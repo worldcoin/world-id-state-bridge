@@ -18,3 +18,7 @@
 	path = lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 	branch = d4d8d2e
+[submodule "lib/world-id-contracts"]
+	path = lib/world-id-contracts
+	url = https://github.com/worldcoin/world-id-contracts
+	branch = batching
