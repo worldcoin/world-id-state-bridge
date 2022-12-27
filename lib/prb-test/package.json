@@ -1,0 +1,62 @@
+{
+  "name": "@prb/test",
+  "description": "Modern collection of testing assertions and logging utilities for Solidity",
+  "version": "0.3.1",
+  "author": {
+    "name": "Paul Razvan Berg",
+    "url": "https://github.com/paulrberg"
+  },
+  "bugs": {
+    "url": "https://github.com/paulrberg/prb-test/issues"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.3.0",
+    "@commitlint/config-conventional": "^17.3.0",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.4",
+    "pinst": "^3.0.0",
+    "prettier": "^2.8.0",
+    "prettier-plugin-solidity": "^1.0.0",
+    "rimraf": "^3.0.2",
+    "solhint": "^3.3.7",
+    "solhint-plugin-prettier": "^0.0.5"
+  },
+  "files": [
+    "/src",
+    "CHANGELOG.md"
+  ],
+  "homepage": "https://github.com/paulrberg/prb-test#readme",
+  "keywords": [
+    "assertions",
+    "blockchain",
+    "ethereum",
+    "foundry",
+    "smart-contracts",
+    "solidity",
+    "testing"
+  ],
+  "license": "MIT",
+  "packageManager": "yarn@3.2.4",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulrberg/prb-test"
+  },
+  "resolutions": {
+    "solhint/@solidity-parser/parser": "^0.14.5"
+  },
+  "scripts": {
+    "clean": "rimraf cache out",
+    "lint": "yarn lint:sol && yarn prettier:check",
+    "lint:sol": "solhint \"{src,test}/**/*.sol\"",
+    "postinstall": "husky install",
+    "postpublish": "pinst --enable",
+    "prepublishOnly": "pinst --disable",
+    "prettier:check": "prettier --check \"**/*.{json,md,sol,yml}\"",
+    "prettier:write": "prettier --write \"**/*.{json,md,sol,yml}\""
+  }
+}
