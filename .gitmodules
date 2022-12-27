@@ -14,3 +14,7 @@
 	path = lib/zk-kit
 	url = https://github.com/corydickson/zk-kit
 	branch = cb6b5c8
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+	branch = d4d8d2e
