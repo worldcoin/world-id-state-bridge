@@ -40,5 +40,8 @@
     "postinstall": "husky install",
     "prettier:check": "prettier --check \"**/*.{json,md,sol,yml}\"",
     "prettier:write": "prettier --write \"**/*.{json,md,sol,yml}\""
+  },
+  "dependencies": {
+    "@eth-optimism/sdk": "^1.8.0"
   }
 }

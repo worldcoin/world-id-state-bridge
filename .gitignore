@@ -8,6 +8,8 @@
 **/cache
 **/node_modules
 **/out
+node_modules
+
 
 # files
 *.env
@@ -21,4 +23,3 @@ yarn-error.log*
 !/broadcast
 /broadcast/*
 /broadcast/*/31337/
-node_modules
