@@ -42,6 +42,8 @@
     "prettier:write": "prettier --write \"**/*.{json,md,sol,yml}\""
   },
   "dependencies": {
-    "@eth-optimism/sdk": "^1.8.0"
+    "@eth-optimism/sdk": "^1.8.0",
+    "@zk-kit/identity": "^1.4.1",
+    "@zk-kit/protocols": "^1.11.0"
   }
 }
