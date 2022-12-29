@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4;
 
+// demo deployments 0x38b421a8A92375A356224F15CDE7AA94F64d371a
+
 import { Script } from "forge-std/Script.sol";
-import { Foo } from "../src/Foo.sol";
+import { Bridge } from "../src/Bridge.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
-contract FooScript is Script {
-    Foo internal foo;
+contract BridgeScript is Script {
+    Bridge internal bridge;
 
     function run() public {
         vm.startBroadcast();
-        foo = new Foo();
+        bridge = new Bridge();
         vm.stopBroadcast();
     }
 }

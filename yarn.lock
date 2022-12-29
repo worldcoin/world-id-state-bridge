@@ -288,7 +288,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eth-optimism/contracts@npm:0.5.39":
+"@eth-optimism/contracts@npm:0.5.39, @eth-optimism/contracts@npm:^0.5.39":
   version: 0.5.39
   resolution: "@eth-optimism/contracts@npm:0.5.39"
   dependencies:
@@ -1160,6 +1160,7 @@ __metadata:
   dependencies:
     "@commitlint/cli": ^17.2.0
     "@commitlint/config-conventional": ^17.2.0
+    "@eth-optimism/contracts": ^0.5.39
     "@eth-optimism/sdk": ^1.8.0
     "@zk-kit/identity": ^1.4.1
     "@zk-kit/protocols": ^1.11.0
