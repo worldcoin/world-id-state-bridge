@@ -11,7 +11,6 @@ import { IBridge } from "./IBridge.sol";
 contract Bridge is IBridge {
     address crossDomainMessengerAddr = 0x5086d1eEF304eb5284A0f6720f79403b4e9bE294;
 
-    // solhint-disable-previous-line no-empty-blocks
     function sendRootToOptimism(uint256 root, uint128 timestamp) external {
         ICrossDomainMessenger(crossDomainMessengerAddr).sendMessage(
             // Contract address on L2
