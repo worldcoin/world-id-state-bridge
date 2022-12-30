@@ -11,10 +11,4 @@ contract BridgeTest is PRBTest, StdCheats {
     function setUp() public {
         // solhint-disable-previous-line no-empty-blocks
     }
-
-    /// @dev Run Forge with `-vvvv` to see console logs.
-    function testExample() external {
-        console2.log("Hello World");
-        assertTrue(true);
-    }
 }
