@@ -12,10 +12,9 @@ contract OpWorldIDTest is PRBTest, StdCheats {
     OpWorldID internal id;
     uint256 preRoot = 0x18f43331537ee2af2e3d758d50f72106467c6eea50371dd528d57eb2b856d238;
     uint256 newRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
-    uint128 preRootTimestamp = uint128(block.timestamp);
-    uint128 newRootTimestamp = uint128(block.timestamp + 5 days);
 
     function setUp() public {
+        uint128 preRootTimestamp = uint128(block.timestamp);
         id = new OpWorldID(preRoot, preRootTimestamp);
 
         vm.label(address(this), "Sender");
@@ -23,8 +22,9 @@ contract OpWorldIDTest is PRBTest, StdCheats {
     }
 
     function testReceiveRootPasses() external {
+        vm.warp(block.timestamp + 200);
+        uint128 newRootTimestamp = uint128(block.timestamp + 100);
         id.receiveRoot(newRoot, newRootTimestamp);
-
         assertTrue(id.checkValidRoot(newRoot));
     }
 
