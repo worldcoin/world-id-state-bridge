@@ -7,7 +7,7 @@ import { Script } from "forge-std/Script.sol";
 import { OpWorldID } from "../src/OpWorldID.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
-contract OpWorldIDScrip is Script {
+contract OpWorldIDScript is Script {
     function run() public {
         // solhint-disable-previous-line no-empty-blocks
     }

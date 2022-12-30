@@ -6,7 +6,7 @@ import {
     ICrossDomainMessenger
 } from "../node_modules/@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 
-import { IBridge } from "./IBridge.sol";
+import { IBridge } from "./interfaces/IBridge.sol";
 
 contract Bridge is IBridge {
     /// @notice The address of the L2 Root contract

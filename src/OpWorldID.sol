@@ -1,18 +1,22 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4;
 
-// Optimism interface for cross domain messaging
-import { console2 } from "forge-std/console2.sol";
+import { Verifier as SemaphoreVerifier } from "lib/world-id-contracts/lib/semaphore/contracts/base/Verifier.sol";
+import { IWorldID } from "./interfaces/IWorldID.sol";
 
-/// @title L2Root
+/// @title OpWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
-/// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract.
-contract OpWorldID {
+/// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
+contract OpWorldID is IWorldID {
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
+
     /// @notice A mapping from the value of the merkle tree root to the timestamp at which it was submitted
     mapping(uint256 => uint128) public rootHistory;
+
+    /// @notice The verifier instance needed for operating within the semaphore protocol.
+    SemaphoreVerifier private semaphoreVerifier = new SemaphoreVerifier();
 
     /// @notice Thrown when attempting to validate a root that has expired.
     error ExpiredRoot();
@@ -21,6 +25,7 @@ contract OpWorldID {
     ///         history.
     error NonExistentRoot();
 
+    /// @notice Initializes the OpWorldID contract with a pre-existing root.
     constructor(uint256 preRoot, uint128 preRootTimestamp) {
         rootHistory[preRoot] = preRootTimestamp;
     }
@@ -50,5 +55,34 @@ contract OpWorldID {
         }
 
         return true;
+    }
+
+    /// A verifier for the semaphore protocol.
+    ///
+    /// @notice Reverts if the zero-knowledge proof is invalid.
+    /// @dev Note that a double-signaling check is not included here, and should be carried by the
+    ///      caller.
+    /// @param root The of the Merkle tree
+    /// @param signalHash A keccak256 hash of the Semaphore signal
+    /// @param nullifierHash The nullifier hash
+    /// @param externalNullifierHash A keccak256 hash of the external nullifier
+    /// @param proof The zero-knowledge proof
+    function verifyProof(
+        uint256 root,
+        uint256 signalHash,
+        uint256 nullifierHash,
+        uint256 externalNullifierHash,
+        uint256[8] calldata proof
+    ) public view {
+        uint256[4] memory publicSignals = [root, nullifierHash, signalHash, externalNullifierHash];
+
+        if (checkValidRoot(root)) {
+            semaphoreVerifier.verifyProof(
+                [proof[0], proof[1]],
+                [[proof[2], proof[3]], [proof[4], proof[5]]],
+                [proof[6], proof[7]],
+                publicSignals
+            );
+        }
     }
 }
