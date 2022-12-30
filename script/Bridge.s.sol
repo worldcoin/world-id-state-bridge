@@ -8,11 +8,7 @@ import { Bridge } from "../src/Bridge.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
 contract BridgeScript is Script {
-    Bridge internal bridge;
-
     function run() public {
-        vm.startBroadcast();
-        bridge = new Bridge();
-        vm.stopBroadcast();
+        // solhint-disable-previous-line no-empty-blocks
     }
 }
