@@ -10,7 +10,7 @@ import {
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract.
-contract L2Root {
+contract OpWorldID {
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
     /// @notice A mapping from the value of the merkle tree root to the timestamp at which it was submitted
