@@ -17,7 +17,7 @@ contract Bridge is IBridge {
 
     /// @notice Sets the addresses for all the WorldID target chains
     constructor(address _optimismAddress) {
-        L2RootAdress = _optimismAddress;
+        optimismAddress = _optimismAddress;
     }
 
     function sendRootMultichain(uint256 root, uint128 timestamp) external {
