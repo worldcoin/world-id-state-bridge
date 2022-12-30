@@ -22,15 +22,9 @@ contract OpWorldIDTest is PRBTest, StdCheats {
     }
 
     function testReceiveRootPasses() external {
-        vm.warp(block.timestamp + 200);
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
+        vm.warp(block.timestamp + 200);
         id.receiveRoot(newRoot, newRootTimestamp);
         assertTrue(id.checkValidRoot(newRoot));
-    }
-
-    /// @dev Run Forge with `-vvvv` to see console logs.
-    function testExample() external {
-        console2.log("Hello World");
-        assertTrue(true);
     }
 }
