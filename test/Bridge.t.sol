@@ -5,8 +5,7 @@ import { console2 } from "forge-std/console2.sol";
 import { PRBTest } from "@prb/test/PRBTest.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
-/// @dev See the "Writing Tests" section in the Foundry Book if this is your first time with Forge.
-/// https://book.getfoundry.sh/forge/writing-tests
+// no point in unit testing this contract, only integratoin testing matters
 contract BridgeTest is PRBTest, StdCheats {
     function setUp() public {
         // solhint-disable-previous-line no-empty-blocks
