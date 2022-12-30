@@ -8,11 +8,7 @@ import { OpWorldID } from "../src/OpWorldID.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
 contract OpWorldIDScrip is Script {
-    OpWorldID internal opWorldID;
-
     function run() public {
-        vm.startBroadcast();
-        opWorldID = new OpWorldID();
-        vm.stopBroadcast();
+        // solhint-disable-previous-line no-empty-blocks
     }
 }

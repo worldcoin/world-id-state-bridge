@@ -36,7 +36,7 @@ contract Bridge is IBridge {
     /// @param timestamp The Ethereum block timestamp of the latest Semaphore root.
     function sendRootToOptimism(uint256 root, uint128 timestamp) internal {
         // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
-        ICrossDomainMessenger().sendMessage(
+        ICrossDomainMessenger(goerliCrossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
             optimismAddress,
             abi.encodeWithSignature("receiveRoot(uint256, uint128)", root, timestamp),

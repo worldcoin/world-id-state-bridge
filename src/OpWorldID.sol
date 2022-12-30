@@ -14,7 +14,7 @@ contract OpWorldID {
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
     /// @notice A mapping from the value of the merkle tree root to the timestamp at which it was submitted
-    mapping(uint256 => uint128) internal rootHistory;
+    mapping(uint256 => uint128) public rootHistory;
 
     /// @notice Thrown when attempting to validate a root that has expired.
     error ExpiredRoot();
@@ -22,6 +22,10 @@ contract OpWorldID {
     /// @notice Thrown when attempting to validate a root that has yet to be added to the root
     ///         history.
     error NonExistentRoot();
+
+    constructor(uint256 preRoot, uint128 preRootTimestamp) {
+        rootHistory[preRoot] = preRootTimestamp;
+    }
 
     /// @notice receiveRoot is called by the L1 Proxy contract which forwards new Semaphore roots to L2.
     /// @param newRoot new valid root with ROOT_HISTORY_EXPIRY validity
@@ -35,18 +39,16 @@ contract OpWorldID {
     ///      is not in the root history.
     /// @param root The root of a given identity group.
     function checkValidRoot(uint256 root) public view returns (bool) {
-        if (root != latestRoot) {
-            uint128 rootTimestamp = rootHistory[root];
+        uint128 rootTimestamp = rootHistory[root];
 
-            // A root is no longer valid if it has expired.
-            if (block.timestamp - rootTimestamp > ROOT_HISTORY_EXPIRY) {
-                revert ExpiredRoot();
-            }
+        // A root is no longer valid if it has expired.
+        if (block.timestamp - rootTimestamp > ROOT_HISTORY_EXPIRY) {
+            revert ExpiredRoot();
+        }
 
-            // A root does not exist if it has no associated timestamp.
-            if (rootTimestamp == 0) {
-                revert NonExistentRoot();
-            }
+        // A root does not exist if it has no associated timestamp.
+        if (rootTimestamp == 0) {
+            revert NonExistentRoot();
         }
 
         return true;
