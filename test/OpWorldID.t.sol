@@ -22,12 +22,7 @@ contract OpWorldIDTest is PRBTest, StdCheats {
         vm.label(address(id), "OPWorldID");
     }
 
-    function _getTimestamp(uint256 root) internal view returns (uint128) {
-        return id.rootHistory[root];
-    }
-
     function testReceiveRootPasses() external {
-        console2.log(_getTimestamp(newRoot));
         id.receiveRoot(newRoot, newRootTimestamp);
 
         assertTrue(id.checkValidRoot(newRoot));
