@@ -2,9 +2,7 @@
 pragma solidity >=0.8.4;
 
 // Optimism interface for cross domain messaging
-import {
-    ICrossDomainMessenger
-} from "../node_modules/@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import { console2 } from "forge-std/console2.sol";
 
 /// @title L2Root
 /// @author Worldcoin
