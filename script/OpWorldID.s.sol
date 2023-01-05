@@ -6,9 +6,27 @@ pragma solidity >=0.8.4;
 import { Script } from "forge-std/Script.sol";
 import { OpWorldID } from "../src/OpWorldID.sol";
 
-/// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
+// Optimism Goerli Testnet ChainID = 420
+
 contract OpWorldIDScript is Script {
+    uint256 private immutable preRoot;
+    uint128 private immutable preRootTimestamp;
+
+    OpWorldID public opWorldID;
+
+    constructor(uint256 _preRoot, uint128 _preRootTimestamp) {
+        preRoot = _preRoot;
+        preRootTimestamp = _preRootTimestamp;
+    }
+
     function run() public {
-        // solhint-disable-previous-line no-empty-blocks
+        preRoot = 0x18f43331537ee2af2e3d758d50f72106467c6eea50371dd528d57eb2b856d238;
+        preRootTimestamp = uint128(block.timestamp);
+
+        vm.startBroadcast();
+
+        OpWorldID = new OpWorldID(preRoot, preRootTimestamp);
+
+        vm.stopBroadcast();
     }
 }

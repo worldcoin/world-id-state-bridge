@@ -6,9 +6,26 @@ pragma solidity >=0.8.4;
 import { Script } from "forge-std/Script.sol";
 import { Bridge } from "../src/Bridge.sol";
 
-/// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
 contract BridgeScript is Script {
+    address private immutable opWorldIDAdress;
+
+    Bridge public bridge;
+
+    constructor(address _opWorldIDAdress) {
+        // get deployment address from OpWorldID.t.sol
+        opWorldIDAdress = _opWorldIDAdress;
+    }
+
     function run() public {
-        // solhint-disable-previous-line no-empty-blocks
+        uint256 bridgeKey = vm.envUint("BRIDGE_PRIVATE_KEY");
+
+        address bridgeDeployerAddress = vm.addr(bridgeKey);
+        address bridgeAddress = LibRLP.computeAddress(bridgeDeployerAddress, 0);
+
+        vm.startBroadcast(bridgeKey);
+
+        bridge = new Bridge(opWorldIDAdress);
+
+        vm.stopBroadcast();
     }
 }

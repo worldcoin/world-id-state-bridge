@@ -18,6 +18,9 @@ contract OpWorldID is IWorldID {
     /// @notice The verifier instance needed for operating within the semaphore protocol.
     SemaphoreVerifier private semaphoreVerifier = new SemaphoreVerifier();
 
+    /// @notice Emitted when a new root is inserted into the root history.
+    event RootAdded(uint256 root, uint128 timestamp);
+
     /// @notice Thrown when attempting to validate a root that has expired.
     error ExpiredRoot();
 
@@ -35,6 +38,8 @@ contract OpWorldID is IWorldID {
     /// @param timestamp Ethereum block timestamp of the new Semaphore root
     function receiveRoot(uint256 newRoot, uint128 timestamp) external {
         rootHistory[newRoot] = timestamp;
+
+        emit rootAdded(newRoot, timestamp);
     }
 
     /// @notice Checks if a given root value is valid and has been added to the root history.
