@@ -39,7 +39,7 @@ contract OpWorldID is IWorldID {
     function receiveRoot(uint256 newRoot, uint128 timestamp) external {
         rootHistory[newRoot] = timestamp;
 
-        emit rootAdded(newRoot, timestamp);
+        emit RootAdded(newRoot, timestamp);
     }
 
     /// @notice Checks if a given root value is valid and has been added to the root history.
