@@ -5,9 +5,10 @@ pragma solidity >=0.8.4;
 
 import { Script } from "forge-std/Script.sol";
 import { Bridge } from "../src/Bridge.sol";
+import { LibRLP } from "./utils/LibRLP.sol";
 
 contract BridgeScript is Script {
-    address private immutable opWorldIDAdress;
+    address private opWorldIDAdress;
 
     Bridge public bridge;
 
@@ -21,6 +22,7 @@ contract BridgeScript is Script {
 
         address bridgeDeployerAddress = vm.addr(bridgeKey);
         address bridgeAddress = LibRLP.computeAddress(bridgeDeployerAddress, 0);
+        opWorldIDAdress = vm.envAddress("OP_WORLDID_ADDRESS");
 
         vm.startBroadcast(bridgeKey);
 
