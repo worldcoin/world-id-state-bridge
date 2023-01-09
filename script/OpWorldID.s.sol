@@ -29,7 +29,6 @@ contract OpWorldIDScript is Script {
         uint256 opWorldIDKey = vm.envUint("OP_WORLDID_PRIVATE_KEY");
 
         address opWorldIDDeployerAddress = vm.addr(opWorldIDKey);
-
         address opWorldIDAddress = LibRLP.computeAddress(opWorldIDDeployerAddress, 0);
 
         vm.startBroadcast(opWorldIDKey);

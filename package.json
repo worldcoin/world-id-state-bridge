@@ -1,50 +1,10 @@
 {
-  "name": "@prb/foundry-template",
-  "description": "Foundry-based template for developing Solidity smart contracts",
-  "version": "1.0.0",
-  "author": {
-    "name": "Paul Razvan Berg",
-    "url": "https://github.com/paulrberg"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^17.2.0",
-    "@commitlint/config-conventional": "^17.2.0",
-    "commitizen": "^4.2.5",
-    "cz-conventional-changelog": "^3.3.0",
-    "husky": "^8.0.2",
-    "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1",
-    "prettier-plugin-solidity": "^1.0.0",
-    "rimraf": "^3.0.2",
-    "solhint": "^3.3.7",
-    "solhint-plugin-prettier": "^0.0.5"
-  },
-  "keywords": [
-    "blockchain",
-    "ethereum",
-    "forge",
-    "foundry",
-    "smart-contracts",
-    "solidity",
-    "template"
-  ],
+  "name": "optimism-state-bridge",
   "packageManager": "yarn@3.2.4",
-  "private": true,
-  "resolutions": {
-    "solhint/@solidity-parser/parser": "^0.14.5"
-  },
-  "scripts": {
-    "clean": "rimraf cache out",
-    "lint": "yarn lint:sol && yarn prettier:check",
-    "lint:sol": "solhint \"{src,test}/**/*.sol\"",
-    "postinstall": "husky install",
-    "prettier:check": "prettier --check \"**/*.{json,md,sol,yml}\"",
-    "prettier:write": "prettier --write \"**/*.{json,md,sol,yml}\""
-  },
-  "dependencies": {
-    "@eth-optimism/contracts": "^0.5.39",
-    "@eth-optimism/sdk": "^1.8.0",
-    "@zk-kit/identity": "^1.4.1",
-    "@zk-kit/protocols": "^1.11.0"
+  "devDependencies": {
+    "@chugsplash/core": "^0.3.24",
+    "@chugsplash/plugins": "^0.8.9",
+    "@nomiclabs/hardhat-ethers": "^2.2.1",
+    "hardhat": "^2.12.5"
   }
 }
