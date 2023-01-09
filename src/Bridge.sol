@@ -49,4 +49,7 @@ contract Bridge is IBridge, Initializable, UUPSUpgradeable {
             1000000
         );
     }
+
+    ///@dev required by the OZ UUPS module
+    function _authorizeUpgrade(address) internal override onlyOwner;
 }
