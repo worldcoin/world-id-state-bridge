@@ -7,8 +7,13 @@ import {
 } from "../node_modules/@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 
 import { IBridge } from "./interfaces/IBridge.sol";
+import { Initializable } from "openzeppelin-contracts/proxy/utils/Initializable.sol";
+import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
 
-contract Bridge is IBridge {
+contract Bridge is IBridge, Initializable, UUPSUpgradeable {
+    /// @notice The owner of the contract
+    address public owner;
+
     /// @notice The address of the L2 Root contract
     address public optimismAddress;
 
@@ -17,7 +22,8 @@ contract Bridge is IBridge {
 
     /// @notice Sets the addresses for all the WorldID target chains
     /// @param _optimismAddress The address of the Optimism contract that will receive the new root and timestamp
-    constructor(address _optimismAddress) {
+    function initialize(address _optimismAddress) public virtual initializer {
+        owner = msg.sender;
         optimismAddress = _optimismAddress;
     }
 
