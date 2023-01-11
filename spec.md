@@ -22,12 +22,12 @@
 
 1. Lack of upgradeability for `Bridge.sol` and `OpWorldID.sol`.
 
-- Add a `TransparentUpgradeableProxy` and `ProxyAdmin` OpenZeppelin setup for `stateBridge` in `Semaphore.sol`, and potentially add upgradeability within `Bridge.sol` itself, although it might be better to redeploy it every single time the bridge modifies `sendRootMultichain` functionality and upgrade `Semaphore.sol` instead.
+- Add a `UUPSUpgradeable` Proxy OpenZeppelin setup for `stateBridge` in `Semaphore.sol`, and potentially add upgradeability within `Bridge.sol` itself, although it might be better to redeploy it every single time the bridge modifies `sendRootMultichain` functionality and upgrade `Semaphore.sol` instead.
 
 2. There is no way to verify inside `OpWorldID.sol` that a newly inserted root and timestamp is valid and comes from `Semaphore.sol`.
 
 - how to solve:
-  - `onlyFromCrossDomainAccount` modifier
+  - `onlyFromCrossDomainAccount` modifier (this is what is currently being worked on)
   - external relayer ecdsa signature on root and timestamp from Semaphore
   - use state proofs to prove validity of newly inserted roots
     - how to implement:
