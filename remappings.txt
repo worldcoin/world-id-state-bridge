@@ -1,4 +1,7 @@
 @prb/test/=lib/prb-test/src/
 forge-std/=lib/forge-std/src/
 src/=src/
-openzeppelin-contracts/=lib/openzeppelin-contracts/contracts
+openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
+@eth-optimism/contracts/=node_modules/@eth-optimism/contracts/
+@eth-optimism/contracts-bedrock/=node_modules/@eth-optimism/contracts-bedrock/contracts/
+semaphore/=lib/world-id-contracts/lib/semaphore/
