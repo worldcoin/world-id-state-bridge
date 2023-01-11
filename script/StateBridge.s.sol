@@ -4,13 +4,13 @@ pragma solidity >=0.8.4;
 // demo deployments 0x38b421a8A92375A356224F15CDE7AA94F64d371a
 
 import { Script } from "forge-std/Script.sol";
-import { Bridge } from "../src/Bridge.sol";
+import { Bridge } from "../src/StateBridge.sol";
 import { LibRLP } from "./utils/LibRLP.sol";
 
-contract BridgeScript is Script {
+contract StateBridgeScript is Script {
     address private opWorldIDAdress;
 
-    Bridge public bridge;
+    StateBridge public bridge;
 
     constructor(address _opWorldIDAdress) {
         // get deployment address from OpWorldID.t.sol

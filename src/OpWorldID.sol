@@ -3,7 +3,7 @@ pragma solidity >=0.8.4;
 
 import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
 import { IWorldID } from "./interfaces/IWorldID.sol";
-import { CrossDomainOwnable2 } from "@ethereum-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
+import { CrossDomainOwnable2 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin

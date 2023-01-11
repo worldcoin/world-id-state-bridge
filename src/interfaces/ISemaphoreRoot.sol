@@ -10,5 +10,5 @@ interface ISemaphoreRoot {
     ///      is not in the root history.
     ///
     /// @param root The root of a given identity group.
-    function checkValidRoot(uint256 root) public view returns (bool) {
+    function checkValidRoot(uint256 root) public view returns (bool);
 }

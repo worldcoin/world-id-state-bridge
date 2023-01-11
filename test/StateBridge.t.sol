@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4;
 
-import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
-import {ERC1967Upgrade} from "openzeppelin-contracts/proxy/ERC1967/ERC1967Upgrade.sol";
-import {ERC1967Proxy} from "openzeppelin-contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import { ERC1967Upgrade } from "openzeppelin-contracts/proxy/ERC1967/ERC1967Upgrade.sol";
+import { ERC1967Proxy } from "openzeppelin-contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-import {StateBridge} from "../src/StateBridge.sol";
-import {StateBridge2} from "./StateBridge2.sol";
-import {StateBridgeProxy} from "../src/StateBridgeProxy.sol";
+import { StateBridge } from "../src/StateBridge.sol";
+import { StateBridge2 } from "./StateBridge2.sol";
+import { StateBridgeProxy } from "../src/StateBridgeProxy.sol";
 
 import { console2 } from "forge-std/console2.sol";
 import { PRBTest } from "@prb/test/PRBTest.sol";
@@ -32,7 +32,9 @@ contract StateBridgeTest is PRBTest, StdCheats {
         // deploy StateBridge
         address stateBridge = address(new StateBridge());
         // deploy StateBridgeProxy
-        address stateBridgeProxy = address(new StateBridgeProxy(stateBridge, abi.encodeCall(stateBridge.initialize, (optimismAddress))));
+        address stateBridgeProxy = address(
+            new StateBridgeProxy(stateBridge, abi.encodeCall(stateBridge.initialize, (optimismAddress)))
+        );
 
         address newStateBridge = address(new StateBridge2());
 
@@ -46,4 +48,29 @@ contract StateBridgeTest is PRBTest, StdCheats {
         assert(success);
 
         assertEq(abi.decode(result, (uint256)), 420);
+    }
+
+    function testTransferOwnership() public {
+        console2.log("testTransferOwnership");
+
+        // deploy StateBridge
+        address stateBridge = address(new StateBridge());
+        // deploy StateBridgeProxy
+        address stateBridgeProxy = address(
+            new StateBridgeProxy(stateBridge, abi.encodeCall(stateBridge.initialize, (optimismAddress)))
+        );
+
+        // transfer ownership
+        (bool success, bytes memory result) = stateBridgeProxy.call(
+            abi.encodeCall(UUPSUpgradeable.transferOwnership, (address(0x4321)))
+        );
+
+        assert(success);
+
+        // check new owner
+        (success, result) = stateBridgeProxy.call(abi.encodeCall(UUPSUpgradeable.owner, ()));
+        assert(success);
+
+        assertEq(abi.decode(result, (address)), address(0x4321));
+    }
 }

@@ -2,8 +2,10 @@
 pragma solidity >=0.8.4;
 
 // Optimism interface for cross domain messaging
-import { ICrossDomainMessenger } from "@eth-optimism/contracts-bedrock/contracts/L1/L1CrossDomainMessenger.sol";
-import { IBridge } from "./interfaces/IBridge.sol";
+import {
+    ICrossDomainMessenger
+} from "../node_modules/@eth-optimism/contracts-bedrock/contracts/L1/L1CrossDomainMessenger.sol";
+import { IBridge } from "../src/interfaces/IBridge.sol";
 import { Initializable } from "openzeppelin-contracts/proxy/utils/Initializable.sol";
 import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
 
