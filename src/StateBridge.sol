@@ -51,6 +51,7 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
         // If the root is not a valid root in the canonical Semaphore contract, revert
         if (!semaphore.checkValidRoot(root)) revert InvalidRoot();
 
+        uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
         // add other chains here
     }
