@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4;
 
-import { Verifier as SemaphoreVerifier } from "lib/world-id-contracts/lib/semaphore/contracts/base/Verifier.sol";
+import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
 import { IWorldID } from "./interfaces/IWorldID.sol";
+import { CrossDomainOwnable2 } from "@ethereum-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
-contract OpWorldID is IWorldID {
+contract OpWorldID is IWorldID, CrossDomainOwnable2 {
+    /// @notice The owner of the contract is the StateBridgeProxy contract on L1.
+    address public owner;
+
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -30,13 +34,15 @@ contract OpWorldID is IWorldID {
 
     /// @notice Initializes the OpWorldID contract with a pre-existing root.
     constructor(uint256 preRoot, uint128 preRootTimestamp) {
+        // initially the owner is the deployer of the contract
+        owner = msg.sender;
         rootHistory[preRoot] = preRootTimestamp;
     }
 
     /// @notice receiveRoot is called by the L1 Proxy contract which forwards new Semaphore roots to L2.
     /// @param newRoot new valid root with ROOT_HISTORY_EXPIRY validity
     /// @param timestamp Ethereum block timestamp of the new Semaphore root
-    function receiveRoot(uint256 newRoot, uint128 timestamp) external {
+    function receiveRoot(uint256 newRoot, uint128 timestamp) external onlyOwner {
         rootHistory[newRoot] = timestamp;
 
         emit RootAdded(newRoot, timestamp);
