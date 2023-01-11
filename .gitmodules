@@ -13,3 +13,6 @@
 [submodule "lib/world-id-contracts"]
 	path = lib/world-id-contracts
 	url = https://github.com/worldcoin/world-id-contracts
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/transmissions11/solmate
