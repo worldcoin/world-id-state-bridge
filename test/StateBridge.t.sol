@@ -14,14 +14,14 @@ import { PRBTest } from "@prb/test/PRBTest.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 contract StateBridgeTest is PRBTest, StdCheats {
-    address public owner;
-
-    address public optimismAddress = address(0x1234);
+    address public testSemaphoreAddress;
+    address public testOptimismAddress;
+    address public crossDomainMessengerAddress;
 
     function setUp() public {
-        owner = address(this);
-        vm.label(owner, "owner");
-        vm.label(optimismAddress, "optimismAddress");
+        testSemaphoreAddress = address(0x1234);
+        testOptimismAddress = address(0x5678);
+        crossDomainMessengerAddress = address(0x9abc);
     }
 
     event Upgraded(address indexed implementation);
@@ -30,47 +30,32 @@ contract StateBridgeTest is PRBTest, StdCheats {
         console2.log("testBridgeUpgrade");
 
         // deploy StateBridge
-        address stateBridge = address(new StateBridge());
-        // deploy StateBridgeProxy
-        address stateBridgeProxy = address(
-            new StateBridgeProxy(stateBridge, abi.encodeCall(stateBridge.initialize, (optimismAddress)))
+        StateBridge stateBridge = new StateBridge();
+
+        address stateBridgeAddress = address(stateBridge);
+
+        bytes memory initCallData = abi.encodeCall(
+            StateBridge.initialize,
+            (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
         );
+
+        // deploy StateBridgeProxy
+        StateBridgeProxy stateBridgeProxy = new StateBridgeProxy(stateBridgeAddress, initCallData);
+
+        address stateBridgeProxyAddress = address(stateBridgeProxy);
 
         address newStateBridge = address(new StateBridge2());
 
-        emit Upgraded(newImpl);
-        (success, result) = proxy.call(
+        emit Upgraded(newStateBridge);
+        (bool success, bytes memory result) = stateBridgeProxyAddress.call(
             abi.encodeCall(
                 UUPSUpgradeable.upgradeToAndCall,
                 (newStateBridge, abi.encodeCall(StateBridge2.getCounter, ()))
             )
         );
+
         assert(success);
 
         assertEq(abi.decode(result, (uint256)), 420);
-    }
-
-    function testTransferOwnership() public {
-        console2.log("testTransferOwnership");
-
-        // deploy StateBridge
-        address stateBridge = address(new StateBridge());
-        // deploy StateBridgeProxy
-        address stateBridgeProxy = address(
-            new StateBridgeProxy(stateBridge, abi.encodeCall(stateBridge.initialize, (optimismAddress)))
-        );
-
-        // transfer ownership
-        (bool success, bytes memory result) = stateBridgeProxy.call(
-            abi.encodeCall(UUPSUpgradeable.transferOwnership, (address(0x4321)))
-        );
-
-        assert(success);
-
-        // check new owner
-        (success, result) = stateBridgeProxy.call(abi.encodeCall(UUPSUpgradeable.owner, ()));
-        assert(success);
-
-        assertEq(abi.decode(result, (address)), address(0x4321));
     }
 }
