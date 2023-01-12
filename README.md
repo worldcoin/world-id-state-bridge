@@ -1,6 +1,6 @@
 # optimism-state-bridge
 
-State bridge between Ethereum mainnet and the Optimism L2
+State bridge for the Semaphore contract operated by Worldcoin between Ethereum mainnet and the Optimism rollup.
 
 # Foundry Template [![Open in Gitpod][gitpod-badge]][gitpod] [![Github Actions][gha-badge]][gha] [![Foundry][foundry-badge]][foundry] [![License: MIT][license-badge]][license]
 
@@ -13,7 +13,7 @@ State bridge between Ethereum mainnet and the Optimism L2
 [license]: https://opensource.org/licenses/MIT
 [license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
 
-A Foundry-based template for developing Solidity smart contracts, with sensible defaults.
+This repo uses Paul Razvan Berg's [foundry template](https://github.com/paulrberg/foundry-template/): A Foundry-based template for developing Solidity smart contracts, with sensible defaults.
 
 ## What's Inside
 
@@ -188,7 +188,3 @@ $ forge test
 - [cleanunicorn/ethereum-smartcontract-template](https://github.com/cleanunicorn/ethereum-smartcontract-template)
 - [foundry-rs/forge-template](https://github.com/foundry-rs/forge-template)
 - [FrankieIsLost/forge-template](https://github.com/FrankieIsLost/forge-template)
-
-## License
-
-[MIT](./LICENSE.md) © Paul Razvan Berg

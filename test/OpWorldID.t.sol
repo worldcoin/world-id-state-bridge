@@ -35,6 +35,7 @@ contract OpWorldIDTest is PRBTest, StdCheats {
     function testReceiveVerifyRoot() public {
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
         vm.warp(block.timestamp + 200);
+        vm.prank(address(this));
         id.receiveRoot(newRoot, newRootTimestamp);
         assertTrue(id.checkValidRoot(newRoot));
     }

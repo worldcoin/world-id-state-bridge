@@ -10,9 +10,6 @@ import { CrossDomainOwnable2 } from "@eth-optimism/contracts-bedrock/contracts/L
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
 contract OpWorldID is IWorldID, CrossDomainOwnable2 {
-    /// @notice The owner of the contract is the StateBridgeProxy contract on L1.
-    address public owner;
-
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -35,7 +32,6 @@ contract OpWorldID is IWorldID, CrossDomainOwnable2 {
     /// @notice Initializes the OpWorldID contract with a pre-existing root.
     constructor(uint256 preRoot, uint128 preRootTimestamp) {
         // initially the owner is the deployer of the contract
-        owner = msg.sender;
         rootHistory[preRoot] = preRootTimestamp;
     }
 

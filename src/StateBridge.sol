@@ -2,7 +2,7 @@
 pragma solidity >=0.8.4;
 
 // Optimism interface for cross domain messaging
-import { ICrossDomainMessenger } from "@eth-optimism/contracts-bedrock/contracts/L1/L1CrossDomainMessenger.sol";
+import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import { IBridge } from "./interfaces/IBridge.sol";
 import { ISemaphoreRoot } from "./interfaces/ISemaphoreRoot.sol";
 import { Initializable } from "openzeppelin-contracts/proxy/utils/Initializable.sol";
@@ -37,7 +37,11 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
 
     /// @notice Sets the addresses for all the WorldID target chains
     /// @param _optimismAddress The address of the Optimism contract that will receive the new root and timestamp
-    function initialize(address _semaphoreAddress, address _optimismAddress) public virtual initializer {
+    function initialize(
+        address _semaphoreAddress,
+        address _optimismAddress,
+        address _crossDomainMessenger
+    ) public virtual initializer {
         owner = msg.sender;
         optimismAddress = _optimismAddress;
         semaphore = ISemaphoreRoot(_semaphoreAddress);
@@ -46,7 +50,6 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     /// @notice Sends the latest Semaphore root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest Semaphore root.
-    /// @param timestamp The Ethereum block timestamp of the latest Semaphore root.
     function sendRootMultichain(uint256 root) external {
         // If the root is not a valid root in the canonical Semaphore contract, revert
         if (!semaphore.checkValidRoot(root)) revert InvalidRoot();
@@ -75,5 +78,5 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     }
 
     ///@dev required by the OZ UUPS module
-    function _authorizeUpgrade(address) internal override onlyOwner;
+    function _authorizeUpgrade(address newImplementation) internal virtual override onlyOwner {}
 }
