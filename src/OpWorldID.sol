@@ -4,12 +4,13 @@ pragma solidity >=0.8.4;
 import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
 import { IWorldID } from "./interfaces/IWorldID.sol";
 import { CrossDomainOwnable2 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
+import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
-contract OpWorldID is IWorldID, CrossDomainOwnable2 {
+contract OpWorldID is IWorldID, CrossDomainOwnable2, Initializable {
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -30,8 +31,7 @@ contract OpWorldID is IWorldID, CrossDomainOwnable2 {
     error NonExistentRoot();
 
     /// @notice Initializes the OpWorldID contract with a pre-existing root.
-    constructor(uint256 preRoot, uint128 preRootTimestamp) {
-        // initially the owner is the deployer of the contract
+    function initialize(uint256 preRoot, uint128 preRootTimestamp) public virtual initializer {
         rootHistory[preRoot] = preRootTimestamp;
     }
 

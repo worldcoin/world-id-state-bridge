@@ -45,6 +45,7 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
         owner = msg.sender;
         optimismAddress = _optimismAddress;
         semaphore = ISemaphoreRoot(_semaphoreAddress);
+        crossDomainMessengerAddress = _crossDomainMessenger;
     }
 
     /// @notice Sends the latest Semaphore root to all chains.
