@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@eth-optimism/contracts-bedrock@0.11.2":
+"@eth-optimism/contracts-bedrock@0.11.2", "@eth-optimism/contracts-bedrock@^0.11.2":
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.11.2.tgz#a637dc3df3893b4329f5cfe3a36684350b84058c"
   integrity sha512-NREJUAw8dqFKBPxcq4NrM6ugLpTVtijfMjzG0wDqwZ7lpkbLJ0fXuac4UGb3THcwWLRdXtH9DHWQ4uCXS8nazQ==
