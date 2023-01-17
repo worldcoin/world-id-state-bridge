@@ -5,5 +5,5 @@ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
 @eth-optimism/contracts/=node_modules/@eth-optimism/contracts/
 @eth-optimism/contracts-bedrock/=node_modules/@eth-optimism/contracts-bedrock/
-semaphore/=lib/semaphore
+semaphore/=lib/semaphore/packages/contracts/contracts/
 solmate/=lib/solmate/
