@@ -16,3 +16,7 @@
 [submodule "lib/solmate"]
 	path = lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "lib/semaphore"]
+	path = lib/semaphore
+	url = https://github.com/semaphore-protocol/semaphore
+	branch = d001dd9
