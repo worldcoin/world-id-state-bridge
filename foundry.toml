@@ -3,16 +3,28 @@
 [profile.default]
 auto_detect_solc = false
 bytecode_hash = "none"
-fuzz = { runs = 256 }
+fuzz = {runs = 256}
 gas_reports = ["*"]
 libs = ["lib"]
 optimizer = true
 optimizer_runs = 10_000
 out = "out"
-solc = "0.8.17"
+remappings = [
+  "@prb/test/=lib/prb-test/src/",
+  "forge-std/=lib/forge-std/src/",
+  "src/=src/",
+  "semaphore/=lib/semaphore/",
+  "@eth-optimism/contracts/=node_modules/@eth-optimism/contracts/",
+  "@eth-optimism/contracts-bedrock/=node_modules/@eth-optimism/contracts-bedrock/",
+  "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+  "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+  "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+  "solmate/=lib/solmate/",
+]
+solc = "0.8.15"
 src = "src"
 test = "test"
 
 [profile.ci]
-fuzz = { runs = 10_000 }
+fuzz = {runs = 10_000}
 verbosity = 4
