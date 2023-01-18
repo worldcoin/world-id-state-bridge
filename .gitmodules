@@ -13,6 +13,7 @@
 [submodule "lib/solmate"]
 	path = lib/solmate
 	url = https://github.com/transmissions11/solmate
+	branch = v7
 [submodule "lib/semaphore"]
 	path = lib/semaphore
 	url = https://github.com/semaphore-protocol/semaphore
