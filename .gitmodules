@@ -10,10 +10,6 @@
 	path = lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 	branch = v4.8.0
-[submodule "lib/solmate"]
-	path = lib/solmate
-	url = https://github.com/transmissions11/solmate
-	branch = v7
 [submodule "lib/semaphore"]
 	path = lib/semaphore
 	url = https://github.com/semaphore-protocol/semaphore
