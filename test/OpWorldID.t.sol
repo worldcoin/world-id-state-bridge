@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.4;
+pragma solidity 0.8.15;
 
-import { PRBTest } from "@prb/test/PRBTest.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
+/// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
+// import { PRBTest } from "@prb/test/PRBTest.sol";
+// import { StdCheats } from "forge-std/StdCheats.sol";
 import { OpWorldID } from "../src/OpWorldID.sol";
 import { L2CrossDomainMessenger } from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
 import { CrossDomainOwnable2 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
 import { Predeploys } from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import { Messenger_Initializer } from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+import { CommonTest, Messenger_Initializer } from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
+import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
+import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// Test contract from
 /// https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/contracts/test/CrossDomainOwnable2.t.sol
@@ -24,13 +28,16 @@ contract XDomainSetter2 is CrossDomainOwnable2, Messenger_Initializer {
 /// @author Worldcoin
 /// @notice A test contract for OpWorldID
 /// @dev The OpWorldID contract is deployed on Optimism and is called by the L1 Proxy contract.
-contract OpWorldIDTest is PRBTest, StdCheats {
+contract OpWorldIDTest is Messenger_Initializer {
+    /*//////////////////////////////////////////////////////////////
+                            OPTIMISM TOOLING
+    //////////////////////////////////////////////////////////////*/
     /// @notice Common test helpers (@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol)
-    address alice = address(128);
-    address bob = address(256);
 
     XDomainSetter2 internal setter;
-
+    /*//////////////////////////////////////////////////////////////
+                                WORLD ID
+    //////////////////////////////////////////////////////////////*/
     /// @notice The OpWorldID contract
     OpWorldID internal id;
 
@@ -40,16 +47,16 @@ contract OpWorldIDTest is PRBTest, StdCheats {
     /// @notice The root of the merkle tree after the first update
     uint256 public newRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
 
-    /// instantiate the L2CrossDomainMessenger to be able to mock calls from it
-    address public messengerAddress;
+    function setUp() public override {
+        /// @notice CrossDomainOwnable2 setup
+        super.setUp();
 
-    function setUp() public {
         vm.prank(alice);
+
         setter = new XDomainSetter2();
+
         /// @notice The timestamp of the root of the merkle tree before the first update
         uint128 preRootTimestamp = uint128(block.timestamp);
-
-        messengerAddress = Predeploys.L2_CROSS_DOMAIN_MESSENGER;
 
         /// @notice Initialize the OpWorldID contract
         id = new OpWorldID();
@@ -66,32 +73,79 @@ contract OpWorldIDTest is PRBTest, StdCheats {
         setter.set(1);
     }
 
+    function test_onlyOwner_notOwner_reverts() external {
+        // set the xDomainMsgSender storage slot
+        bytes32 key = bytes32(uint256(204));
+        bytes32 value = Bytes32AddressLib.fillLast12Bytes(address(alice));
+        vm.store(address(L2Messenger), key, value);
+
+        vm.prank(address(L2Messenger));
+        vm.expectRevert("CrossDomainOwnable2: caller is not the owner");
+
+        setter.set(1);
+    }
+
     /// @notice Test that you can insert new root and check if it is valid
     function test_receiveVerifyRoot_succeeds() public {
+        address owner = id.owner();
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
         vm.warp(block.timestamp + 200);
-        vm.prank(messengerAddress);
-        id.receiveRoot(newRoot, newRootTimestamp);
+
+        // set the xDomainMsgSender storage slot to the L1Messenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(0, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+        );
+
         assertTrue(id.checkValidRoot(newRoot));
     }
 
     /// @notice Test that you can insert an invalid root and check that it is invalid
     function test_receiveVerifyInvalidRoot_reverts() public {
+        address owner = id.owner();
+
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
         vm.warp(block.timestamp + 200);
         uint256 randomRoot = 0x712cab3414951eba341ca234aef42142567c6eea50371dd528d57eb2b856d238;
-        vm.prank(messengerAddress);
-        id.receiveRoot(newRoot, newRootTimestamp);
+
+        // set the xDomainMsgSender storage slot to the L1Messenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(1, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+        );
+
         vm.expectRevert(OpWorldID.NonExistentRoot.selector);
         id.checkValidRoot(randomRoot);
     }
 
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
     function test_expiredRoot_reverts() public {
+        address owner = id.owner();
+
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
-        vm.prank(messengerAddress);
-        id.receiveRoot(newRoot, newRootTimestamp);
+
+        // set the xDomainMsgSender storage slot to the L1Messenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(2, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+        );
         vm.warp(block.timestamp + 8 days);
+
         vm.expectRevert(OpWorldID.ExpiredRoot.selector);
         id.checkValidRoot(newRoot);
     }
