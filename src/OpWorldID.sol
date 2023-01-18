@@ -30,7 +30,6 @@ contract OpWorldID is IWorldID, CrossDomainOwnable2, Initializable {
     ///         history.
     error NonExistentRoot();
 
-    /// @notice Initializes the OpWorldID contract with a pre-existing root.
     function initialize(uint256 preRoot, uint128 preRootTimestamp) public virtual initializer {
         rootHistory[preRoot] = preRootTimestamp;
     }
