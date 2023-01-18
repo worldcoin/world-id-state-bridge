@@ -13,17 +13,6 @@ import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/ve
 import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
 import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 
-/// Test contract from
-/// https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/contracts/test/CrossDomainOwnable2.t.sol
-/// to help prank the L2CrossDomainMessenger
-contract XDomainSetter2 is CrossDomainOwnable2, Messenger_Initializer {
-    uint256 public value;
-
-    function set(uint256 _value) external onlyOwner {
-        value = _value;
-    }
-}
-
 /// @title OpWorldIDTest
 /// @author Worldcoin
 /// @notice A test contract for OpWorldID
@@ -34,7 +23,6 @@ contract OpWorldIDTest is Messenger_Initializer {
     //////////////////////////////////////////////////////////////*/
     /// @notice Common test helpers (@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol)
 
-    XDomainSetter2 internal setter;
     /*//////////////////////////////////////////////////////////////
                                 WORLD ID
     //////////////////////////////////////////////////////////////*/
@@ -53,8 +41,6 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.prank(alice);
 
-        setter = new XDomainSetter2();
-
         /// @notice The timestamp of the root of the merkle tree before the first update
         uint128 preRootTimestamp = uint128(block.timestamp);
 
@@ -69,8 +55,10 @@ contract OpWorldIDTest is Messenger_Initializer {
     }
 
     function test_onlyOwner_notMessenger_reverts() external {
+        uint128 newRootTimestamp = uint128(block.timestamp + 100);
+
         vm.expectRevert("CrossDomainOwnable2: caller is not the messenger");
-        setter.set(1);
+        id.receiveRoot(newRoot, newRootTimestamp);
     }
 
     function test_onlyOwner_notOwner_reverts() external {
@@ -79,10 +67,11 @@ contract OpWorldIDTest is Messenger_Initializer {
         bytes32 value = Bytes32AddressLib.fillLast12Bytes(address(alice));
         vm.store(address(L2Messenger), key, value);
 
+        uint128 newRootTimestamp = uint128(block.timestamp + 100);
+
         vm.prank(address(L2Messenger));
         vm.expectRevert("CrossDomainOwnable2: caller is not the owner");
-
-        setter.set(1);
+        id.receiveRoot(newRoot, newRootTimestamp);
     }
 
     /// @notice Test that you can insert new root and check if it is valid
