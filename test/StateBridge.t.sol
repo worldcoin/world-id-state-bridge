@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.4;
+pragma solidity 0.8.15;
 
 import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
 import { ERC1967Upgrade } from "openzeppelin-contracts/proxy/ERC1967/ERC1967Upgrade.sol";
