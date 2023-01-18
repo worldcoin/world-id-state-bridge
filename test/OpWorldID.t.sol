@@ -39,8 +39,6 @@ contract OpWorldIDTest is Messenger_Initializer {
         /// @notice CrossDomainOwnable2 setup
         super.setUp();
 
-        vm.prank(alice);
-
         /// @notice The timestamp of the root of the merkle tree before the first update
         uint128 preRootTimestamp = uint128(block.timestamp);
 
