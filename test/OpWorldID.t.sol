@@ -44,7 +44,6 @@ contract OpWorldIDTest is PRBTest, StdCheats {
     address public messengerAddress;
 
     function setUp() public {
-        super.setUp();
         vm.prank(alice);
         setter = new XDomainSetter2();
         /// @notice The timestamp of the root of the merkle tree before the first update
