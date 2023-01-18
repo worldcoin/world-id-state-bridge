@@ -24,8 +24,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
         crossDomainMessengerAddress = address(0x9abc);
     }
 
-    event Upgraded(address indexed implementation);
-
     function testBridgeUpgrade() public {
         console2.log("testBridgeUpgrade");
 
@@ -46,13 +44,27 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         address newStateBridge = address(new StateBridge2());
 
-        emit Upgraded(newStateBridge);
+        initCallData = abi.encodeCall(
+            StateBridge2.initialize,
+            (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
+        );
+
         (bool success, bytes memory result) = stateBridgeProxyAddress.call(
             abi.encodeCall(
                 UUPSUpgradeable.upgradeToAndCall,
-                (newStateBridge, abi.encodeCall(StateBridge2.getCounter, ()))
+                (
+                    newStateBridge,
+                    abi.encodeCall(
+                        StateBridge2.initialize,
+                        (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
+                    )
+                )
             )
         );
+
+        assert(success);
+
+        (success, result) = stateBridgeProxyAddress.call(abi.encodeCall(StateBridge2.getCounter, ()));
 
         assert(success);
 

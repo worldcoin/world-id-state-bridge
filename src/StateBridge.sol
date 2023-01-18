@@ -41,7 +41,7 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
         address _semaphoreAddress,
         address _optimismAddress,
         address _crossDomainMessenger
-    ) public virtual initializer {
+    ) public virtual reinitializer(1) {
         owner = msg.sender;
         optimismAddress = _optimismAddress;
         semaphore = ISemaphoreRoot(_semaphoreAddress);

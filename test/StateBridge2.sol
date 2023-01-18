@@ -41,10 +41,15 @@ contract StateBridge2 is IBridge, Initializable, UUPSUpgradeable {
 
     /// @notice Sets the addresses for all the WorldID target chains
     /// @param _optimismAddress The address of the Optimism contract that will receive the new root and timestamp
-    function initialize(address _semaphoreAddress, address _optimismAddress) public virtual initializer {
+    function initialize(
+        address _semaphoreAddress,
+        address _optimismAddress,
+        address _crossDomainMessenger
+    ) public virtual reinitializer(2) {
         owner = msg.sender;
         optimismAddress = _optimismAddress;
         semaphore = ISemaphoreRoot(_semaphoreAddress);
+        crossDomainMessengerAddress = _crossDomainMessenger;
         counter = 420;
     }
 
