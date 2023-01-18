@@ -105,7 +105,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         assertTrue(id.checkValidRoot(newRoot));
     }
 
-    /// @notice Test that you can insert an invalid root and check that it is invalid
+    /// @notice Test that a root that hasn't been inserted is invalid
     function test_receiveVerifyInvalidRoot_reverts() public {
         address owner = id.owner();
 
