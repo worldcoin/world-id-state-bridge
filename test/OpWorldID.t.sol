@@ -17,12 +17,11 @@ import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 /// @author Worldcoin
 /// @notice A test contract for OpWorldID
 /// @dev The OpWorldID contract is deployed on Optimism and is called by the L1 Proxy contract.
+/// @dev This contract uses the Optimism CommonTest.t.sol tool suite to test the OpWorldID contract.
+/// For more information on the CommonTest.t.sol tool suite, please see the CommonTest.t.sol source code.
+/// CommonTest.t.sol - Link https://github.com/ethereum-optimism/optimism/blob/e768427b369f6dd642bee1755574537d7424f847/packages/contracts-bedrock/contracts/test/CommonTest.t.sol
+/// CrossDomainOwnable2.t.sol - Link https://github.com/ethereum-optimism/optimism/blob/e768427b369f6dd642bee1755574537d7424f847/packages/contracts-bedrock/contracts/test/CrossDomainOwnable2.t.sol
 contract OpWorldIDTest is Messenger_Initializer {
-    /*//////////////////////////////////////////////////////////////
-                            OPTIMISM TOOLING
-    //////////////////////////////////////////////////////////////*/
-    /// @notice Common test helpers (@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol)
-
     /*//////////////////////////////////////////////////////////////
                                 WORLD ID
     //////////////////////////////////////////////////////////////*/
