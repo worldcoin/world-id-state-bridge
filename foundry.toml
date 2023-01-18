@@ -20,6 +20,7 @@ remappings = [
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
   "solmate/=lib/solmate/",
+  "@rari-capital/solmate/=lib/solmate/",
 ]
 solc = "0.8.15"
 src = "src"
