@@ -4,7 +4,7 @@ pragma solidity >=0.8.4;
 /// @title ISemaphoreRoot
 /// @author Worldcoin
 /// @dev used to check if a root is valid for the StateBridge
-interface ISemaphoreRoot {
+interface IWorldIDIdentityManager {
     /// @notice Checks if a given root value is valid and has been added to the root history.
     /// @dev Reverts with `ExpiredRoot` if the root has expired, and `NonExistentRoot` if the root
     ///      is not in the root history.
