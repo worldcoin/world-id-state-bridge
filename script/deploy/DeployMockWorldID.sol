@@ -4,7 +4,7 @@ pragma solidity >=0.8.4;
 // demo deployments 0x38b421a8A92375A356224F15CDE7AA94F64d371a
 
 import { Script } from "forge-std/Script.sol";
-import { WorldIDIdentityManagerImplV1 } from "../src/mock/WorldIDIdentityManagerImplV1.sol";
+import { WorldIDIdentityManagerImplV1 } from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
 
 // Optimism Goerli Testnet ChainID = 420
 
