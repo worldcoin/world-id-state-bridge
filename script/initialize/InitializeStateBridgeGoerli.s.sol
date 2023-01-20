@@ -21,7 +21,7 @@ contract InitializeStateBridgeGoerli is Script {
         // tbd
         opWorldIDAdress = address(0xEe6abb338938740f7292aAd2a1c440239792b510);
         /// @dev Goerli crossDomainMessenger deployment address
-        crossDomainMessengerAddress = 0x5086d1eEF304eb5284A0f6720f79403b4e9bE294;
+        crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
         // tbd
         stateBridgeDeploymentAddress = address(0x6de5BC2B62815D85b4A8fe6BE3ed17f5b4E61c73);
     }
