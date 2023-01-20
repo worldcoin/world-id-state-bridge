@@ -28,7 +28,7 @@ contract InitializeOpWorldID is Script {
     }
 
     function run() public {
-        uint256 opWorldIDKey = vm.envUint("OP_WORLDID_KEY");
+        uint256 opWorldIDKey = vm.envUint("OP_WORLDID_PRIVATE_KEY");
 
         vm.startBroadcast(opWorldIDKey);
 

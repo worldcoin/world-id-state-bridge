@@ -36,14 +36,16 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     }
 
     /// @notice Sets the addresses for all the WorldID target chains
-    /// @param _optimismAddress The address of the Optimism contract that will receive the new root and timestamp
+    /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
+    /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
+    /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
     function initialize(
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
         address _crossDomainMessenger
     ) public virtual reinitializer(1) {
         owner = msg.sender;
-        opWorldID = _opWorldIDAddress;
+        opWorldIDAddress = _opWorldIDAddress;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
     }
@@ -54,7 +56,7 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     function sendRootMultichain(uint256 root) external {
         // If the root is not a valid root in the canonical WorldID Identity Manager contract, revert
         // comment out for mock deployments
-        if (!worldID.checkValidRoot(root)) revert InvalidRoot();
+        // if (!worldID.checkValidRoot(root)) revert InvalidRoot();
 
         uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
@@ -73,7 +75,7 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
         // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
-            optimismAddress,
+            opWorldIDAddress,
             message,
             1000000 // within the free gas limit
         );

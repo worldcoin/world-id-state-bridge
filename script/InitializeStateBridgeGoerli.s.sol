@@ -9,16 +9,15 @@ import { StateBridge } from "../src/StateBridge.sol";
 /// @notice Initializes the StateBridge contract
 contract InitializeStateBridgeGoerli is Script {
     address public immutable opWorldIDAdress;
-    address public immutable semaphoreAddress;
+    address public immutable worldIDIdentityManagerAddress;
     address public immutable crossDomainMessengerAddress;
-
     address public immutable stateBridgeDeploymentAddress;
 
     StateBridge public bridge;
 
     constructor() {
         // tbd
-        semaphoreAddress = address(0x222);
+        worldIDIdentityManagerAddress = address(0x222);
         // tbd
         opWorldIDAdress = address(0x333);
         /// @dev Goerli crossDomainMessenger deployment address
@@ -34,7 +33,7 @@ contract InitializeStateBridgeGoerli is Script {
 
         bridge = StateBridge(stateBridgeDeploymentAddress);
 
-        bridge.initialize(semaphoreAddress, opWorldIDAdress, crossDomainMessengerAddress);
+        bridge.initialize(worldIDIdentityManagerAddress, opWorldIDAdress, crossDomainMessengerAddress);
 
         vm.stopBroadcast();
     }
