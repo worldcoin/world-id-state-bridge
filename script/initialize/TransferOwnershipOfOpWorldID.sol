@@ -3,9 +3,9 @@ pragma solidity 0.8.15;
 
 // demo deployments
 
-import { Script } from "forge-std/Script.sol";
-import { OpWorldID } from "../../src/OpWorldID.sol";
-import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {Script} from "forge-std/Script.sol";
+import {OpWorldID} from "../../src/OpWorldID.sol";
+import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 
 /// @notice Initializes the StateBridge contract
 contract TransferOwnershipOfOpWorldID is Script {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
@@ -15,7 +15,7 @@ contract WorldIDIdentityManagerImplV1 is Initializable {
     }
 
     function sendRootToStateBridge(uint256 root) public {
-        (bool success, ) = stateBridgeProxy.call(abi.encodeWithSignature("sendRootMultichain(uint256)", root));
+        (bool success,) = stateBridgeProxy.call(abi.encodeWithSignature("sendRootMultichain(uint256)", root));
         assert(success);
     }
 }

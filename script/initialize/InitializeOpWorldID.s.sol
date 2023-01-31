@@ -3,8 +3,8 @@ pragma solidity >=0.8.4;
 
 // demo deployments
 
-import { Script } from "forge-std/Script.sol";
-import { OpWorldID } from "../../src/OpWorldID.sol";
+import {Script} from "forge-std/Script.sol";
+import {OpWorldID} from "../../src/OpWorldID.sol";
 
 /// @notice Initializes the StateBridge contract
 contract InitializeOpWorldID is Script {

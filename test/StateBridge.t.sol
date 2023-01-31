@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
-import { ERC1967Upgrade } from "openzeppelin-contracts/proxy/ERC1967/ERC1967Upgrade.sol";
-import { ERC1967Proxy } from "openzeppelin-contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import {ERC1967Upgrade} from "openzeppelin-contracts/proxy/ERC1967/ERC1967Upgrade.sol";
+import {ERC1967Proxy} from "openzeppelin-contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-import { StateBridge } from "../src/StateBridge.sol";
-import { StateBridge2 } from "./StateBridge2.sol";
-import { StateBridgeProxy } from "../src/StateBridgeProxy.sol";
+import {StateBridge} from "../src/StateBridge.sol";
+import {StateBridge2} from "./StateBridge2.sol";
+import {StateBridgeProxy} from "../src/StateBridgeProxy.sol";
 
-import { console2 } from "forge-std/console2.sol";
-import { PRBTest } from "@prb/test/PRBTest.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
+import {console2} from "forge-std/console2.sol";
+import {PRBTest} from "@prb/test/PRBTest.sol";
+import {StdCheats} from "forge-std/StdCheats.sol";
 
 contract StateBridgeTest is PRBTest, StdCheats {
     address public testSemaphoreAddress;
@@ -33,8 +33,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         address stateBridgeAddress = address(stateBridge);
 
         bytes memory initCallData = abi.encodeCall(
-            StateBridge.initialize,
-            (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
+            StateBridge.initialize, (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
         );
 
         // deploy StateBridgeProxy
@@ -45,8 +44,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         address newStateBridge = address(new StateBridge2());
 
         initCallData = abi.encodeCall(
-            StateBridge2.initialize,
-            (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
+            StateBridge2.initialize, (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
         );
 
         (bool success, bytes memory result) = stateBridgeProxyAddress.call(
@@ -57,7 +55,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
                     abi.encodeCall(
                         StateBridge2.initialize,
                         (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
-                    )
+                        )
                 )
             )
         );
