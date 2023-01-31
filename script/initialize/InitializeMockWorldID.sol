@@ -3,8 +3,8 @@ pragma solidity >=0.8.4;
 
 // demo deployments
 
-import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerImplV1} from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
+import { Script } from "forge-std/Script.sol";
+import { WorldIDIdentityManagerImplV1 } from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
 
 /// @notice Initializes the StateBridge contract
 contract InitializeOpWorldID is Script {
@@ -14,10 +14,8 @@ contract InitializeOpWorldID is Script {
     WorldIDIdentityManagerImplV1 public worldID;
 
     constructor() {
-        // tbd
-        stateBridgeAddress = address(0x6de5BC2B62815D85b4A8fe6BE3ed17f5b4E61c73);
-        // tbd
-        mockWorldIDAddress = address(0xee5f96E2cdb5A194Cd25F0F29cA06fbcB6d1AdE4);
+        stateBridgeAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);
+        mockWorldIDAddress = address(0x206d2C6A7A600BC6bD3A26A8A12DfFb64698C23C);
     }
 
     function run() public {
