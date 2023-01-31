@@ -3,8 +3,8 @@ pragma solidity >=0.8.4;
 
 // demo deployments
 
-import { Script } from "forge-std/Script.sol";
-import { StateBridge } from "../../src/StateBridge.sol";
+import {Script} from "forge-std/Script.sol";
+import {StateBridge} from "../../src/StateBridge.sol";
 
 /// @notice Initializes the StateBridge contract
 contract InitializeStateBridgeGoerli is Script {
