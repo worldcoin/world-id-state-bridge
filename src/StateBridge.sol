@@ -70,7 +70,7 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
-        message = abi.encodeWithSignature("receiveRoot(uint256, uint128)", root, timestamp);
+        message = abi.encodeWithSignature("receiveRoot(uint256,uint128)", root, timestamp);
 
         // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
