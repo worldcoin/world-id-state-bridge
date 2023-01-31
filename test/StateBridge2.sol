@@ -44,7 +44,7 @@ contract StateBridge2 is IBridge, Initializable, UUPSUpgradeable {
     function initialize(address _worldIDIdentityManager, address _opWorldIDAddress, address _crossDomainMessenger)
         public
         virtual
-        reinitializer(1)
+        reinitializer(2)
     {
         owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
