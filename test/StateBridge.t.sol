@@ -48,16 +48,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         );
 
         (bool success, bytes memory result) = stateBridgeProxyAddress.call(
-            abi.encodeCall(
-                UUPSUpgradeable.upgradeToAndCall,
-                (
-                    newStateBridge,
-                    abi.encodeCall(
-                        StateBridge2.initialize,
-                        (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
-                        )
-                )
-            )
+            abi.encodeCall(UUPSUpgradeable.upgradeToAndCall, (newStateBridge, initCallData))
         );
 
         assert(success);
