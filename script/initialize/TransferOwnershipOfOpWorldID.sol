@@ -3,9 +3,9 @@ pragma solidity 0.8.15;
 
 // demo deployments
 
-import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "../../src/OpWorldID.sol";
-import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import { Script } from "forge-std/Script.sol";
+import { OpWorldID } from "../../src/OpWorldID.sol";
+import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 
 /// @notice Initializes the StateBridge contract
 contract TransferOwnershipOfOpWorldID is Script {
@@ -16,8 +16,8 @@ contract TransferOwnershipOfOpWorldID is Script {
     OpWorldID public opWorldID;
 
     constructor() {
-        opWorldIDAdress = address(0xEe6abb338938740f7292aAd2a1c440239792b510);
-        stateBridgeAddress = address(0x6de5BC2B62815D85b4A8fe6BE3ed17f5b4E61c73);
+        opWorldIDAdress = address(0x09A02586dAf43Ca837b45F34dC2661d642b8Da15);
+        stateBridgeAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);
         crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
     }
 
