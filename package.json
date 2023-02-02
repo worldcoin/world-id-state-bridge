@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@eth-optimism/contracts": "^0.5.39",
+    "@eth-optimism/contracts": "^0.5.40",
     "@eth-optimism/contracts-bedrock": "^0.11.2",
     "@eth-optimism/sdk": "^1.9.1"
   }
