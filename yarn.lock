@@ -13,19 +13,10 @@
     ethers "^5.7.0"
     hardhat "^2.9.6"
 
-"@eth-optimism/contracts@0.5.40":
+"@eth-optimism/contracts@0.5.40", "@eth-optimism/contracts@^0.5.40":
   version "0.5.40"
   resolved "https://registry.yarnpkg.com/@eth-optimism/contracts/-/contracts-0.5.40.tgz#d13a04a15ea947a69055e6fc74d87e215d4c936a"
   integrity sha512-MrzV0nvsymfO/fursTB7m/KunkPsCndltVgfdHaT1Aj5Vi6R/doKIGGkOofHX+8B6VMZpuZosKCMQ5lQuqjt8w==
-  dependencies:
-    "@eth-optimism/core-utils" "0.12.0"
-    "@ethersproject/abstract-provider" "^5.7.0"
-    "@ethersproject/abstract-signer" "^5.7.0"
-
-"@eth-optimism/contracts@^0.5.39":
-  version "0.5.39"
-  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts/-/contracts-0.5.39.tgz#a312a0a0b2d5853cd417c5e8969e87288e166fcb"
-  integrity sha512-u3UufuZFzgidRN2/cC3mhRxX+M6VsMV9tauIKu8D5pym5/UO4pZr85WP3KxHFfLh1i8zmkdj+pN/GRQsNYCqMg==
   dependencies:
     "@eth-optimism/core-utils" "0.12.0"
     "@ethersproject/abstract-provider" "^5.7.0"
