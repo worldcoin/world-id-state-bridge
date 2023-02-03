@@ -59,4 +59,10 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         assertEq(abi.decode(result, (uint256)), 420);
     }
+
+    function testCannotInitializeUUPSImplementationDirectly() public {
+        StateBridge stateBridge = new StateBridge();
+        vm.expectRevert("Initializable: contract is already initialized");
+        stateBridge.initialize(address(this), address(0), address(0));
+    }
 }
