@@ -2,7 +2,18 @@
 # yarn lockfile v1
 
 
-"@eth-optimism/contracts-bedrock@0.11.2", "@eth-optimism/contracts-bedrock@^0.11.2":
+"@eth-optimism/contracts-bedrock@0.11.3":
+  version "0.11.3"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.11.3.tgz#102c4de7d741f28bf7ee23ac7866660a0eb40a9e"
+  integrity sha512-WOP69fdv7TIfvTD6pEedW0OVwYe39aX2DXqvKDpDhJNF0W9miHZUY7UaNKiSqlE37SuQJpC4VvGfls/gwfL1Mw==
+  dependencies:
+    "@eth-optimism/core-utils" "^0.12.0"
+    "@openzeppelin/contracts" "4.7.3"
+    "@openzeppelin/contracts-upgradeable" "4.7.3"
+    ethers "^5.7.0"
+    hardhat "^2.9.6"
+
+"@eth-optimism/contracts-bedrock@^0.11.2":
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.11.2.tgz#a637dc3df3893b4329f5cfe3a36684350b84058c"
   integrity sha512-NREJUAw8dqFKBPxcq4NrM6ugLpTVtijfMjzG0wDqwZ7lpkbLJ0fXuac4UGb3THcwWLRdXtH9DHWQ4uCXS8nazQ==
@@ -53,13 +64,13 @@
     bufio "^1.0.7"
     chai "^4.3.4"
 
-"@eth-optimism/sdk@^1.9.1":
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/@eth-optimism/sdk/-/sdk-1.9.1.tgz#8477e1e2ef00b1c666f26a645644057abf2196a8"
-  integrity sha512-rpf6CZ+LNw4v2p6jMDpBlZt2wxUCjPLWAsGuOhXZpPFMXvQWzTwS8y4PXoRZ0Ys6SLg5rUTjUHB5iDE8d+XcTQ==
+"@eth-optimism/sdk@^1.10.0":
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/sdk/-/sdk-1.10.1.tgz#843384985f00e443d6ab1252fa566cdd8421773e"
+  integrity sha512-ypoHVeMZo+PHgujsp2n/LTxkAOHM1P4gmDf1JigGNdQlelu9/83eYQPr9BYHDaYETvCi1YKTmjnT+tqqqVGLeg==
   dependencies:
     "@eth-optimism/contracts" "0.5.40"
-    "@eth-optimism/contracts-bedrock" "0.11.2"
+    "@eth-optimism/contracts-bedrock" "0.11.3"
     "@eth-optimism/core-utils" "0.12.0"
     lodash "^4.17.21"
     merkletreejs "^0.2.27"
