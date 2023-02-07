@@ -1,0 +1,8 @@
+OpWorldIDTest:test_expiredRoot_reverts() (gas: 82914)
+OpWorldIDTest:test_onlyOwner_notMessenger_reverts() (gas: 10738)
+OpWorldIDTest:test_onlyOwner_notOwner_reverts() (gas: 18861)
+OpWorldIDTest:test_receiveVerifyInvalidRoot_reverts() (gas: 84842)
+OpWorldIDTest:test_receiveVerifyRoot_succeeds() (gas: 82636)
+StateBridgeTest:testBridgeUpgrade() (gas: 2321575)
+StateBridgeTest:testOptimismAddress():(address) (gas: 2347)
+StateBridgeTest:testSemaphoreAddress():(address) (gas: 2302)

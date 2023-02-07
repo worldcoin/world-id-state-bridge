@@ -2,11 +2,13 @@
 pragma solidity 0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {IBridge} from "./interfaces/IBridge.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
-import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
-import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import { IBridge } from "./interfaces/IBridge.sol";
+import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
+import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
+import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
+import { Initializable } from "openzeppelin-contracts/proxy/utils/Initializable.sol";
+import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
 
 contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     /// @notice The owner of the contract
@@ -39,11 +41,11 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
-    function initialize(address _worldIDIdentityManager, address _opWorldIDAddress, address _crossDomainMessenger)
-        public
-        virtual
-        reinitializer(1)
-    {
+    function initialize(
+        address _worldIDIdentityManager,
+        address _opWorldIDAddress,
+        address _crossDomainMessenger
+    ) public virtual reinitializer(1) {
         owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
@@ -70,14 +72,38 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
     function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
-        message = abi.encodeWithSignature("receiveRoot(uint256,uint128)", root, timestamp);
+        message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
 
-        // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            1000000 // within the free gas limit
+            1000000
+        );
+
+        //        // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
+        //        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+        //            // Contract address on Optimism
+        //            opWorldIDAddress,
+        //            message,
+        //            1000000 // within the free gas limit
+        //        );
+    }
+
+    /// @notice Adds functionality to the StateBridge to transfer ownership
+    /// of OpWorldID to another contract on L1 or to a local Optimism EOA
+    /// @param _owner new owner (EOA or contract)
+    /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
+    function transferOwership(address _owner, bool _isLocal) external onlyOwner {
+        bytes memory message;
+
+        message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
+
+        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+            // Contract address on Optimism
+            opWorldIDAddress,
+            message,
+            1000000
         );
     }
 
