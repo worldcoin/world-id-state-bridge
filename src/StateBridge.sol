@@ -37,6 +37,10 @@ contract StateBridge is IBridge, Initializable, UUPSUpgradeable {
         _;
     }
 
+    constructor() {
+        _disableInitializers();
+    }
+
     /// @notice Sets the addresses for all the WorldID target chains
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
