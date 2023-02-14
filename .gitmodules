@@ -22,3 +22,7 @@
 	path = lib/solmate
 	url = https://github.com/transmissions11/solmate
 	branch = v7
+[submodule "lib/contracts"]
+	path = lib/contracts
+	url = https://github.com/fx-portal/contracts
+	branch = v1.0.5
