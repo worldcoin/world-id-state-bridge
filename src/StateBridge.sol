@@ -96,14 +96,6 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
             message,
             1000000
         );
-
-        //        // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
-        //        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
-        //            // Contract address on Optimism
-        //            opWorldIDAddress,
-        //            message,
-        //            1000000 // within the free gas limit
-        //        );
     }
 
     /// @notice Adds functionality to the StateBridge to transfer ownership
