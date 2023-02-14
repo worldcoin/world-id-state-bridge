@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
-import {IWorldID} from "./interfaces/IWorldID.sol";
-import {CrossDomainOwnable2} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
-import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
+import { IWorldID } from "./interfaces/IWorldID.sol";
+import { CrossDomainOwnable2 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
+import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
@@ -34,7 +34,7 @@ contract OpWorldID is IWorldID, CrossDomainOwnable2, Initializable {
         rootHistory[preRoot] = preRootTimestamp;
     }
 
-    /// @notice receiveRoot is called by the L1 Proxy contract which forwards new Semaphore roots to L2.
+    /// @notice receiveRoot is called by the state bridge contract which forwards new WorldID roots to Optimism.
     /// @param newRoot new valid root with ROOT_HISTORY_EXPIRY validity
     /// @param timestamp Ethereum block timestamp of the new Semaphore root
     function receiveRoot(uint256 newRoot, uint128 timestamp) external onlyOwner {
@@ -84,7 +84,10 @@ contract OpWorldID is IWorldID, CrossDomainOwnable2, Initializable {
 
         if (checkValidRoot(root)) {
             semaphoreVerifier.verifyProof(
-                [proof[0], proof[1]], [[proof[2], proof[3]], [proof[4], proof[5]]], [proof[6], proof[7]], publicSignals
+                [proof[0], proof[1]],
+                [[proof[2], proof[3]], [proof[4], proof[5]]],
+                [proof[6], proof[7]],
+                publicSignals
             );
         }
     }
