@@ -4,23 +4,20 @@ pragma solidity 0.8.15;
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
-import {OpWorldID} from "../src/OpWorldID.sol";
-import {L2CrossDomainMessenger} from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
-import {CrossDomainOwnable2} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
-import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import {CommonTest, Messenger_Initializer} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
-import {AddressAliasHelper} from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
-import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
-import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
+import { OpWorldID } from "../src/OpWorldID.sol";
+import { L2CrossDomainMessenger } from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
+import { CrossDomainOwnable2 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
+import { Predeploys } from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
+import { CommonTest, Messenger_Initializer } from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
+import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
+import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title OpWorldIDTest
 /// @author Worldcoin
 /// @notice A test contract for OpWorldID
 /// @dev The OpWorldID contract is deployed on Optimism and is called by the L1 Proxy contract.
 /// @dev This contract uses the Optimism CommonTest.t.sol tool suite to test the OpWorldID contract.
-/// For more information on the CommonTest.t.sol tool suite, please see the CommonTest.t.sol source code.
-/// CommonTest.t.sol - Link https://github.com/ethereum-optimism/optimism/blob/e768427b369f6dd642bee1755574537d7424f847/packages/contracts-bedrock/contracts/test/CommonTest.t.sol
-/// CrossDomainOwnable2.t.sol - Link https://github.com/ethereum-optimism/optimism/blob/e768427b369f6dd642bee1755574537d7424f847/packages/contracts-bedrock/contracts/test/CrossDomainOwnable2.t.sol
 contract OpWorldIDTest is Messenger_Initializer {
     /*//////////////////////////////////////////////////////////////
                                 WORLD ID
