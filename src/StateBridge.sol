@@ -134,6 +134,8 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
         _sendMessageToChild(message);
     }
 
+    function _processMessageFromChild(bytes memory message) internal virtual override {}
+
     /*//////////////////////////////////////////////////////////////
                              UPGRADEABILITY
     //////////////////////////////////////////////////////////////*/

@@ -108,8 +108,8 @@ contract PolygonWorldID is IWorldID, FxBaseChildTunnel, Initializable {
 
     /// @notice receiveRoot is called by the StateBridge contract which forwards new WorldID roots to Polygon.
     /// @param data newRoot and timestamp encoded as bytes
-    function receiveRoot(bytes memory data) external {
-        (newRoot, timestamp) = abi.decode(data, (uint256, uint128));
+    function receiveRoot(bytes memory data) internal {
+        (uint256 newRoot, uint128 timestamp) = abi.decode(data, (uint256, uint128));
 
         rootHistory[newRoot] = timestamp;
 
@@ -118,7 +118,6 @@ contract PolygonWorldID is IWorldID, FxBaseChildTunnel, Initializable {
 
     /// @notice internal function used to receive messages from the StateBridge contract
     /// @dev calls receiveRoot upon receiving a message from the StateBridge contract
-    /// @param stateId the stateId of the message
     /// @param sender of the message
     /// @param data newRoot and timestamp encoded as bytes
     function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
