@@ -2,14 +2,14 @@
 pragma solidity 0.8.15;
 
 // Optimism interface for cross domain messaging
-import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import { IBridge } from "./interfaces/IBridge.sol";
-import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
-import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
-import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
-import { Initializable } from "openzeppelin-contracts/proxy/utils/Initializable.sol";
-import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
-import { FxBaseRootTunnel } from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {IBridge} from "./interfaces/IBridge.sol";
+import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
+import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
+import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
 contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeable {
     /// @notice The owner of the contract
@@ -22,13 +22,10 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     address public polygonWorldIDAddress;
 
     /// @notice address for Optimism's Ethereum mainnet Messenger contract
-    address public crossDomainMessengerAddress;
+    address internal crossDomainMessengerAddress;
 
     /// @notice Interface for checkValidRoot within the WorldID Identity Manager contract
     IWorldIDIdentityManager public worldID;
-
-    /// @notice data received from Polygon's StateChild contract
-    bytes public latestData;
 
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
@@ -44,6 +41,9 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
         _;
     }
 
+    /// @notice constructor
+    /// @param _checkpointManager address of the checkpoint manager contract
+    /// @param _fxRoot address of the fxRoot contract (Goerli or Mainnet)
     constructor(address _checkpointManager, address _fxRoot) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
         _disableInitializers();
     }
@@ -52,11 +52,11 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
-    function initialize(
-        address _worldIDIdentityManager,
-        address _opWorldIDAddress,
-        address _crossDomainMessenger
-    ) public virtual reinitializer(1) {
+    function initialize(address _worldIDIdentityManager, address _opWorldIDAddress, address _crossDomainMessenger)
+        public
+        virtual
+        reinitializer(1)
+    {
         owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
@@ -126,12 +126,6 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     /*//////////////////////////////////////////////////////////////
                                 POLYGON
     //////////////////////////////////////////////////////////////*/
-
-    /// @notice Receive message from Polygon's StateChild contract
-    /// @param data bytes received from Polygon
-    function _processMessageFromChild(bytes memory data) internal override {
-        latestData = data;
-    }
 
     /// @notice Send message to Polygon's StateChild contract
     /// @param message bytes to send to Polygon

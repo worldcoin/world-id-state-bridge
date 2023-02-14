@@ -1,21 +1,23 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
-import { IWorldID } from "./interfaces/IWorldID.sol";
-import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import { FxBaseChildTunnel } from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
+import {IWorldID} from "./interfaces/IWorldID.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
-/// @title OpWorldID
+/// @title PolygonWorldID
 /// @author Worldcoin
-/// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
-/// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
-contract OpWorldID is IWorldID, FxBaseChildTunnel, Initializable {
-    uint256 public latestStateId;
-    address public latestRootMessageSender;
+/// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
+/// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for new root insertions.
+contract PolygonWorldID is IWorldID, FxBaseChildTunnel, Initializable {
+    /// @notice latest data received from Ethereum mainnet
     bytes public latestData;
 
-    /// @notice The amount of time a root is considered as valid on Optimism.
+    /// @notice The address of the StateBridge contract on Ethereum mainnet
+    address internal _stateBridgeAddress;
+
+    /// @notice The amount of time a root is considered as valid on Polygon.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
     /// @notice A mapping from the value of the merkle tree root to the timestamp at which it was submitted
@@ -34,11 +36,19 @@ contract OpWorldID is IWorldID, FxBaseChildTunnel, Initializable {
     ///         history.
     error NonExistentRoot();
 
+    /// @notice Thrown when attempting to send messages from a contract that is not the StateBridge contract.
+    error SenderIsNotStateBridge();
+
     constructor(address _fxChild) FxBaseChildTunnel(_fxChild) {
         _disableInitializers();
     }
 
-    function initialize(uint256 preRoot, uint128 preRootTimestamp) public virtual initializer {
+    function initialize(uint256 preRoot, uint128 preRootTimestamp, address stateBridgeAddress)
+        public
+        virtual
+        initializer
+    {
+        _stateBridgeAddress = stateBridgeAddress;
         rootHistory[preRoot] = preRootTimestamp;
     }
 
@@ -87,10 +97,7 @@ contract OpWorldID is IWorldID, FxBaseChildTunnel, Initializable {
 
         if (checkValidRoot(root)) {
             semaphoreVerifier.verifyProof(
-                [proof[0], proof[1]],
-                [[proof[2], proof[3]], [proof[4], proof[5]]],
-                [proof[6], proof[7]],
-                publicSignals
+                [proof[0], proof[1]], [[proof[2], proof[3]], [proof[4], proof[5]]], [proof[6], proof[7]], publicSignals
             );
         }
     }
@@ -114,21 +121,15 @@ contract OpWorldID is IWorldID, FxBaseChildTunnel, Initializable {
     /// @param stateId the stateId of the message
     /// @param sender of the message
     /// @param data newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(
-        uint256 stateId,
-        address sender,
-        bytes memory data
-    ) internal override validateSender(sender) {
-        latestStateId = stateId;
-        latestRootMessageSender = sender;
+    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
+        internal
+        override
+        validateSender(sender)
+    {
+        if (sender != _stateBridgeAddress) revert SenderIsNotStateBridge();
+
         latestData = data;
 
         receiveRoot(data);
-    }
-
-    /// @notice template function used to send messages to the StateBridge contract
-    /// @param message data to be sent to the StateBridge contract encoded as bytes
-    function sendMessageToRoot(bytes memory message) public {
-        _sendMessageToRoot(message);
     }
 }
