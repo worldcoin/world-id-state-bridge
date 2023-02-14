@@ -2,10 +2,21 @@
 # yarn lockfile v1
 
 
-"@eth-optimism/contracts-bedrock@0.11.2", "@eth-optimism/contracts-bedrock@^0.11.2":
+"@eth-optimism/contracts-bedrock@0.11.2":
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.11.2.tgz#a637dc3df3893b4329f5cfe3a36684350b84058c"
   integrity sha512-NREJUAw8dqFKBPxcq4NrM6ugLpTVtijfMjzG0wDqwZ7lpkbLJ0fXuac4UGb3THcwWLRdXtH9DHWQ4uCXS8nazQ==
+  dependencies:
+    "@eth-optimism/core-utils" "^0.12.0"
+    "@openzeppelin/contracts" "4.7.3"
+    "@openzeppelin/contracts-upgradeable" "4.7.3"
+    ethers "^5.7.0"
+    hardhat "^2.9.6"
+
+"@eth-optimism/contracts-bedrock@^0.11.3":
+  version "0.11.3"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.11.3.tgz#102c4de7d741f28bf7ee23ac7866660a0eb40a9e"
+  integrity sha512-WOP69fdv7TIfvTD6pEedW0OVwYe39aX2DXqvKDpDhJNF0W9miHZUY7UaNKiSqlE37SuQJpC4VvGfls/gwfL1Mw==
   dependencies:
     "@eth-optimism/core-utils" "^0.12.0"
     "@openzeppelin/contracts" "4.7.3"
