@@ -1,4 +1,30 @@
 {
+  "name": "@worldcoin/world-id-state-bridge",
+  "version": "0.1.0",
+  "description": "State bridge between the WorldID Ethereum mainnet deployment and WorldID supported networks",
+  "license": "MIT",
+  "files": [
+    "src/**/*.sol"
+  ],
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "smart-contracts",
+    "semaphore",
+    "identity",
+    "solidity",
+    "zero-knowledge",
+    "proof-of-uniqueness",
+    "bridge"
+  ],
+  "homepage": "https://github.com/worldcoin/world-id-state-bridge",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/worldcoin/world-id-state-bridge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/worldcoin/world-id-state-bridge/issues"
+  },
   "dependencies": {
     "@eth-optimism/contracts": "^0.5.39",
     "@eth-optimism/contracts-bedrock": "^0.11.2",
