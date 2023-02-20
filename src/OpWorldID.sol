@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
-import {IWorldID} from "./interfaces/IWorldID.sol";
-import {CrossDomainOwnable2} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable2.sol";
-import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
+import { IWorldID } from "./interfaces/IWorldID.sol";
+// needs to be manually imported from develop branch (ethereum-optimism/optimism repo)
+import { CrossDomainOwnable3 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
-contract OpWorldID is IWorldID, CrossDomainOwnable2, Initializable {
+contract OpWorldID is IWorldID, CrossDomainOwnable3, Initializable {
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -84,7 +85,10 @@ contract OpWorldID is IWorldID, CrossDomainOwnable2, Initializable {
 
         if (checkValidRoot(root)) {
             semaphoreVerifier.verifyProof(
-                [proof[0], proof[1]], [[proof[2], proof[3]], [proof[4], proof[5]]], [proof[6], proof[7]], publicSignals
+                [proof[0], proof[1]],
+                [[proof[2], proof[3]], [proof[4], proof[5]]],
+                [proof[6], proof[7]],
+                publicSignals
             );
         }
     }
