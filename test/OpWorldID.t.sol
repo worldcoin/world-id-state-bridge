@@ -4,13 +4,13 @@ pragma solidity 0.8.15;
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
-import { OpWorldID } from "../src/OpWorldID.sol";
-import { L2CrossDomainMessenger } from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
-import { Predeploys } from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import { CommonTest, Messenger_Initializer } from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
-import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
-import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
-import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
+import {OpWorldID} from "../src/OpWorldID.sol";
+import {L2CrossDomainMessenger} from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
+import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
+import {CommonTest, Messenger_Initializer} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+import {AddressAliasHelper} from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
+import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
+import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title OpWorldIDTest
 /// @author Worldcoin
@@ -65,7 +65,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         // CrossDomainOwnable3.sol transferOwnership to crossDomain address (as alice and to alice)
         vm.prank(id.owner());
-        id.transferOwnership({ _owner: alice, _isLocal: false });
+        id.transferOwnership({_owner: alice, _isLocal: false});
     }
 
     function test_onlyOwner_notMessenger_reverts() external {
