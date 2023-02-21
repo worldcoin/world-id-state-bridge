@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
-// Demo deployments
-// Goerli 0x8438ba278cF0bf6dc75a844755C7A805BB45984F
-// https://goerli.etherscan.io/address/0x8438ba278cf0bf6dc75a844755c7a805bb45984f#code
-
 import {Script} from "forge-std/Script.sol";
 import {StateBridge} from "../../src/StateBridge.sol";
 
@@ -15,9 +11,15 @@ contract DeployStateBridge is Script {
     address public fxRootAddress;
 
     function setup() public {
-        // TBD
-        checkpointManagerAddress = address(0x38b421a8A92375A356224F15CDE7AA94F64d371a);
-        fxRootAddress = address(0x38b421a8A92375A356224F15CDE7AA94F64d371a);
+        /*//////////////////////////////////////////////////////////////
+                                POLYGON
+        //////////////////////////////////////////////////////////////*/
+
+        // https://static.matic.network/network/mainnet/v1/index.json
+        // RoootChainManagerProxy
+        checkpointManagerAddress = address(0xA0c68C638235ee32657e8f720a23ceC1bFc77C77);
+        // FxRoot
+        fxRootAddress = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
     }
 
     function run() public {

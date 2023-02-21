@@ -11,7 +11,11 @@ import {PolygonWorldID} from "../../src/PolygonWorldID.sol";
 contract DeployPolygonWorldID is Script {
     PolygonWorldID public polygonWorldId;
 
-    address fxChildAddress = address(0x1111);
+    // Polygon PoS Mumbai Testnet Child Tunnel
+    address fxChildAddress = address(0xCf73231F28B7331BBe3124B907840A94851f9f11);
+
+    // Polygon PoS Mainnet Child Tunnel
+    // address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
 
     function run() external {
         uint256 PolygonWorldIDKey = vm.envUint("POLYGON_WORLDID_PRIVATE_KEY");

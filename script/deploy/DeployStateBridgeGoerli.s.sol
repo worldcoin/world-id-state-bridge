@@ -15,9 +15,16 @@ contract DeployStateBridge is Script {
     address public fxRootAddress;
 
     function setup() public {
-        // TBD
-        checkpointManagerAddress = address(0x38b421a8A92375A356224F15CDE7AA94F64d371a);
-        fxRootAddress = address(0x38b421a8A92375A356224F15CDE7AA94F64d371a);
+        /*//////////////////////////////////////////////////////////////
+                                POLYGON
+        //////////////////////////////////////////////////////////////*/
+
+        // https://static.matic.network/network/testnet/mumbai/index.json
+        // RoootChainManagerProxy
+        checkpointManagerAddress = address(0xBbD7cBFA79faee899Eaf900F13C9065bF03B1A74);
+
+        // FxRoot
+        fxRootAddress = address(0x3d1d3E34f7fB6D26245E6640E1c50710eFFf15bA);
     }
 
     function run() public {

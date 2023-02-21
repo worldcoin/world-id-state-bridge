@@ -6,6 +6,7 @@ pragma solidity >=0.8.15;
 import {Script} from "forge-std/Script.sol";
 import {OpWorldID} from "../../src/OpWorldID.sol";
 import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {ICrossDomainOwnable3} from "../../src/interfaces/ICrossDomainOwnable3.sol";
 
 /// @notice Initializes the StateBridge contract
 contract TransferOwnershipOfOpWorldID is Script {
@@ -14,6 +15,10 @@ contract TransferOwnershipOfOpWorldID is Script {
     address public immutable crossDomainMessengerAddress;
 
     OpWorldID public opWorldID;
+
+    /// @notice in CrossDomainOwnable3.sol, isLocal is used to set ownership to a new address with a toggle
+    /// for local or cross domain (using the CrossDomainMessenger to pass messages)
+    bool public isLocal;
 
     constructor() {
         /*//////////////////////////////////////////////////////////////
@@ -33,17 +38,22 @@ contract TransferOwnershipOfOpWorldID is Script {
     function run() public {
         uint256 opWorldIDKey = vm.envUint("OP_WORLDID_PRIVATE_KEY");
 
+        /// @notice cross domain ownership flag
+        /// false = cross domain (address on Ethereum)
+        /// true = local (address on Optimism)
+        isLocal = false;
+
         vm.startBroadcast(opWorldIDKey);
 
-        crossDomainTransferOwnership(stateBridgeAddress);
+        crossDomainTransferOwnership(stateBridgeAddress, isLocal);
 
         vm.stopBroadcast();
     }
 
-    function crossDomainTransferOwnership(address newOwner) internal {
+    function crossDomainTransferOwnership(address newOwner, bool _isLocal) internal {
         bytes memory message;
 
-        message = abi.encodeWithSignature("transferOwnership(address)", newOwner);
+        message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (newOwner, _isLocal));
 
         // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
