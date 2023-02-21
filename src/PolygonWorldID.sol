@@ -39,10 +39,15 @@ contract PolygonWorldID is IWorldID, FxBaseChildTunnel, Initializable {
     /// @notice Thrown when attempting to send messages from a contract that is not the StateBridge contract.
     error SenderIsNotStateBridge();
 
+    /// @notice Connects contract to the Polygon PoS child tunnel.
     constructor(address _fxChild) FxBaseChildTunnel(_fxChild) {
         _disableInitializers();
     }
 
+    /// @notice Initializes the contract with a pre-existing root and timestamp.
+    /// @param preRoot The root of the merkle tree before the contract was deployed.
+    /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
+    /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
     function initialize(uint256 preRoot, uint128 preRootTimestamp, address stateBridgeAddress)
         public
         virtual

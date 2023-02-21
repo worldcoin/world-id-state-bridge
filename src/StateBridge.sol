@@ -61,6 +61,7 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
         opWorldIDAddress = _opWorldIDAddress;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
+        setFxChildTunnel(_opWorldIDAddress);
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
