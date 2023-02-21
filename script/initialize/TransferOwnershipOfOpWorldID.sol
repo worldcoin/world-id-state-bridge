@@ -16,9 +16,18 @@ contract TransferOwnershipOfOpWorldID is Script {
     OpWorldID public opWorldID;
 
     constructor() {
+        /*//////////////////////////////////////////////////////////////
+                                 GOERLI
+        //////////////////////////////////////////////////////////////*/
         opWorldIDAdress = address(0x09A02586dAf43Ca837b45F34dC2661d642b8Da15);
         stateBridgeAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);
         crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+        /*//////////////////////////////////////////////////////////////
+                                MAINNET (TBD)
+        //////////////////////////////////////////////////////////////*/
+        // opWorldIDAdress = address(0x09A02586dAf43Ca837b45F34dC2661d642b8Da15);
+        // stateBridgeAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);             }
+        // crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
     }
 
     function run() public {

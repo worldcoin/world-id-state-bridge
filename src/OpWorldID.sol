@@ -31,6 +31,9 @@ contract OpWorldID is IWorldID, CrossDomainOwnable3, Initializable {
     ///         history.
     error NonExistentRoot();
 
+    /// @notice Initializes the contract with a pre-existing root and timestamp.
+    /// @param preRoot The root of the merkle tree before the contract was deployed.
+    /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
     function initialize(uint256 preRoot, uint128 preRootTimestamp) public virtual initializer {
         rootHistory[preRoot] = preRootTimestamp;
     }

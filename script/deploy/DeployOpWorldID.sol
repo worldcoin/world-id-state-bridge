@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
-// demo deployments 0x38b421a8A92375A356224F15CDE7AA94F64d371a
+// Demo deployments
+// Goerli 0x09A02586dAf43Ca837b45F34dC2661d642b8Da15
+// https://goerli-optimism.etherscan.io/address/0x09a02586daf43ca837b45f34dc2661d642b8da15#code
 
 import {Script} from "forge-std/Script.sol";
 import {OpWorldID} from "../../src/OpWorldID.sol";
