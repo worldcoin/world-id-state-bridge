@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.15;
+pragma solidity >=0.8.15;
 
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";
@@ -15,8 +15,8 @@ import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 /// @title OpWorldIDTest
 /// @author Worldcoin
 /// @notice A test contract for OpWorldID
-/// @dev The OpWorldID contract is deployed on Optimism and is called by the L1 Proxy contract.
-/// @dev This contract uses the Optimism CommonTest.t.sol tool suite to test the OpWorldID contract.
+/// @dev The OpWorldID contract is deployed on Optimism and is called by the StateBridge contract.
+/// @dev This contract uses the Optimism CommonTest.t.sol testing tool suite.
 contract OpWorldIDTest is Messenger_Initializer {
     /*//////////////////////////////////////////////////////////////
                                 WORLD ID
@@ -54,7 +54,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.label(address(id), "OPWorldID");
     }
 
-    function _switchToCrossDomainOwnership(OpWorldID id) internal {
+    function _switchToCrossDomainOwnership(OpWorldID _id) internal {
         vm.expectEmit(true, true, true, true);
 
         // OpenZeppelin Ownable.sol transferOwnership event
@@ -64,7 +64,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         emit OwnershipTransferred(alice, alice, false);
 
         // CrossDomainOwnable3.sol transferOwnership to crossDomain address (as alice and to alice)
-        vm.prank(id.owner());
+        vm.prank(_id.owner());
         id.transferOwnership({ _owner: alice, _isLocal: false });
     }
 
