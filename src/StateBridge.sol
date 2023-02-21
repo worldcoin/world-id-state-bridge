@@ -2,14 +2,14 @@
 pragma solidity >=0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {IBridge} from "./interfaces/IBridge.sol";
-import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
-import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
-import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
-import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
-import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import { IBridge } from "./interfaces/IBridge.sol";
+import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
+import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
+import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
+import { Initializable } from "openzeppelin-contracts/proxy/utils/Initializable.sol";
+import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import { FxBaseRootTunnel } from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
 contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeable {
     /// @notice The owner of the contract
@@ -52,11 +52,11 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
-    function initialize(address _worldIDIdentityManager, address _opWorldIDAddress, address _crossDomainMessenger)
-        public
-        virtual
-        reinitializer(1)
-    {
+    function initialize(
+        address _worldIDIdentityManager,
+        address _opWorldIDAddress,
+        address _crossDomainMessenger
+    ) public virtual reinitializer(1) {
         owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
@@ -127,6 +127,8 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     }
 
     /// @notice Sends root and timestamp to Polygon's StateChild contract (PolygonWorldID)
+    /// @param root The latest WorldID Identity Manager root to be sent to Polygon
+    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root
     function _sendRootToPolygon(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
@@ -135,6 +137,7 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
         _sendMessageToChild(message);
     }
 
+    /// @notice boilerplate function to satisfy the FxBaseRootTunnel interface (not going to be used)
     function _processMessageFromChild(bytes memory message) internal virtual override {}
 
     /*//////////////////////////////////////////////////////////////
