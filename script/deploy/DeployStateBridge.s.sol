@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.4;
+pragma solidity >=0.8.15;
 
 // demo deployments 0x38b421a8A92375A356224F15CDE7AA94F64d371a
 

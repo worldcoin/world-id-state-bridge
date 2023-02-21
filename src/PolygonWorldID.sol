@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.15;
+pragma solidity >=0.8.15;
 
 import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
 import {IWorldID} from "./interfaces/IWorldID.sol";
