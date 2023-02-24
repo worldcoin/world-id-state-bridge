@@ -45,9 +45,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         /// @notice Initialize the OpWorldID contract
         vm.prank(alice);
-        id = new OpWorldID();
-
-        id.initialize(preRoot, preRootTimestamp);
+        id = new OpWorldID(preRoot, preRootTimestamp);
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
