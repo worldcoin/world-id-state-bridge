@@ -17,7 +17,7 @@
 3. Pull-based approach (external service)
 
 - status: ideation, strong candidate the for next iteration of the state bridge functionality
-- idea: leverage storage proofs of contract on L1 and run an external relayer service that would update all of the supported target chain contracts by providing a new root, the block timestamp and a storage proof from Ethereum mainnet. This approach is easily generalizable to any target chain that supports the cryptography needed to deploy a Semaphore verifier and storage proof verifier. For EVM-based chain it is a trivial change as contracts for this are already implemented and would only require a \<targetChain\>WorldID contract deployment and integration to the state relayer service.
+- idea: leverage storage proofs of `WorldIDIdentityManagerV1` contract on L1 and run an external relayer service that would update all of the supported target chain contracts by providing a new root, the block timestamp and a storage proof from Ethereum mainnet. This approach is easily generalizable to any target chain that supports the cryptography needed to deploy a Semaphore verifier and a storage proof verifier. For EVM-based chain it is a trivial change as contracts for this are already implemented and would only require a \<targetChain\>WorldID contract deployment and integration to the state relayer service.
 
 - Upsides:
   - generalizeable
