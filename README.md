@@ -29,14 +29,6 @@ Delete the build artifacts and cache directories:
 forge clean
 ```
 
-### Compile
-
-Compile the contracts:
-
-```sh
-forge build
-```
-
 ### Coverage
 
 Get a test coverage report:
@@ -107,6 +99,8 @@ forge script script/deploy/DeployMockWorldID.s.sol --fork-url $GOERLI_URL \
 
 `OpWorldID`:
 
+Make sure to uncomment the correct Etherscan API key in `.env` and `source .env` before deploying.
+
 ```sh
 forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url $OP_GOERLI_URL \
  --broadcast --verify -vvvv
@@ -114,15 +108,19 @@ forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url $OP_GOERLI_U
 
 `PolygonWorldID`:
 
+Make sure to uncomment the correct Etherscan API key in `.env` and `source .env` before deploying.
+
 ```sh
 forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url $POLYGON_MUMBAI_URL \
  --broadcast --verify -vvvv
 ```
 
+### Initialize
+
+After deploying all of the contracts, you need to update the address in the initialization scripts in order to make sure that the `StateBridge` is able to communicate with the correct target contracts.
+
 For instructions on how to deploy to a testnet or mainnet, check out the
 [Solidity Scripting tutorial](https://book.getfoundry.sh/tutorials/solidity-scripting.html).
-
-
 
 ## Credits
 
