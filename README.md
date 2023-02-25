@@ -97,9 +97,17 @@ forge script script/deploy/DeployMockWorldID.s.sol --fork-url $GOERLI_URL \
  --broadcast --verify -vvvv
 ```
 
+Integration with full system:
+
+- Download [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
+- `make all`
+- `make deploy`
+- follow the deployment script guide in the command line and input the deployment address of `StateBridge` when prompted.
+
 `OpWorldID`:
 
 Make sure to uncomment the correct Etherscan API key in `.env` and `source .env` before deploying.
+Put the `StateBridge` deployment address in the constructor of `OpWorldID` in the deployment `DeployOpWorldID.s.sol` script.
 
 ```sh
 forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url $OP_GOERLI_URL \
@@ -109,6 +117,7 @@ forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url $OP_GOERLI_U
 `PolygonWorldID`:
 
 Make sure to uncomment the correct Etherscan API key in `.env` and `source .env` before deploying.
+Put the `StateBridge` deployment address in the constructor of `PolygonWorldID` in the deployment `DeployPolygonWorldID.s.sol` script.
 
 ```sh
 forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url $POLYGON_MUMBAI_URL \
