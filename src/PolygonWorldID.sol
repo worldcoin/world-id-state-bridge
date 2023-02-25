@@ -2,15 +2,13 @@
 pragma solidity >=0.8.15;
 
 import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
-import {IWorldID} from "./interfaces/IWorldID.sol";
-import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
 /// @title PolygonWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for new root insertions.
-contract PolygonWorldID is IWorldID, FxBaseChildTunnel, Initializable {
+contract PolygonWorldID is FxBaseChildTunnel {
     /// @notice latest data received from Ethereum mainnet
     bytes public latestData;
 
@@ -40,18 +38,14 @@ contract PolygonWorldID is IWorldID, FxBaseChildTunnel, Initializable {
     error SenderIsNotStateBridge();
 
     /// @notice Connects contract to the Polygon PoS child tunnel.
-    constructor(address _fxChild) FxBaseChildTunnel(_fxChild) {
-        _disableInitializers();
-    }
 
     /// @notice Initializes the contract with a pre-existing root and timestamp.
+    /// @param _fxChild The address of the Polygon PoS child tunnel.
     /// @param preRoot The root of the merkle tree before the contract was deployed.
     /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
     /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
-    function initialize(uint256 preRoot, uint128 preRootTimestamp, address stateBridgeAddress)
-        public
-        virtual
-        initializer
+    constructor(address _fxChild, uint256 preRoot, uint128 preRootTimestamp, address stateBridgeAddress)
+        FxBaseChildTunnel(_fxChild)
     {
         _stateBridgeAddress = stateBridgeAddress;
         rootHistory[preRoot] = preRootTimestamp;
@@ -123,6 +117,7 @@ contract PolygonWorldID is IWorldID, FxBaseChildTunnel, Initializable {
 
     /// @notice internal function used to receive messages from the StateBridge contract
     /// @dev calls receiveRoot upon receiving a message from the StateBridge contract
+    /// @param stateId of the message (unused)
     /// @param sender of the message
     /// @param data newRoot and timestamp encoded as bytes
     function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
