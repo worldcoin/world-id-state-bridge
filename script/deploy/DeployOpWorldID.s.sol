@@ -11,7 +11,7 @@ import {OpWorldID} from "../../src/OpWorldID.sol";
 // Optimism Goerli Testnet ChainID = 420
 
 contract DeployOpWorldID is Script {
-    // Fetch the latest preRoot and preRootTimestamp from the WorldIDIdentityManagerV1 contract
+    // TODO: Fetch the latest preRoot and preRootTimestamp from the WorldIDIdentityManagerV1 contract
     uint256 public immutable preRoot = 0x22222;
     uint128 public immutable preRootTimestamp = 0x33333;
 
