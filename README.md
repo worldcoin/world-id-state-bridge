@@ -101,7 +101,6 @@ Integration with full system:
 
 - Download [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
 - `make all`
-- edit constants in `deploy.js` to configure it to deploy on Goerli (`RPC_URL`)
 - `make deploy`
 - follow the deployment script guide in the command line and input the deployment address of `StateBridge` when prompted.
 
