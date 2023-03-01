@@ -23,6 +23,9 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice The root of the merkle tree after the first update
     uint256 public newRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
 
+    /// @notice The timestamp of the root of the merkle tree after the first update
+    uint128 public newRootTimestamp;
+
     /// @notice demo address
     address public alice = address(0x1111111);
 
@@ -32,44 +35,25 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice state bridge contract address
     address public stateBridgeAddress = address(0x3333333);
 
+    bytes public data;
+
     function setUp() public {
         /// @notice The timestamp of the root of the merkle tree before the first update
         uint128 preRootTimestamp = uint128(block.timestamp);
 
+        newRootTimestamp = uint128(block.timestamp + 100);
+
+        data = abi.encode(newRoot, newRootTimestamp);
+
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(alice);
-        id = new PolygonWorldID(fxChild);
-
-        id.initialize(preRoot, preRootTimestamp, stateBridgeAddress);
+        id = new PolygonWorldID(fxChild, preRoot, preRootTimestamp, stateBridgeAddress);
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
         vm.label(address(id), "PolygonWorldID");
     }
 
-    //  function test_onlyOwner_notMessenger_reverts() external {
-    //      id.receiveRoot(newRoot, newRootTimestamp);
-    //  }
-
-    //  function test_onlyOwner_notOwner_reverts() external {
-    //      id.receiveRoot(newRoot, newRootTimestamp);
-    //  }
-
-    //  /// @notice Test that you can insert new root and check if it is valid
-    //  function test_receiveVerifyRoot_succeeds() public {
-    //      assertTrue(id.checkValidRoot(newRoot));
-    //  }
-
-    //  /// @notice Test that a root that hasn't been inserted is invalid
-    //  function test_receiveVerifyInvalidRoot_reverts() public {
-    //      vm.expectRevert(PolygonWorldID.NonExistentRoot.selector);
-    //      id.checkValidRoot(randomRoot);
-    //  }
-
-    //  /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
-    //  function test_expiredRoot_reverts() public {
-
-    //      vm.expectRevert(PolygonWorldID.ExpiredRoot.selector);
-    //      id.checkValidRoot(newRoot);
-    //  }
+    /// pending unit tests, hard to test internal functions that depend on Polygon State Bridge functionality
+    /// no straightforward way to vm.prank as the Polygon State Bridge (fxChildTunnel)
 }
