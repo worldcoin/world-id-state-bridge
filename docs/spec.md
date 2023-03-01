@@ -59,7 +59,7 @@ state to the Polygon bridge on L1.
 ## Optimism L1<>L2 infrastructure
 
 The `StateBridge.sol` uses Optimism's native bridge contract and `L2Messenger` to relay messages from L1 to L2. A guide
-can be found in the `Optimism documentation` to learn more about how this mechanism works.
+can be found in the [Optimism documentation](https://community.optimism.io/docs/developers/bridge/messaging/#for-l1-%E2%87%92-l2-transactions) to learn more about how this mechanism works.
 
 Assumption: Optimism Bridge currently relies on OP labs submitting output commitments, however they are working on
 making it fully permissionless so that anyone can submit their own output commitment. The L2 node is used to fetch the
