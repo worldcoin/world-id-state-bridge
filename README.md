@@ -20,6 +20,9 @@ networks pending storage proof verifier and Semaphore verifier implementations a
 Build the contracts:
 
 ```sh
+# Download dependencies
+yarn install
+# Build contracts with Foundry
 forge build
 ```
 
