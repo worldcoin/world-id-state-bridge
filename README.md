@@ -20,10 +20,7 @@ networks pending storage proof verifier and Semaphore verifier implementations a
 Build the contracts:
 
 ```sh
-# Download dependencies
-yarn install
-# Build contracts with Foundry
-forge build
+make build
 ```
 
 ### Clean
@@ -47,8 +44,7 @@ forge coverage
 Format the contracts with Prettier:
 
 ```sh
-yarn format
-yarn prettier
+make format
 ```
 
 ### Gas Usage
@@ -56,7 +52,11 @@ yarn prettier
 Get a gas report:
 
 ```sh
-forge test --gas-report
+make snapshot
+```
+
+```sh
+make bench
 ```
 
 ### Lint
@@ -72,7 +72,7 @@ yarn lint
 Run the tests:
 
 ```sh
-forge test
+make test
 ```
 
 ### Environment
@@ -84,7 +84,13 @@ there is a different Etherscan API key for every single network that we are depl
 
 ### Deploy
 
-#### Testnet
+Run the deploy CLI tool:
+
+```sh
+make deploy
+```
+
+#### Testnet (manual deployment)
 
 Deploy to Goerli:
 
