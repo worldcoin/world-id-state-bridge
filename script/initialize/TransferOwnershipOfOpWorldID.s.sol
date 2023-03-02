@@ -5,7 +5,8 @@ pragma solidity >=0.8.15;
 
 import {Script} from "forge-std/Script.sol";
 import {OpWorldID} from "../../src/OpWorldID.sol";
-import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {ICrossDomainMessenger} from
+    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {ICrossDomainOwnable3} from "../../src/interfaces/ICrossDomainOwnable3.sol";
 
 /// @notice Initializes the StateBridge contract

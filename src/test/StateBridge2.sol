@@ -2,9 +2,10 @@
 pragma solidity >=0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {IBridge} from "../src/interfaces/IBridge.sol";
-import {IWorldIDIdentityManager} from "../src/interfaces/IWorldIDIdentityManager.sol";
+import {ICrossDomainMessenger} from
+    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {IBridge} from "src/interfaces/IBridge.sol";
+import {IWorldIDIdentityManager} from "src/interfaces/IWorldIDIdentityManager.sol";
 import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
 
@@ -41,11 +42,11 @@ contract StateBridge2 is IBridge, Initializable, UUPSUpgradeable {
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
-    function initialize(address _worldIDIdentityManager, address _opWorldIDAddress, address _crossDomainMessenger)
-        public
-        virtual
-        reinitializer(2)
-    {
+    function initialize(
+        address _worldIDIdentityManager,
+        address _opWorldIDAddress,
+        address _crossDomainMessenger
+    ) public virtual reinitializer(2) {
         owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);

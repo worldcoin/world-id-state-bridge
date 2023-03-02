@@ -4,11 +4,16 @@ pragma solidity >=0.8.15;
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
-import {OpWorldID} from "../src/OpWorldID.sol";
-import {L2CrossDomainMessenger} from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
+import {OpWorldID} from "src/OpWorldID.sol";
+import {L2CrossDomainMessenger} from
+    "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
 import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import {CommonTest, Messenger_Initializer} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
-import {AddressAliasHelper} from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
+import {
+    CommonTest,
+    Messenger_Initializer
+} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+import {AddressAliasHelper} from
+    "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
 import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
@@ -34,7 +39,9 @@ contract OpWorldIDTest is Messenger_Initializer {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /// @notice CrossDomainOwnable3.sol transferOwnership event
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, bool isLocal);
+    event OwnershipTransferred(
+        address indexed previousOwner, address indexed newOwner, bool isLocal
+    );
 
     function setUp() public override {
         /// @notice CrossDomainOwnable3 setup
