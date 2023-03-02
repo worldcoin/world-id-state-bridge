@@ -2,14 +2,15 @@
 pragma solidity >=0.8.15;
 
 // Optimism interface for cross domain messaging
-import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import { IBridge } from "./interfaces/IBridge.sol";
-import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
-import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
-import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
-import { Initializable } from "openzeppelin-contracts/proxy/utils/Initializable.sol";
-import { UUPSUpgradeable } from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
-import { FxBaseRootTunnel } from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import {ICrossDomainMessenger} from
+    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {IBridge} from "./interfaces/IBridge.sol";
+import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
+import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
+import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
 contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeable {
     /// @notice The owner of the contract
@@ -44,7 +45,9 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     /// @notice constructor
     /// @param _checkpointManager address of the checkpoint manager contract
     /// @param _fxRoot address of the fxRoot contract (Goerli or Mainnet)
-    constructor(address _checkpointManager, address _fxRoot) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
+    constructor(address _checkpointManager, address _fxRoot)
+        FxBaseRootTunnel(_checkpointManager, _fxRoot)
+    {
         _disableInitializers();
     }
 
