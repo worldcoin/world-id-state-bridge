@@ -31,7 +31,8 @@ contract DeployPolygonWorldID is Script {
 
         vm.startBroadcast(PolygonWorldIDKey);
 
-        polygonWorldId = new PolygonWorldID(fxChildAddress, preRoot, preRootTimestamp, stateBridgeAddress);
+        polygonWorldId =
+            new PolygonWorldID(fxChildAddress, preRoot, preRootTimestamp, stateBridgeAddress);
 
         vm.stopBroadcast();
     }

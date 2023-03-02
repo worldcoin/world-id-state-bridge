@@ -29,7 +29,9 @@ contract InitializeStateBridgeGoerli is Script {
 
         bridge = StateBridge(stateBridgeDeploymentAddress);
 
-        bridge.initialize(worldIDIdentityManagerAddress, opWorldIDAdress, crossDomainMessengerAddress);
+        bridge.initialize(
+            worldIDIdentityManagerAddress, opWorldIDAdress, crossDomainMessengerAddress
+        );
 
         vm.stopBroadcast();
     }
