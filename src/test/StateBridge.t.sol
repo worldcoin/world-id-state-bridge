@@ -16,6 +16,7 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 contract StateBridgeTest is PRBTest, StdCheats {
     address public testSemaphoreAddress;
     address public testOptimismAddress;
+    address public testPolygonAddress;
     address public crossDomainMessengerAddress;
     address public checkpointManagerAddress;
     address public fxRootAddress;
@@ -23,6 +24,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
     function setUp() public {
         testSemaphoreAddress = address(0x1234);
         testOptimismAddress = address(0x5678);
+        testPolygonAddress = address(0x2949);
         crossDomainMessengerAddress = address(0x9abc);
         checkpointManagerAddress = address(0xdef0);
         fxRootAddress = address(0x1234);
@@ -38,7 +40,12 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         bytes memory initCallData = abi.encodeCall(
             StateBridge.initialize,
-            (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
+            (
+                testSemaphoreAddress,
+                testOptimismAddress,
+                testPolygonAddress,
+                crossDomainMessengerAddress
+            )
         );
 
         // deploy StateBridgeProxy
@@ -70,6 +77,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
     function testCannotInitializeUUPSImplementationDirectly() public {
         StateBridge stateBridge = new StateBridge(checkpointManagerAddress, fxRootAddress);
         vm.expectRevert("Initializable: contract is already initialized");
-        stateBridge.initialize(address(this), address(0), address(0));
+        stateBridge.initialize(address(this), address(0), address(0), address(0));
     }
 }

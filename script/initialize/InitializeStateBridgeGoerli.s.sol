@@ -1,36 +1,50 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
-// demo deployments
-
 import {Script} from "forge-std/Script.sol";
 import {StateBridge} from "../../src/StateBridge.sol";
 
 /// @notice Initializes the StateBridge contract
 contract InitializeStateBridgeGoerli is Script {
-    address public immutable opWorldIDAdress;
-    address public immutable worldIDIdentityManagerAddress;
+    address public opWorldIDAddress;
+    address public polygonWorldIDAddress;
+    address public worldIDIdentityManagerAddress;
     address public immutable crossDomainMessengerAddress;
-    address public immutable stateBridgeDeploymentAddress;
+    address public stateBridgeAddress;
+    uint256 public privateKey;
 
     StateBridge public bridge;
 
+    function setup() public {
+        /*//////////////////////////////////////////////////////////////
+                                 CONFIG
+        //////////////////////////////////////////////////////////////*/
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "script/.deploy-config.json");
+        string memory json = vm.readFile(path);
+
+        privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+        worldIDIdentityManagerAddress =
+            abi.decode(vm.parseJson(json, "worldIDIdentityManagerAddress"), (address));
+        opWorldIDAddress = abi.decode(vm.parseJson(json, "optimismWorldIDAddress"), (address));
+        polygonWorldIDAddress = abi.decode(vm.parseJson(json, "polygonWorldIDAddress"), (address));
+        stateBridgeAddress = abi.decode(vm.parseJson(json, "stateBridgeAddress"), (address));
+    }
+
     constructor() {
-        worldIDIdentityManagerAddress = address(0x206d2C6A7A600BC6bD3A26A8A12DfFb64698C23C);
-        opWorldIDAdress = address(0x09A02586dAf43Ca837b45F34dC2661d642b8Da15);
-        stateBridgeDeploymentAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);
         crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
     }
 
     function run() public {
-        uint256 bridgeKey = vm.envUint("BRIDGE_PRIVATE_KEY");
+        vm.startBroadcast(privateKey);
 
-        vm.startBroadcast(bridgeKey);
-
-        bridge = StateBridge(stateBridgeDeploymentAddress);
+        bridge = StateBridge(stateBridgeAddress);
 
         bridge.initialize(
-            worldIDIdentityManagerAddress, opWorldIDAdress, crossDomainMessengerAddress
+            worldIDIdentityManagerAddress,
+            opWorldIDAddress,
+            polygonWorldIDAddress,
+            crossDomainMessengerAddress
         );
 
         vm.stopBroadcast();

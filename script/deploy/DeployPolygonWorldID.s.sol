@@ -23,13 +23,20 @@ contract DeployPolygonWorldID is Script {
 
     PolygonWorldID public polygonWorldId;
 
+    /*//////////////////////////////////////////////////////////////
+                                CONFIG
+    //////////////////////////////////////////////////////////////*/
+    string public root = vm.projectRoot();
+    string public path = string.concat(root, "script/.deploy-config.json");
+    string public json = vm.readFile(path);
+
+    uint256 public privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+
     // Polygon PoS Mainnet Child Tunnel
     // address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
 
     function run() external {
-        uint256 PolygonWorldIDKey = vm.envUint("POLYGON_WORLDID_PRIVATE_KEY");
-
-        vm.startBroadcast(PolygonWorldIDKey);
+        vm.startBroadcast(privateKey);
 
         polygonWorldId =
             new PolygonWorldID(fxChildAddress, preRoot, preRootTimestamp, stateBridgeAddress);

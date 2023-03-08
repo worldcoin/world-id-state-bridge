@@ -17,10 +17,17 @@ contract DeployOpWorldID is Script {
 
     OpWorldID public opWorldID;
 
-    function run() external {
-        uint256 opWorldIDKey = vm.envUint("OP_WORLDID_PRIVATE_KEY");
+    /*//////////////////////////////////////////////////////////////
+                                 CONFIG
+    //////////////////////////////////////////////////////////////*/
+    string public root = vm.projectRoot();
+    string public path = string.concat(root, "script/.deploy-config.json");
+    string public json = vm.readFile(path);
 
-        vm.startBroadcast(opWorldIDKey);
+    uint256 public privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+
+    function run() external {
+        vm.startBroadcast(privateKey);
 
         opWorldID = new OpWorldID(preRoot, preRootTimestamp);
 
