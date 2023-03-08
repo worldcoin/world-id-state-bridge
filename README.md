@@ -28,7 +28,7 @@ make build
 Delete the build artifacts and cache directories:
 
 ```sh
-forge clean
+make clean
 ```
 
 ### Coverage
@@ -36,7 +36,7 @@ forge clean
 Get a test coverage report:
 
 ```sh
-forge coverage
+make coverage
 ```
 
 ### Format
@@ -64,7 +64,7 @@ make bench
 Lint the contracts:
 
 ```sh
-yarn lint
+make lint
 ```
 
 ### Test

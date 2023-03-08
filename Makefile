@@ -37,5 +37,14 @@ mock: install build; node --no-warnings scripts/deploy.js mock
 # Format the solidity code.
 format:; forge fmt; npx prettier --write .
 
+# Lint the solidity code.
+lint:; yarn lint
+
+# Clean the build artifacts.
+clean:; forge clean
+
+# Get a test coverage report.
+coverage:; forge coverage
+
 # Update forge dependencies.
 update:; forge update
