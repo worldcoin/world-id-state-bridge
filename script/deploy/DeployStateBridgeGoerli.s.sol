@@ -14,6 +14,15 @@ contract DeployStateBridge is Script {
     address public checkpointManagerAddress;
     address public fxRootAddress;
 
+    /*//////////////////////////////////////////////////////////////
+                                 CONFIG
+        //////////////////////////////////////////////////////////////*/
+    string public root = vm.projectRoot();
+    string public path = string.concat(root, "script/.deploy-config.json");
+    string public json = vm.readFile(path);
+
+    uint256 public privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+
     function setup() public {
         /*//////////////////////////////////////////////////////////////
                                 POLYGON
@@ -28,9 +37,7 @@ contract DeployStateBridge is Script {
     }
 
     function run() public {
-        uint256 bridgeKey = vm.envUint("BRIDGE_PRIVATE_KEY");
-
-        vm.startBroadcast(bridgeKey);
+        vm.startBroadcast(privateKey);
 
         bridge = new StateBridge(checkpointManagerAddress, fxRootAddress);
 

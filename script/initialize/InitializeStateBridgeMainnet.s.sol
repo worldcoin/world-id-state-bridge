@@ -8,33 +8,49 @@ import {StateBridge} from "../../src/StateBridge.sol";
 
 /// @notice Initializes the StateBridge contract
 contract InitializeStateBridgeMainnet is Script {
-    address public immutable opWorldIDAdress;
-    address public immutable semaphoreAddress;
     address public immutable crossDomainMessengerAddress;
+    address public worldIDIdentityManagerAddress;
+    address public polygonWorldIDAddress;
+    address public opWorldIDAddress;
 
-    address public immutable stateBridgeDeploymentAddress;
+    address public stateBridgeAddress;
 
     StateBridge public bridge;
 
+    uint256 public privateKey;
+
+    function setup() public {
+        /*//////////////////////////////////////////////////////////////
+                                 CONFIG
+        //////////////////////////////////////////////////////////////*/
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "script/.deploy-config.json");
+        string memory json = vm.readFile(path);
+
+        privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+        worldIDIdentityManagerAddress =
+            abi.decode(vm.parseJson(json, "worldIDIdentityManagerAddress"), (address));
+        opWorldIDAddress = abi.decode(vm.parseJson(json, "optimismWorldIDAddress"), (address));
+        polygonWorldIDAddress = abi.decode(vm.parseJson(json, "polygonWorldIDAddress"), (address));
+        stateBridgeAddress = abi.decode(vm.parseJson(json, "stateBridgeAddress"), (address));
+    }
+
     constructor() {
-        // tbd
-        semaphoreAddress = address(0x222);
-        // tbd
-        opWorldIDAdress = address(0x333);
         /// @dev Ethereum mainnet crossDomainMessenger deployment address
         crossDomainMessengerAddress = 0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1;
-        // tbd
-        stateBridgeDeploymentAddress = address(0x555);
     }
 
     function run() public {
-        uint256 bridgeKey = vm.envUint("BRIDGE_PRIVATE_KEY");
+        vm.startBroadcast(privateKey);
 
-        vm.startBroadcast(bridgeKey);
+        bridge = StateBridge(stateBridgeAddress);
 
-        bridge = StateBridge(stateBridgeDeploymentAddress);
-
-        bridge.initialize(semaphoreAddress, opWorldIDAdress, crossDomainMessengerAddress);
+        bridge.initialize(
+            worldIDIdentityManagerAddress,
+            opWorldIDAddress,
+            polygonWorldIDAddress,
+            crossDomainMessengerAddress
+        );
 
         vm.stopBroadcast();
     }
