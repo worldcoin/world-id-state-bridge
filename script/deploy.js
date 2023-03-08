@@ -290,6 +290,21 @@ async function deployPolygonWorldID(config) {
   spinner.succeed("DeployPolygonWorldID.s.sol ran successfully!");
 }
 
+async function deployMockWorldID(config) {
+  const spinner = ora("Deploying PolygonWorldID...").start();
+
+  exec(
+    `forge script script/deploy/DeployMockWorldID.s.sol --fork-url ${config.ETH_RPC_URL} \
+  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+    function (err, stdout, stderr) {
+      if (err) console.error(stderr);
+      console.log(stdout);
+    },
+  );
+
+  spinner.succeed("DeployMockWorldID.s.sol ran successfully!");
+}
+
 async function deployOptimismWorldID(config) {
   const spinner = ora("Deploying OptimismWorldID...").start();
 
@@ -307,7 +322,35 @@ async function deployOptimismWorldID(config) {
 
 async function initializeStateBridge(config) {}
 
-async function buildDeploymentActionPlan(plan, config) {
+async function buildTestnetDeploymentActionPlan(plan, config) {
+  dotenv.config();
+
+  await getPrivateKey(config);
+  await getEthereumRpcUrl(config);
+  await getOptimismRpcUrl(config);
+  await getPolygonRpcUrl(config);
+  await getEthereumProvider(config);
+  await getOptimismProvider(config);
+  await getPolygonProvider(config);
+  await getEthereumWallet(config);
+  await getOptimismWallet(config);
+  await getPolygonWallet(config);
+  await getEthereumEtherscanApiKey(config);
+  await getOptimismEtherscanApiKey(config);
+  await getPolygonscanApiKey(config);
+  await saveConfiguration(config);
+  await deployStateBridge(config);
+  await deployPolygonWorldID(config);
+  await deployOptimismWorldID(config);
+  await getStateBridgeAddress(config);
+  await getWorldIDIdentityManagerAddress(config);
+  await getOptimismWorldIDAddress(config);
+  await getPolygonWorldIDAddress(config);
+  await saveConfiguration(config);
+  await initializeStateBridge(config);
+}
+
+async function buildMockActionPlan(plan, config) {
   dotenv.config();
 
   await getPrivateKey(config);
@@ -371,23 +414,29 @@ async function main() {
   const program = new Command();
 
   program
-    .name("deploy")
+    .name("deploy-testnet")
     .description("A CLI interface for deploying the WorldID state bridge on the Goerli testnet.")
     .option("--no-config", "Do not use any existing configuration.");
 
   program
-    .command("deploy")
-    .description("Interactively deploys the WorldID state bridge.")
+    .command("deploy-testnet")
+    .description("Interactively deploys the WorldID state bridge on the Goerli testnet.")
     .action(async () => {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
-      await buildAndRunPlan(buildDeploymentActionPlan, config);
+      await buildAndRunPlan(buildTestnetDeploymentActionPlan, config);
       await saveConfiguration(config);
     });
 
   program
     .name("mock")
-    .description("A CLI interface to mock the WorldID identity manager along with the WorldID state bridge.");
+    .description("A CLI interface to mock the WorldID identity manager along with the WorldID state bridge.")
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await buildAndRunPlan(buildMockActionPlan, config);
+      await saveConfiguration(config);
+    });
 
   // program
   //   .command("upgrade")
