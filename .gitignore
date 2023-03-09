@@ -15,7 +15,6 @@ node_modules
 *.env
 *.log
 script/.deploy-config.json
-yarn.lock
 .DS_Store
 .pnp.*
 yarn-debug.log*
