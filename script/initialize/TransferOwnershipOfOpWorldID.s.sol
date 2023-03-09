@@ -11,9 +11,10 @@ import {ICrossDomainOwnable3} from "../../src/interfaces/ICrossDomainOwnable3.so
 
 /// @notice Initializes the StateBridge contract
 contract TransferOwnershipOfOpWorldID is Script {
-    address public immutable stateBridgeAddress;
-    address public immutable opWorldIDAdress;
+    address public stateBridgeAddress;
+    address public opWorldIDAddress;
     address public immutable crossDomainMessengerAddress;
+    uint256 public privateKey;
 
     OpWorldID public opWorldID;
 
@@ -21,32 +22,37 @@ contract TransferOwnershipOfOpWorldID is Script {
     /// for local or cross domain (using the CrossDomainMessenger to pass messages)
     bool public isLocal;
 
+    function setup() public {
+        /*//////////////////////////////////////////////////////////////
+                                 CONFIG
+        //////////////////////////////////////////////////////////////*/
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/script/.deploy-config.json");
+        string memory json = vm.readFile(path);
+
+        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+        opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
+        stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
+    }
+
     constructor() {
         /*//////////////////////////////////////////////////////////////
                                  GOERLI
         //////////////////////////////////////////////////////////////*/
-        opWorldIDAdress = address(0x09A02586dAf43Ca837b45F34dC2661d642b8Da15);
-        // DeployStateBridgeGoerli.s.sol -> stateBridgeAddress
-        stateBridgeAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);
         crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
         /*//////////////////////////////////////////////////////////////
                                 MAINNET (TBD)
         //////////////////////////////////////////////////////////////*/
-        // opWorldIDAdress = address(0x09A02586dAf43Ca837b45F34dC2661d642b8Da15);
-        // // DeployStateBridgeMainnet.s.sol -> stateBridgeAddress
-        // stateBridgeAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);             }
         // crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
     }
 
     function run() public {
-        uint256 opWorldIDKey = vm.envUint("OP_WORLDID_PRIVATE_KEY");
-
         /// @notice cross domain ownership flag
         /// false = cross domain (address on Ethereum)
         /// true = local (address on Optimism)
         isLocal = false;
 
-        vm.startBroadcast(opWorldIDKey);
+        vm.startBroadcast(privateKey);
 
         crossDomainTransferOwnership(stateBridgeAddress, isLocal);
 
@@ -61,7 +67,7 @@ contract TransferOwnershipOfOpWorldID is Script {
         // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
-            opWorldIDAdress,
+            opWorldIDAddress,
             message,
             1000000 // within the free gas limit
         );
