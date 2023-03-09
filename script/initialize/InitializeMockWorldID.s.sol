@@ -8,9 +8,6 @@ import {WorldIDIdentityManagerImplV1} from "../../src/mock/WorldIDIdentityManage
 
 /// @notice Initializes the StateBridge contract
 contract InitializeOpWorldID is Script {
-    address public stateBridgeAddress;
-    address public mockWorldIDAddress;
-
     WorldIDIdentityManagerImplV1 public worldID;
 
     /*//////////////////////////////////////////////////////////////
@@ -22,15 +19,15 @@ contract InitializeOpWorldID is Script {
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
 
-    constructor() {
-        stateBridgeAddress = address(0x8438ba278cF0bf6dc75a844755C7A805BB45984F);
-        mockWorldIDAddress = address(0x206d2C6A7A600BC6bD3A26A8A12DfFb64698C23C);
-    }
+    address public worldIDIdentityManagerAddress =
+        abi.decode(vm.parseJson(json, "worldIDIdentityManagerAddress"), (address));
+    address public stateBridgeAddress =
+        abi.decode(vm.parseJson(json, "stateBridgeAddress"), (address));
 
     function run() public {
         vm.startBroadcast(privateKey);
 
-        worldID = WorldIDIdentityManagerImplV1(mockWorldIDAddress);
+        worldID = WorldIDIdentityManagerImplV1(worldIDIdentityManagerAddress);
 
         worldID.initialize(stateBridgeAddress);
 

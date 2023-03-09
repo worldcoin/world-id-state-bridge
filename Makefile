@@ -29,6 +29,11 @@ deploy-testnet: install build; node --no-warnings scripts/deploy.js deploy-testn
 
 mock: install build; node --no-warnings scripts/deploy.js mock
 
+# Initialize contracts
+init-testnet: install build; node --no-warnings scripts/deploy.js initialize-testnet
+
+init-mock: install build; node --no-warnings scripts/deploy.js initialize-mock
+
 # Upgrade contracts
 # upgrade: install build; node --no-warnings scripts/deploy.js upgrade
 

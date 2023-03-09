@@ -74,7 +74,7 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     function sendRootMultichain(uint256 root) external {
         // If the root is not a valid root in the canonical WorldID Identity Manager contract, revert
         // comment out for mock deployments
-        // if (!worldID.checkValidRoot(root)) revert InvalidRoot();
+        if (!worldID.checkValidRoot(root)) revert InvalidRoot();
 
         uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
