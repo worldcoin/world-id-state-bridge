@@ -27,12 +27,12 @@ contract InitializeStateBridgeMainnet is Script {
         string memory path = string.concat(root, "/script/.deploy-config.json");
         string memory json = vm.readFile(path);
 
-        privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
         worldIDIdentityManagerAddress =
-            abi.decode(vm.parseJson(json, "worldIDIdentityManagerAddress"), (address));
-        opWorldIDAddress = abi.decode(vm.parseJson(json, "optimismWorldIDAddress"), (address));
-        polygonWorldIDAddress = abi.decode(vm.parseJson(json, "polygonWorldIDAddress"), (address));
-        stateBridgeAddress = abi.decode(vm.parseJson(json, "stateBridgeAddress"), (address));
+            abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
+        opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
+        polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
+        stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
     }
 
     constructor() {

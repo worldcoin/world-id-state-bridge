@@ -6,8 +6,6 @@ import ora from "ora";
 import { Command } from "commander";
 import { exec } from "child_process";
 
-import { Wallet, JsonRpcProvider } from "ethers";
-
 // === Constants ==================================================================================
 
 const DEFAULT_RPC_URL = "http://localhost:8545";
@@ -76,18 +74,6 @@ function newPlan() {
   return self;
 }
 
-async function getOptimismWallet(config) {
-  config.wallet = new Wallet(config.privateKey, config.optimismProvider);
-}
-
-async function getPolygonWallet(config) {
-  config.wallet = new Wallet(config.privateKey, config.polygonProvider);
-}
-
-async function getEthereumWallet(config) {
-  config.wallet = new Wallet(config.privateKey, config.ethereumProvider);
-}
-
 async function getPrivateKey(config) {
   if (!config.privateKey) {
     config.privateKey = process.env.PRIVATE_KEY;
@@ -131,18 +117,6 @@ async function getPolygonRpcUrl(config) {
   if (!config.polygonRpcUrl) {
     config.polygonRpcUrl = DEFAULT_RPC_URL;
   }
-}
-
-async function getEthereumProvider(config) {
-  config.ethereumProvider = new JsonRpcProvider(config.ethereumRpcUrl);
-}
-
-async function getPolygonProvider(config) {
-  config.polygonProvider = new JsonRpcProvider(config.polygonRpcUrl);
-}
-
-async function getOptimismProvider(config) {
-  config.optimismProvider = new JsonRpcProvider(config.optimismRpcUrl);
 }
 
 async function getOptimismEtherscanApiKey(config) {
@@ -386,12 +360,6 @@ async function buildTestnetDeploymentActionPlan(plan, config) {
   await getEthereumRpcUrl(config);
   await getOptimismRpcUrl(config);
   await getPolygonRpcUrl(config);
-  await getEthereumProvider(config);
-  await getOptimismProvider(config);
-  await getPolygonProvider(config);
-  await getEthereumWallet(config);
-  await getOptimismWallet(config);
-  await getPolygonWallet(config);
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);

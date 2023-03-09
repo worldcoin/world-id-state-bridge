@@ -17,12 +17,12 @@ contract InitializeOpWorldID is Script {
     string public path = string.concat(root, "/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
-    uint256 public privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
     address public worldIDIdentityManagerAddress =
-        abi.decode(vm.parseJson(json, "worldIDIdentityManagerAddress"), (address));
+        abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
     address public stateBridgeAddress =
-        abi.decode(vm.parseJson(json, "stateBridgeAddress"), (address));
+        abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
 
     function run() public {
         vm.startBroadcast(privateKey);

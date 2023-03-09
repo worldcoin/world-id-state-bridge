@@ -30,7 +30,7 @@ contract DeployPolygonWorldID is Script {
     string public path = string.concat(root, "/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
-    uint256 public privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));
+    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
     // Polygon PoS Mainnet Child Tunnel
     // address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
