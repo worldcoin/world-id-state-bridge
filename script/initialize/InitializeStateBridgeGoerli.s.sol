@@ -20,7 +20,7 @@ contract InitializeStateBridgeGoerli is Script {
                                  CONFIG
         //////////////////////////////////////////////////////////////*/
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "script/.deploy-config.json");
+        string memory path = string.concat(root, "/script/.deploy-config.json");
         string memory json = vm.readFile(path);
 
         privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));

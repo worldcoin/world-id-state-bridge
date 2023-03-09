@@ -21,7 +21,7 @@ contract DeployOpWorldID is Script {
                                  CONFIG
     //////////////////////////////////////////////////////////////*/
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "script/.deploy-config.json");
+    string public path = string.concat(root, "/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, "privateKey"), (uint256));

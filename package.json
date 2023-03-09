@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "State bridge between the WorldID Ethereum mainnet deployment and WorldID supported networks",
   "license": "MIT",
+  "type": "module",
   "files": [
     "src/**/*.sol"
   ],

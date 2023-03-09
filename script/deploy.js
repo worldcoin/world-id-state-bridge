@@ -6,14 +6,12 @@ import ora from "ora";
 import { Command } from "commander";
 import { exec } from "child_process";
 
-import { providers, Wallet } from "ethers";
-
-const { JsonRpcProvider } = providers;
+import { Wallet, JsonRpcProvider } from "ethers";
 
 // === Constants ==================================================================================
 
 const DEFAULT_RPC_URL = "http://localhost:8545";
-const CONFIG_FILENAME = ".deploy-config.json";
+const CONFIG_FILENAME = "script/.deploy-config.json";
 
 // === Implementation =============================================================================
 
@@ -438,7 +436,7 @@ async function buildMockActionPlan(plan, config) {
   await getPolygonscanApiKey(config);
   await saveConfiguration(config);
   await deployMockWorldID(plan, config);
-  await deployStateBridgeGoerli(plan, config);
+  await deployStateBridgeGoerli(config);
   await deployPolygonWorldID(plan, config);
   await deployOptimismWorldID(plan, config);
   await getStateBridgeAddress(config);
@@ -530,6 +528,15 @@ async function main() {
       await saveConfiguration(config);
     });
 
+  program
+    .name("test-deploy")
+    .description("test test")
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await buildAndRunPlan(deploy, config);
+    });
+
   // program
   //   .command("upgrade")
   //   .description("Interactively upgrades the deployed WorldID identity manager.")
@@ -540,7 +547,7 @@ async function main() {
   //     await saveConfiguration(config);
   //   });
 
-  // await program.parseAsync();
+  await program.parseAsync();
 }
 
 main().then(() => process.exit(0));

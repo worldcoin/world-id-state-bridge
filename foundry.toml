@@ -8,6 +8,7 @@ solc = "0.8.15"
 optimizer = true
 optimizer_runs = 10_000
 fuzz = {runs = 256}
+fs_permissions = [{ access = "read", path = "./"}]
 
 src="src"
 libs = ["lib"]
@@ -95,4 +96,5 @@ gas_reports = [
 [profile.production]
 # We make the optimiser run a lot more for production, hoping to reduce our gas
 # costs.
+fs_permissions = [{ access = "read", path = "./"}]
 optimizer_runs = 20000
