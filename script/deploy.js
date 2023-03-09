@@ -208,7 +208,9 @@ async function getWorldIDIdentityManagerAddress(config) {
     config.worldIDIdentityManagerAddress = process.env.WORLD_ID_IDENTITY_MANAGER_ADDRESS;
   }
   if (!config.worldIDIdentityManagerAddress) {
-    config.worldIDIdentityManagerAddress = await ask("Enter World ID Identity Manager Address: ");
+    config.worldIDIdentityManagerAddress = await ask(
+      "Enter World ID Identity Manager Address (world-id-contracts or WorldIDMock): ",
+    );
   }
 }
 
@@ -260,67 +262,124 @@ async function saveConfiguration(config) {
   fs.writeFileSync(CONFIG_FILENAME, data);
 }
 
-async function deployStateBridge(config) {
-  const spinner = ora("Deploying State Bridge...").start();
+async function deployStateBridgeGoerli(plan, config) {
+  plan.add("Deploy State Bridge Goerli.", async () => {
+    const spinner = ora("Deploying State Bridge...").start();
 
-  exec(
-    `forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url ${config.ETH_RPC_URL} \
+    exec(
+      `forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url ${config.ethereumRpcUrl} \
   --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-    function (err, stdout, stderr) {
-      if (err) console.error(stderr);
-      console.log(stdout);
-    },
-  );
+      function (err, stdout, stderr) {
+        if (err) console.error(stderr);
+        console.log(stdout);
+      },
+    );
 
-  spinner.succeed("DeployStateBridgeGoerli.s.sol ran successfully!");
+    spinner.succeed("DeployStateBridgeGoerli.s.sol ran successfully!");
+  });
 }
 
-async function deployPolygonWorldID(config) {
-  const spinner = ora("Deploying PolygonWorldID...").start();
+async function deployPolygonWorldID(plan, config) {
+  plan.add("Deploy Polygon World ID.", async () => {
+    const spinner = ora("Deploying PolygonWorldID...").start();
 
-  exec(
-    `forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url ${config.POLYGON_RPC_URL} \
+    exec(
+      `forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url ${config.polygonRpcUrl} \
   --etherscan-api-key ${config.polygonscanApiKey} --broadcast --verify -vvvv`,
-    function (err, stdout, stderr) {
-      if (err) console.error(stderr);
-      console.log(stdout);
-    },
-  );
+      function (err, stdout, stderr) {
+        if (err) console.error(stderr);
+        console.log(stdout);
+      },
+    );
 
-  spinner.succeed("DeployPolygonWorldID.s.sol ran successfully!");
+    spinner.succeed("DeployPolygonWorldID.s.sol ran successfully!");
+  });
 }
 
-async function deployMockWorldID(config) {
-  const spinner = ora("Deploying PolygonWorldID...").start();
+async function deployMockWorldID(plan, config) {
+  plan.add("Deploy Mock World ID.", async () => {
+    const spinner = ora("Deploying PolygonWorldID...").start();
 
-  exec(
-    `forge script script/deploy/DeployMockWorldID.s.sol --fork-url ${config.ETH_RPC_URL} \
+    exec(
+      `forge script script/deploy/DeployMockWorldID.s.sol --fork-url ${config.ethereumRpcUrl} \
   --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-    function (err, stdout, stderr) {
-      if (err) console.error(stderr);
-      console.log(stdout);
-    },
-  );
+      function (err, stdout, stderr) {
+        if (err) console.error(stderr);
+        console.log(stdout);
+      },
+    );
 
-  spinner.succeed("DeployMockWorldID.s.sol ran successfully!");
+    spinner.succeed("DeployMockWorldID.s.sol ran successfully!");
+  });
 }
 
-async function deployOptimismWorldID(config) {
-  const spinner = ora("Deploying OptimismWorldID...").start();
+async function deployOptimismWorldID(plan, config) {
+  plan.add("Deploy Optimism World ID.", async () => {
+    const spinner = ora("Deploying OptimismWorldID...").start();
 
-  exec(
-    `forge script script/deploy/DeployOptimismWorldID.s.sol --fork-url ${config.OP_RPC_URL} \
-  --etherscan-api-key ${config.polygonscanApiKey} --broadcast --verify -vvvv`,
-    function (err, stdout, stderr) {
-      if (err) console.error(stderr);
-      console.log(stdout);
-    },
-  );
+    exec(
+      `forge script script/deploy/DeployOptimismWorldID.s.sol --fork-url ${config.optimismRpcUrl} \
+  --etherscan-api-key ${config.optimismEtherscanApiKey} --broadcast --verify -vvvv`,
+      function (err, stdout, stderr) {
+        if (err) console.error(stderr);
+        console.log(stdout);
+      },
+    );
 
-  spinner.succeed("DeployOptimismWorldID.s.sol ran successfully!");
+    spinner.succeed("DeployOptimismWorldID.s.sol ran successfully!");
+  });
 }
 
-async function initializeStateBridge(config) {}
+async function initializeStateBridgeGoerli(plan, config) {
+  plan.add("Initialize State Bridge", async () => {
+    const spinner = ora("Initializing StateBridge...").start();
+
+    exec(
+      `forge script script/initialize/InitializeStateBridgeGoerli.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
+  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      function (err, stdout, stderr) {
+        if (err) console.error(stderr);
+        console.log(stdout);
+      },
+    );
+
+    spinner.succeed("InitializeStateBridgeGoerli.s.sol ran successfully!");
+  });
+}
+
+async function initializeStateBridgeMainnet(plan, config) {
+  plan.add("Initialize State Bridge", async () => {
+    const spinner = ora("Initializing StateBridge...").start();
+
+    exec(
+      `forge script script/initialize/InitializeStateBridgeMainnet.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
+  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      function (err, stdout, stderr) {
+        if (err) console.error(stderr);
+        console.log(stdout);
+      },
+    );
+
+    spinner.succeed("InitializeStateBridgeMainnet.s.sol ran successfully!");
+  });
+}
+
+async function initializeMockWorldID(plan, config) {
+  plan.add("Initialize Mock WorldID", async () => {
+    const spinner = ora("Initializing MockWorldID...").start();
+
+    exec(
+      `forge script script/initialize/InitializeMockWorldID.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
+  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      function (err, stdout, stderr) {
+        if (err) console.error(stderr);
+        console.log(stdout);
+      },
+    );
+
+    spinner.succeed("InitializeMockWorldID.s.sol ran successfully!");
+  });
+}
 
 async function buildTestnetDeploymentActionPlan(plan, config) {
   dotenv.config();
@@ -339,15 +398,26 @@ async function buildTestnetDeploymentActionPlan(plan, config) {
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await saveConfiguration(config);
-  await deployStateBridge(config);
-  await deployPolygonWorldID(config);
-  await deployOptimismWorldID(config);
+  await deployStateBridgeGoerli(plan, config);
+  await deployPolygonWorldID(plan, config);
+  await deployOptimismWorldID(plan, config);
   await getStateBridgeAddress(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
-  await initializeStateBridge(config);
+}
+
+async function initializeContractsTestnet(config) {
+  dotenv.config();
+
+  await initializeStateBridgeGoerli(plan, config);
+}
+
+async function initializeContracts(plan, config) {
+  dotenv.config();
+
+  await initializeStateBridgeMainnet(plan, config);
 }
 
 async function buildMockActionPlan(plan, config) {
@@ -367,15 +437,17 @@ async function buildMockActionPlan(plan, config) {
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await saveConfiguration(config);
-  await deployStateBridge(config);
-  await deployPolygonWorldID(config);
-  await deployOptimismWorldID(config);
+  await deployMockWorldID(plan, config);
+  await deployStateBridgeGoerli(plan, config);
+  await deployPolygonWorldID(plan, config);
+  await deployOptimismWorldID(plan, config);
   await getStateBridgeAddress(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
-  await initializeStateBridge(config);
+  await initializeStateBridgeGoerli(plan, config);
+  await initializeMockWorldID(plan, config);
 }
 
 async function buildUpgradeActionPlan(plan, config) {
@@ -425,6 +497,26 @@ async function main() {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
       await buildAndRunPlan(buildTestnetDeploymentActionPlan, config);
+      await saveConfiguration(config);
+    });
+
+  program
+    .command("initialize-testnet")
+    .description("Initialize the WorldID state bridge on the Goerli testnet.")
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await buildAndRunPlan(initializeContractsTestnet, config);
+      await saveConfiguration(config);
+    });
+
+  program
+    .command("initialize")
+    .description("Initialize the WorldID state bridge on Ethereum mainnet.")
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await buildAndRunPlan(initializeContracts, config);
       await saveConfiguration(config);
     });
 
