@@ -4,7 +4,7 @@ import readline from "readline";
 import dotenv from "dotenv";
 import ora from "ora";
 import { Command } from "commander";
-import { exec } from "child_process";
+import { execSync } from "child_process";
 
 // === Constants ==================================================================================
 
@@ -238,14 +238,15 @@ async function deployStateBridgeGoerli(plan, config) {
   plan.add("Deploy State Bridge Goerli.", async () => {
     const spinner = ora("Deploying State Bridge...").start();
 
-    exec(
-      `forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url ${config.ethereumRpcUrl} \
-  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-      function (err, stdout, stderr) {
-        if (err) console.error(stderr);
-        console.log(stdout);
-      },
-    );
+    try {
+      const data = execSync(
+        `forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url ${config.ethereumRpcUrl} \
+    --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
 
     spinner.succeed("DeployStateBridgeGoerli.s.sol ran successfully!");
   });
@@ -255,14 +256,13 @@ async function deployPolygonWorldID(plan, config) {
   plan.add("Deploy Polygon World ID.", async () => {
     const spinner = ora("Deploying PolygonWorldID...").start();
 
-    exec(
-      `forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url ${config.polygonRpcUrl} \
-  --etherscan-api-key ${config.polygonscanApiKey} --broadcast --verify -vvvv`,
-      function (err, stdout, stderr) {
-        if (err) console.error(stderr);
-        console.log(stdout);
-      },
-    );
+    try {
+      const data = execSync(`forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url ${config.polygonRpcUrl} \
+      --etherscan-api-key ${config.polygonscanApiKey} --broadcast --verify -vvvv`);
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
 
     spinner.succeed("DeployPolygonWorldID.s.sol ran successfully!");
   });
@@ -272,14 +272,15 @@ async function deployMockWorldID(plan, config) {
   plan.add("Deploy Mock World ID.", async () => {
     const spinner = ora("Deploying PolygonWorldID...").start();
 
-    exec(
-      `forge script script/deploy/DeployMockWorldID.s.sol --fork-url ${config.ethereumRpcUrl} \
-  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-      function (err, stdout, stderr) {
-        if (err) console.error(stderr);
-        console.log(stdout);
-      },
-    );
+    try {
+      const data = execSync(
+        `forge script script/deploy/DeployMockWorldID.s.sol --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
 
     spinner.succeed("DeployMockWorldID.s.sol ran successfully!");
   });
@@ -289,14 +290,15 @@ async function deployOptimismWorldID(plan, config) {
   plan.add("Deploy Optimism World ID.", async () => {
     const spinner = ora("Deploying OptimismWorldID...").start();
 
-    exec(
-      `forge script script/deploy/DeployOptimismWorldID.s.sol --fork-url ${config.optimismRpcUrl} \
-  --etherscan-api-key ${config.optimismEtherscanApiKey} --broadcast --verify -vvvv`,
-      function (err, stdout, stderr) {
-        if (err) console.error(stderr);
-        console.log(stdout);
-      },
-    );
+    try {
+      const data = execSync(
+        `forge script script/deploy/DeployOptimismWorldID.s.sol --fork-url ${config.optimismRpcUrl} \
+      --etherscan-api-key ${config.optimismEtherscanApiKey} --broadcast --verify -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
 
     spinner.succeed("DeployOptimismWorldID.s.sol ran successfully!");
   });
@@ -306,14 +308,15 @@ async function initializeStateBridgeGoerli(plan, config) {
   plan.add("Initialize State Bridge", async () => {
     const spinner = ora("Initializing StateBridge...").start();
 
-    exec(
-      `forge script script/initialize/InitializeStateBridgeGoerli.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
-  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-      function (err, stdout, stderr) {
-        if (err) console.error(stderr);
-        console.log(stdout);
-      },
-    );
+    try {
+      const data = execSync(
+        `forge script script/initialize/InitializeStateBridgeGoerli.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
 
     spinner.succeed("InitializeStateBridgeGoerli.s.sol ran successfully!");
   });
@@ -323,14 +326,15 @@ async function initializeStateBridgeMainnet(plan, config) {
   plan.add("Initialize State Bridge", async () => {
     const spinner = ora("Initializing StateBridge...").start();
 
-    exec(
-      `forge script script/initialize/InitializeStateBridgeMainnet.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
-  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-      function (err, stdout, stderr) {
-        if (err) console.error(stderr);
-        console.log(stdout);
-      },
-    );
+    try {
+      const data = execSync(
+        `forge script script/initialize/InitializeStateBridgeMainnet.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
 
     spinner.succeed("InitializeStateBridgeMainnet.s.sol ran successfully!");
   });
@@ -340,14 +344,15 @@ async function initializeMockWorldID(plan, config) {
   plan.add("Initialize Mock WorldID", async () => {
     const spinner = ora("Initializing MockWorldID...").start();
 
-    exec(
-      `forge script script/initialize/InitializeMockWorldID.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
-  --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-      function (err, stdout, stderr) {
-        if (err) console.error(stderr);
-        console.log(stdout);
-      },
-    );
+    try {
+      const data = execSync(
+        `forge script script/initialize/InitializeMockWorldID.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
 
     spinner.succeed("InitializeMockWorldID.s.sol ran successfully!");
   });
@@ -393,12 +398,6 @@ async function buildMockActionPlan(plan, config) {
   await getEthereumRpcUrl(config);
   await getOptimismRpcUrl(config);
   await getPolygonRpcUrl(config);
-  await getEthereumProvider(config);
-  await getOptimismProvider(config);
-  await getPolygonProvider(config);
-  await getEthereumWallet(config);
-  await getOptimismWallet(config);
-  await getPolygonWallet(config);
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
@@ -414,6 +413,20 @@ async function buildMockActionPlan(plan, config) {
   await saveConfiguration(config);
   await initializeStateBridgeGoerli(plan, config);
   await initializeMockWorldID(plan, config);
+}
+
+async function testTest(plan, config) {
+  dotenv.config();
+
+  await getPrivateKey(config);
+  await getEthereumRpcUrl(config);
+  await getOptimismRpcUrl(config);
+  await getPolygonRpcUrl(config);
+  await getEthereumEtherscanApiKey(config);
+  await getOptimismEtherscanApiKey(config);
+  await getPolygonscanApiKey(config);
+  await saveConfiguration(config);
+  await deployStateBridgeGoerli(plan, config);
 }
 
 async function buildUpgradeActionPlan(plan, config) {
@@ -502,7 +515,7 @@ async function main() {
     .action(async () => {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
-      await buildAndRunPlan(deploy, config);
+      await buildAndRunPlan(testTest, config);
     });
 
   // program
