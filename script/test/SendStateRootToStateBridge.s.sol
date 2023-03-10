@@ -7,26 +7,34 @@ import {Script} from "forge-std/Script.sol";
 import {WorldIDIdentityManagerImplV1} from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
 
 /// @notice Initializes the StateBridge contract
-contract InitializeOpWorldID is Script {
-    address public mockWorldIDAddress;
-
-    uint256 public immutable postRoot;
+contract SendStateRootToStateBridge is Script {
+    address public worldIDAddress;
+    uint256 public newRoot;
 
     WorldIDIdentityManagerImplV1 public worldID;
 
-    constructor() {
-        mockWorldIDAddress = address(0x206d2C6A7A600BC6bD3A26A8A12DfFb64698C23C);
-        postRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
+    uint256 privateKey;
+
+    function setup() public {
+        /*//////////////////////////////////////////////////////////////
+                                 CONFIG
+        //////////////////////////////////////////////////////////////*/
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/script/.deploy-config.json");
+        string memory json = vm.readFile(path);
+
+        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+
+        worldIDAddress = abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
+        newRoot = abi.decode(vm.parseJson(json, ".newRoot"), (address));
     }
 
     function run() public {
-        uint256 worldIDKey = vm.envUint("WORLDID_PRIVATE_KEY");
+        vm.startBroadcast(privateKey);
 
-        vm.startBroadcast(worldIDKey);
+        worldID = WorldIDIdentityManagerImplV1(worldIDAddress);
 
-        worldID = WorldIDIdentityManagerImplV1(mockWorldIDAddress);
-
-        worldID.sendRootToStateBridge(postRoot);
+        worldID.sendRootToStateBridge(newRoot);
 
         vm.stopBroadcast();
     }

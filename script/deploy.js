@@ -186,6 +186,33 @@ async function getWorldIDIdentityManagerAddress(config) {
   }
 }
 
+async function getPreRoot(config) {
+  if (!config.preRoot) {
+    config.preRoot = process.env.PRE_ROOT;
+  }
+  if (!config.preRoot) {
+    config.preRoot = await ask("Enter the WorldID merkle tree root to initialize the StateBridge with (uint256-hex): ");
+  }
+}
+
+async function getPreRootTimestamp(config) {
+  if (!config.preRootTimestamp) {
+    config.preRootTimestamp = process.env.PRE_ROOT_TIMESTAMP;
+  }
+  if (!config.preRootTimestamp) {
+    config.preRootTimestamp = await ask("Enter the WorldID merkle tree root's timestamp (uint128-hex): ");
+  }
+}
+
+async function getNewRoot(config) {
+  if (!config.newRoot) {
+    config.newRoot = process.env.NEW_ROOT;
+  }
+  if (!config.newRoot) {
+    config.newRoot = await ask("Enter WorldID root to be inserted into MockWorldID: ");
+  }
+}
+
 async function loadConfiguration(useConfig) {
   if (!useConfig) {
     return {};
@@ -358,6 +385,62 @@ async function initializeMockWorldID(plan, config) {
   });
 }
 
+async function transferOwnershipOfOpWorldIDGoerli(plan, config) {
+  plan.add("Transfer ownership of OpWorldID to StateBridge", async () => {
+    const spinner = ora("Transfering ownership of OpWorldID to StateBridge...").start();
+
+    try {
+      const data = execSync(
+        `forge script script/initialize/TransferOwnershipOfOpWorldIDGoerli.s.sol --fork-url ${config.optimismRpcUrl} \
+      --broadcast -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
+
+    spinner.succeed("TransferOwnershipOfOpWorldIDGoerli.s.sol ran successfully!");
+  });
+}
+
+async function transferOwnershipOfOpWorldIDMainnet(plan, config) {
+  plan.add("Transfer ownership of OpWorldID to StateBridge", async () => {
+    const spinner = ora("Transfering ownership of OpWorldID to StateBridge...").start();
+
+    try {
+      const data = execSync(
+        `forge script script/initialize/TransferOwnershipOfOpWorldIDMainnet.s.sol --fork-url ${config.optimismRpcUrl} \
+      --broadcast -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
+
+    spinner.succeed("TransferOwnershipOfOpWorldIDMainnet.s.sol ran successfully!");
+  });
+}
+
+// Simple integration test for Mock WorldID
+
+async function transferOwnershipOfOpWorldIDMainnet(plan, config) {
+  plan.add("Send test WorldID merkle tree root from MockWorldID to StateBridge", async () => {
+    const spinner = ora("Sending test WorldID merkle tree root from MockWorldID to StateBridge...").start();
+
+    try {
+      const data = execSync(
+        `forge script script/test/SendStateRootToStateBridge.s.sol --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`,
+      );
+      console.log(data.toString());
+    } catch (err) {
+      console.error(err);
+    }
+
+    spinner.succeed("SendStateRootToStateBridge.s.sol ran successfully!");
+  });
+}
+
 async function buildTestnetDeploymentActionPlan(plan, config) {
   dotenv.config();
 
@@ -368,6 +451,8 @@ async function buildTestnetDeploymentActionPlan(plan, config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
+  await getPreRoot(config);
+  await getPreRootTimestamp(config);
   await saveConfiguration(config);
   await deployStateBridgeGoerli(plan, config);
   await deployPolygonWorldID(plan, config);
@@ -385,10 +470,11 @@ async function initializeContractsTestnet(config) {
   await initializeStateBridgeGoerli(plan, config);
 }
 
-async function initializeContracts(plan, config) {
+async function initializeContractsMainnet(plan, config) {
   dotenv.config();
 
   await initializeStateBridgeMainnet(plan, config);
+  await transferOwnershipOfOpWorldIDMainnet(plan, config);
 }
 
 async function buildMockActionPlan(plan, config) {
@@ -413,6 +499,10 @@ async function buildMockActionPlan(plan, config) {
   await saveConfiguration(config);
   await initializeStateBridgeGoerli(plan, config);
   await initializeMockWorldID(plan, config);
+  await transferOwnershipOfOpWorldIDGoerli(plan, config);
+  await getNewRoot(config);
+  await saveConfiguration(config);
+  await sendStateRootToStateBridge(plan, config);
 }
 
 async function testTest(plan, config) {
@@ -495,7 +585,7 @@ async function main() {
     .action(async () => {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
-      await buildAndRunPlan(initializeContracts, config);
+      await buildAndRunPlan(initializeContractsMainnet, config);
       await saveConfiguration(config);
     });
 

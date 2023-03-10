@@ -14,10 +14,6 @@ contract DeployPolygonWorldID is Script {
     // DeployStateBridgeMainnet.s.sol
     address public immutable stateBridgeAddress = address(0x11111);
 
-    // TODO: Fetch the latest preRoot and preRootTimestamp from the WorldIDIdentityManagerV1 contract
-    uint256 public immutable preRoot = 0x22222;
-    uint128 public immutable preRootTimestamp = 0x33333;
-
     // Polygon PoS Mumbai Testnet Child Tunnel
     address public fxChildAddress = address(0xCf73231F28B7331BBe3124B907840A94851f9f11);
 
@@ -31,6 +27,10 @@ contract DeployPolygonWorldID is Script {
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+
+    // TODO: Fetch the latest preRoot and preRootTimestamp from the WorldIDIdentityManagerV1 in deploy.js
+    uint256 public preRoot = abi.decode(vm.parseJson(json, ".preRoot"), (uint256));
+    uint128 public preRootTimestamp = abi.decode(vm.parseJson(json, ".preRootTimestamp"), (uint128));
 
     // Polygon PoS Mainnet Child Tunnel
     // address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);

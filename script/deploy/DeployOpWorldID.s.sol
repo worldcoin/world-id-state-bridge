@@ -11,10 +11,6 @@ import {OpWorldID} from "../../src/OpWorldID.sol";
 // Optimism Goerli Testnet ChainID = 420
 
 contract DeployOpWorldID is Script {
-    // TODO: Fetch the latest preRoot and preRootTimestamp from the WorldIDIdentityManagerV1 contract
-    uint256 public immutable preRoot = 0x22222;
-    uint128 public immutable preRootTimestamp = 0x33333;
-
     OpWorldID public opWorldID;
 
     /*//////////////////////////////////////////////////////////////
@@ -25,6 +21,10 @@ contract DeployOpWorldID is Script {
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+
+    // TODO: Fetch the latest preRoot and preRootTimestamp from the WorldIDIdentityManagerV1 in deploy.js
+    uint256 public preRoot = abi.decode(vm.parseJson(json, ".preRoot"), (uint256));
+    uint128 public preRootTimestamp = abi.decode(vm.parseJson(json, ".preRootTimestamp"), (uint128));
 
     function run() external {
         vm.startBroadcast(privateKey);

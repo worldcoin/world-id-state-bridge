@@ -10,7 +10,7 @@ import {ICrossDomainMessenger} from
 import {ICrossDomainOwnable3} from "../../src/interfaces/ICrossDomainOwnable3.sol";
 
 /// @notice Initializes the StateBridge contract
-contract TransferOwnershipOfOpWorldID is Script {
+contract TransferOwnershipOfOpWorldIDGoerli is Script {
     address public stateBridgeAddress;
     address public opWorldIDAddress;
     address public immutable crossDomainMessengerAddress;

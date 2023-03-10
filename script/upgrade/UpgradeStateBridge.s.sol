@@ -1,23 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
-// demo deployments
-
 import {Script} from "forge-std/Script.sol";
 import {StateBridge} from "../../src/StateBridge.sol";
 
 /// @notice Initializes the StateBridge contract
-contract InitializeStateBridgeMainnet is Script {
-    address public immutable crossDomainMessengerAddress;
-    address public worldIDIdentityManagerAddress;
-    address public polygonWorldIDAddress;
+contract InitializeStateBridgeGoerli is Script {
     address public opWorldIDAddress;
-
+    address public polygonWorldIDAddress;
+    address public worldIDIdentityManagerAddress;
+    address public immutable crossDomainMessengerAddress;
+    address public checkpointManagerAddress;
+    address public fxRootAddress;
     address public stateBridgeAddress;
+    uint256 public privateKey;
 
     StateBridge public bridge;
-
-    uint256 public privateKey;
 
     function setup() public {
         /*//////////////////////////////////////////////////////////////
@@ -36,8 +34,7 @@ contract InitializeStateBridgeMainnet is Script {
     }
 
     constructor() {
-        /// @dev Ethereum mainnet crossDomainMessenger deployment address
-        crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
+        crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
     }
 
     function run() public {
