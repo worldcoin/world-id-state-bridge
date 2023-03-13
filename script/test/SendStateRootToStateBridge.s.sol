@@ -15,7 +15,7 @@ contract SendStateRootToStateBridge is Script {
 
     uint256 public privateKey;
 
-    function setup() public {
+    function setUp() public {
         /*//////////////////////////////////////////////////////////////
                                  CONFIG
         //////////////////////////////////////////////////////////////*/
