@@ -3,8 +3,8 @@ pragma solidity >=0.8.15;
 
 // demo deployments
 
-import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerImplV1} from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
+import { Script } from "forge-std/Script.sol";
+import { WorldIDIdentityManagerImplV1 } from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
 
 /// @notice Initializes the StateBridge contract
 contract SendStateRootToStateBridge is Script {
@@ -13,7 +13,7 @@ contract SendStateRootToStateBridge is Script {
 
     WorldIDIdentityManagerImplV1 public worldID;
 
-    uint256 privateKey;
+    uint256 public privateKey;
 
     function setup() public {
         /*//////////////////////////////////////////////////////////////
