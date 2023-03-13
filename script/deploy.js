@@ -64,16 +64,6 @@ function ask(question, type) {
   });
 }
 
-function newPlan() {
-  let self = {
-    items: [],
-    add: function (label, action) {
-      self.items.push({ label, action });
-    },
-  };
-  return self;
-}
-
 async function getPrivateKey(config) {
   if (!config.privateKey) {
     config.privateKey = process.env.PRIVATE_KEY;
@@ -388,7 +378,7 @@ async function sendStateRootToStateBridge(config) {
   spinner.succeed("SendStateRootToStateBridge.s.sol ran successfully!");
 }
 
-async function buildTestnetDeploymentActionPlan(config) {
+async function deployment(config) {
   dotenv.config();
 
   await getPrivateKey(config);
@@ -412,7 +402,7 @@ async function buildTestnetDeploymentActionPlan(config) {
   await transferOwnershipOfOpWorldIDGoerli(config);
 }
 
-async function buildMockActionPlan(config) {
+async function mockDeployment(config) {
   dotenv.config();
 
   await getPrivateKey(config);
@@ -454,7 +444,7 @@ async function testTest(config) {
   await deployStateBridgeGoerli(config);
 }
 
-async function buildUpgradeActionPlan(config) {
+async function upgrade(config) {
   dotenv.config();
 
   await getPrivateKey(config);
@@ -483,7 +473,7 @@ async function main() {
     .action(async () => {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
-      await buildAndRunPlan(buildTestnetDeploymentActionPlan, config);
+      await deployment(config);
       await saveConfiguration(config);
     });
 
@@ -494,7 +484,7 @@ async function main() {
     .action(async () => {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
-      await buildAndRunPlan(buildMockActionPlan, config);
+      await mockDeployment(config);
       await saveConfiguration(config);
     });
 
