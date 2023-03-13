@@ -454,14 +454,16 @@ async function buildTestnetDeploymentActionPlan(plan, config) {
   await getPreRoot(config);
   await getPreRootTimestamp(config);
   await saveConfiguration(config);
-  await deployStateBridgeGoerli(plan, config);
-  await deployPolygonWorldID(plan, config);
   await deployOptimismWorldID(plan, config);
-  await getStateBridgeAddress(config);
+  await deployPolygonWorldID(plan, config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
+  await deployStateBridgeGoerli(plan, config);
+  await getStateBridgeAddress(config);
+  await saveConfiguration(config);
+  await transferOwnershipOfOpWorldIDMainnet(plan, config);
 }
 
 async function initializeContractsTestnet(config) {

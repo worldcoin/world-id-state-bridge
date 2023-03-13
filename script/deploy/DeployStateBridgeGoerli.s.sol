@@ -6,10 +6,18 @@ pragma solidity >=0.8.15;
 // https://goerli.etherscan.io/address/0x8438ba278cf0bf6dc75a844755c7a805bb45984f#code
 
 import {Script} from "forge-std/Script.sol";
-import {StateBridge} from "../../src/StateBridge.sol";
+import {StateBridge} from "src/StateBridge.sol";
+import {StateBridgeProxy} from "src/StateBridgeProxy.sol";
 
 contract DeployStateBridge is Script {
     StateBridge public bridge;
+    StateBridgeProxy public bridgeProxy;
+
+    address public opWorldIDAddress;
+    address public polygonWorldIDAddress;
+    address public worldIDIdentityManagerAddress;
+    address public crossDomainMessengerAddress;
+    address public stateBridgeAddress;
 
     address public checkpointManagerAddress;
     address public fxRootAddress;
@@ -23,7 +31,7 @@ contract DeployStateBridge is Script {
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
-    function setUp() public {
+    constructor() {
         /*//////////////////////////////////////////////////////////////
                                 POLYGON
         //////////////////////////////////////////////////////////////*/
@@ -36,10 +44,31 @@ contract DeployStateBridge is Script {
         fxRootAddress = address(0x3d1d3E34f7fB6D26245E6640E1c50710eFFf15bA);
     }
 
+    function setUp() public {
+        worldIDIdentityManagerAddress =
+            abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
+        opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
+        polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
+    }
+
     function run() public {
         vm.startBroadcast(privateKey);
 
         bridge = new StateBridge(checkpointManagerAddress, fxRootAddress);
+
+        address stateBridgeAddress = address(bridge);
+
+        bytes memory initCallData = abi.encodeCall(
+            StateBridge.initialize,
+            (
+                worldIDIdentityManagerAddress,
+                opWorldIDAddress,
+                polygonWorldIDAddress,
+                crossDomainMessengerAddress
+            )
+        );
+
+        bridgeProxy = new StateBridgeProxy(stateBridgeAddress, initCallData);
 
         vm.stopBroadcast();
     }

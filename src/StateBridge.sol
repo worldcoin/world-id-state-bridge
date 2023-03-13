@@ -54,18 +54,19 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     /// @notice Sets the addresses for all the WorldID target chains
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
+    /// @param _polygonWorldIDAddress Address of the Polygon PoS contract that will receive the new root and timestamps
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
     function initialize(
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
-        address _polygonWorldIDAdress,
+        address _polygonWorldIDAddress,
         address _crossDomainMessenger
     ) public virtual reinitializer(1) {
         owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
-        setFxChildTunnel(_polygonWorldIDAdress);
+        setFxChildTunnel(_polygonWorldIDAddress);
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
