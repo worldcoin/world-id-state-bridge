@@ -387,7 +387,7 @@ async function transferOwnershipOfOpWorldIDMainnet(plan, config) {
 
 // Simple integration test for Mock WorldID
 
-async function transferOwnershipOfOpWorldIDMainnet(plan, config) {
+async function sendStateRootToStateBridge(plan, config) {
   plan.add("Send test WorldID merkle tree root from MockWorldID to StateBridge", async () => {
     const spinner = ora("Sending test WorldID merkle tree root from MockWorldID to StateBridge...").start();
 
