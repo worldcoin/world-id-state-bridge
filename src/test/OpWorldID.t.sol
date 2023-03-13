@@ -32,9 +32,6 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice The root of the merkle tree before the first update
     uint256 public preRoot = 0x18f43331537ee2af2e3d758d50f72106467c6eea50371dd528d57eb2b856d238;
 
-    /// @notice The root of the merkle tree after the first update
-    uint256 public newRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
-
     /// @notice OpenZeppelin Ownable.sol transferOwnership event
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
@@ -73,7 +70,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         id.transferOwnership({_owner: alice, _isLocal: false});
     }
 
-    function test_onlyOwner_notMessenger_reverts() external {
+    /// @notice Test that when _isLocal = false, a contract that is not the L2 Messenger can't call the contract
+    /// @param newRoot The root of the merkle tree after the first update
+    function test_onlyOwner_notMessenger_reverts(uint256 newRoot) external {
         _switchToCrossDomainOwnership(id);
 
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
@@ -84,7 +83,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         id.receiveRoot(newRoot, newRootTimestamp);
     }
 
-    function test_onlyOwner_notOwner_reverts() external {
+    /// @notice Test that a non-owner can't insert a new root
+    /// @param newRoot The root of the merkle tree after the first update
+    function test_onlyOwner_notOwner_reverts(uint256 newRoot) external {
         _switchToCrossDomainOwnership(id);
 
         // set the xDomainMsgSender storage slot as bob
@@ -100,7 +101,8 @@ contract OpWorldIDTest is Messenger_Initializer {
     }
 
     /// @notice Test that you can insert new root and check if it is valid
-    function test_receiveVerifyRoot_succeeds() public {
+    /// @param newRoot The root of the merkle tree after the first update
+    function test_receiveVerifyRoot_succeeds(uint256 newRoot) public {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
@@ -122,7 +124,8 @@ contract OpWorldIDTest is Messenger_Initializer {
     }
 
     /// @notice Test that a root that hasn't been inserted is invalid
-    function test_receiveVerifyInvalidRoot_reverts() public {
+    /// @param newRoot The root of the merkle tree after the first update
+    function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot) public {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
@@ -147,7 +150,8 @@ contract OpWorldIDTest is Messenger_Initializer {
     }
 
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
-    function test_expiredRoot_reverts() public {
+    /// @param newRoot The root of the merkle tree after the first update
+    function test_expiredRoot_reverts(uint256 newRoot) public {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();

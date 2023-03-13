@@ -317,8 +317,7 @@ async function initializeMockWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script script/initialize/InitializeMockWorldID.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+      `forge script script/initialize/InitializeMockWorldID.s.sol --fork-url ${config.ethereumRpcUrl} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
   } catch (err) {
