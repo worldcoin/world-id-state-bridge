@@ -466,19 +466,6 @@ async function buildTestnetDeploymentActionPlan(plan, config) {
   await transferOwnershipOfOpWorldIDMainnet(plan, config);
 }
 
-async function initializeContractsTestnet(config) {
-  dotenv.config();
-
-  await initializeStateBridgeGoerli(plan, config);
-}
-
-async function initializeContractsMainnet(plan, config) {
-  dotenv.config();
-
-  await initializeStateBridgeMainnet(plan, config);
-  await transferOwnershipOfOpWorldIDMainnet(plan, config);
-}
-
 async function buildMockActionPlan(plan, config) {
   dotenv.config();
 
@@ -491,15 +478,14 @@ async function buildMockActionPlan(plan, config) {
   await getPolygonscanApiKey(config);
   await saveConfiguration(config);
   await deployMockWorldID(plan, config);
-  await deployStateBridgeGoerli(config);
   await deployPolygonWorldID(plan, config);
   await deployOptimismWorldID(plan, config);
-  await getStateBridgeAddress(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
-  await initializeStateBridgeGoerli(plan, config);
+  await deployStateBridgeGoerli(config);
+  await getStateBridgeAddress(config);
   await initializeMockWorldID(plan, config);
   await transferOwnershipOfOpWorldIDGoerli(plan, config);
   await getNewRoot(config);
@@ -568,26 +554,6 @@ async function main() {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
       await buildAndRunPlan(buildTestnetDeploymentActionPlan, config);
-      await saveConfiguration(config);
-    });
-
-  program
-    .command("initialize-testnet")
-    .description("Initialize the WorldID state bridge on the Goerli testnet.")
-    .action(async () => {
-      const options = program.opts();
-      let config = await loadConfiguration(options.config);
-      await buildAndRunPlan(initializeContractsTestnet, config);
-      await saveConfiguration(config);
-    });
-
-  program
-    .command("initialize")
-    .description("Initialize the WorldID state bridge on Ethereum mainnet.")
-    .action(async () => {
-      const options = program.opts();
-      let config = await loadConfiguration(options.config);
-      await buildAndRunPlan(initializeContractsMainnet, config);
       await saveConfiguration(config);
     });
 

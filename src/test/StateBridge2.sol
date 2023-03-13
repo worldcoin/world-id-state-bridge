@@ -25,7 +25,7 @@ contract StateBridge2 is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeab
     /// @notice Interface for checkValidRoot within the WorldID Identity Manager contract
     IWorldIDIdentityManager public worldID;
 
-    uint256 counter;
+    uint256 public counter;
 
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
