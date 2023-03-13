@@ -448,7 +448,7 @@ async function buildMockActionPlan(plan, config) {
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
-  await deployStateBridgeGoerli(config);
+  await deployStateBridgeGoerli(plan, config);
   await getStateBridgeAddress(config);
   await initializeMockWorldID(plan, config);
   await saveConfiguration(config);
@@ -524,6 +524,7 @@ async function main() {
 
   program
     .name("mock")
+    .command("mock")
     .description("A CLI interface to mock the WorldID identity manager along with the WorldID state bridge.")
     .action(async () => {
       const options = program.opts();
