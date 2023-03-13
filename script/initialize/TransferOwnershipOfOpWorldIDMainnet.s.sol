@@ -22,7 +22,7 @@ contract TransferOwnershipOfOpWorldIDMainnet is Script {
     /// for local or cross domain (using the CrossDomainMessenger to pass messages)
     bool public isLocal;
 
-    function setup() public {
+    function setUp() public {
         /*//////////////////////////////////////////////////////////////
                                  CONFIG
         //////////////////////////////////////////////////////////////*/
