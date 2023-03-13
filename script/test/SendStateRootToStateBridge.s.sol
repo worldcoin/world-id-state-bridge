@@ -24,9 +24,8 @@ contract SendStateRootToStateBridge is Script {
         string memory json = vm.readFile(path);
 
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-
         worldIDAddress = abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-        newRoot = abi.decode(vm.parseJson(json, ".newRoot"), (address));
+        newRoot = abi.decode(vm.parseJson(json, ".newRoot"), (uint256));
     }
 
     function run() public {

@@ -53,11 +53,16 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         address stateBridgeProxyAddress = address(stateBridgeProxy);
 
-        address newStateBridge = address(new StateBridge2());
+        address newStateBridge = address(new StateBridge2(checkpointManagerAddress, fxRootAddress));
 
         initCallData = abi.encodeCall(
             StateBridge2.initialize,
-            (testSemaphoreAddress, testOptimismAddress, crossDomainMessengerAddress)
+            (
+                testSemaphoreAddress,
+                testOptimismAddress,
+                testPolygonAddress,
+                crossDomainMessengerAddress
+            )
         );
 
         (bool success, bytes memory result) = stateBridgeProxyAddress.call(

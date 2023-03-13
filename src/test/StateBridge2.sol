@@ -5,11 +5,14 @@ pragma solidity >=0.8.15;
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {IBridge} from "src/interfaces/IBridge.sol";
+import {IOpWorldID} from "../interfaces/IOpWorldID.sol";
+import {ICrossDomainOwnable3} from "../interfaces/ICrossDomainOwnable3.sol";
 import {IWorldIDIdentityManager} from "src/interfaces/IWorldIDIdentityManager.sol";
 import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
-contract StateBridge2 is IBridge, Initializable, UUPSUpgradeable {
+contract StateBridge2 is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeable {
     /// @notice The owner of the contract
     address public owner;
 
@@ -38,13 +41,24 @@ contract StateBridge2 is IBridge, Initializable, UUPSUpgradeable {
         _;
     }
 
+    /// @notice constructor
+    /// @param _checkpointManager address of the checkpoint manager contract
+    /// @param _fxRoot address of the fxRoot contract (Goerli or Mainnet)
+    constructor(address _checkpointManager, address _fxRoot)
+        FxBaseRootTunnel(_checkpointManager, _fxRoot)
+    {
+        _disableInitializers();
+    }
+
     /// @notice Sets the addresses for all the WorldID target chains
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
+    /// @param _polygonWorldIDAddress Address of the Polygon PoS contract that will receive the new root and timestamps
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
     function initialize(
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
+        address _polygonWorldIDAddress,
         address _crossDomainMessenger
     ) public virtual reinitializer(2) {
         owner = msg.sender;
@@ -60,12 +74,17 @@ contract StateBridge2 is IBridge, Initializable, UUPSUpgradeable {
     function sendRootMultichain(uint256 root) external {
         // If the root is not a valid root in the canonical WorldID Identity Manager contract, revert
         // comment out for mock deployments
-        // if (!worldID.checkValidRoot(root)) revert InvalidRoot();
+        if (!worldID.checkValidRoot(root)) revert InvalidRoot();
 
         uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
+        _sendRootToPolygon(root, timestamp);
         // add other chains here
     }
+
+    /*//////////////////////////////////////////////////////////////
+                                OPTIMISM
+    //////////////////////////////////////////////////////////////*/
 
     // @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
@@ -74,20 +93,65 @@ contract StateBridge2 is IBridge, Initializable, UUPSUpgradeable {
     function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
-        message = abi.encodeWithSignature("receiveRoot(uint256, uint128)", root, timestamp);
+        message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
 
-        // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            1000000 // within the free gas limit
+            1000000
         );
     }
 
+    /// @notice Adds functionality to the StateBridge to transfer ownership
+    /// of OpWorldID to another contract on L1 or to a local Optimism EOA
+    /// @param _owner new owner (EOA or contract)
+    /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
+    function transferOwership(address _owner, bool _isLocal) external onlyOwner {
+        bytes memory message;
+
+        message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
+
+        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+            // Contract address on Optimism
+            opWorldIDAddress,
+            message,
+            1000000
+        );
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                              TEST UPGRADE
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice test upgrade function
     function getCounter() public view returns (uint256) {
         return counter;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                                POLYGON
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice Send message to Polygon's StateChild contract
+    /// @param message bytes to send to Polygon
+    function sendMessageToChild(bytes memory message) public {
+        _sendMessageToChild(message);
+    }
+
+    /// @notice Sends root and timestamp to Polygon's StateChild contract (PolygonWorldID)
+    /// @param root The latest WorldID Identity Manager root to be sent to Polygon
+    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root
+    function _sendRootToPolygon(uint256 root, uint128 timestamp) internal {
+        bytes memory message;
+
+        message = abi.encode(root, timestamp);
+
+        _sendMessageToChild(message);
+    }
+
+    /// @notice boilerplate function to satisfy the FxBaseRootTunnel interface (not going to be used)
+    function _processMessageFromChild(bytes memory message) internal virtual override {}
 
     ///@dev required by the OZ UUPS module
     function _authorizeUpgrade(address newImplementation) internal virtual override onlyOwner {}
