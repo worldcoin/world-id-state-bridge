@@ -44,9 +44,12 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @param preRoot The root of the merkle tree before the contract was deployed.
     /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
     /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
-    constructor(address _fxChild, uint256 preRoot, uint128 preRootTimestamp, address stateBridgeAddress)
-        FxBaseChildTunnel(_fxChild)
-    {
+    constructor(
+        address _fxChild,
+        uint256 preRoot,
+        uint128 preRootTimestamp,
+        address stateBridgeAddress
+    ) FxBaseChildTunnel(_fxChild) {
         _stateBridgeAddress = stateBridgeAddress;
         rootHistory[preRoot] = preRootTimestamp;
     }
@@ -96,7 +99,10 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
         if (checkValidRoot(root)) {
             semaphoreVerifier.verifyProof(
-                [proof[0], proof[1]], [[proof[2], proof[3]], [proof[4], proof[5]]], [proof[6], proof[7]], publicSignals
+                [proof[0], proof[1]],
+                [[proof[2], proof[3]], [proof[4], proof[5]]],
+                [proof[6], proof[7]],
+                publicSignals
             );
         }
     }

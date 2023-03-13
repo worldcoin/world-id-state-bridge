@@ -15,7 +15,8 @@ contract WorldIDIdentityManagerImplV1 is Initializable {
     }
 
     function sendRootToStateBridge(uint256 root) public {
-        (bool success,) = stateBridgeProxy.call(abi.encodeWithSignature("sendRootMultichain(uint256)", root));
+        (bool success,) =
+            stateBridgeProxy.call(abi.encodeWithSignature("sendRootMultichain(uint256)", root));
         assert(success);
     }
 }

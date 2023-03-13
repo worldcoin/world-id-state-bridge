@@ -2,7 +2,8 @@
 pragma solidity >=0.8.15;
 
 import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
-import {CrossDomainOwnable3} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+import {CrossDomainOwnable3} from
+    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
@@ -85,7 +86,10 @@ contract OpWorldID is CrossDomainOwnable3 {
 
         if (checkValidRoot(root)) {
             semaphoreVerifier.verifyProof(
-                [proof[0], proof[1]], [[proof[2], proof[3]], [proof[4], proof[5]]], [proof[6], proof[7]], publicSignals
+                [proof[0], proof[1]],
+                [[proof[2], proof[3]], [proof[4], proof[5]]],
+                [proof[6], proof[7]],
+                publicSignals
             );
         }
     }

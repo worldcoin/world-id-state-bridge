@@ -20,10 +20,7 @@ networks pending storage proof verifier and Semaphore verifier implementations a
 Build the contracts:
 
 ```sh
-# Download dependencies
-yarn install
-# Build contracts with Foundry
-forge build
+make build
 ```
 
 ### Clean
@@ -31,7 +28,7 @@ forge build
 Delete the build artifacts and cache directories:
 
 ```sh
-forge clean
+make clean
 ```
 
 ### Coverage
@@ -39,7 +36,7 @@ forge clean
 Get a test coverage report:
 
 ```sh
-forge coverage
+make coverage
 ```
 
 ### Format
@@ -47,8 +44,7 @@ forge coverage
 Format the contracts with Prettier:
 
 ```sh
-yarn format
-yarn prettier
+make format
 ```
 
 ### Gas Usage
@@ -56,7 +52,11 @@ yarn prettier
 Get a gas report:
 
 ```sh
-forge test --gas-report
+make snapshot
+```
+
+```sh
+make bench
 ```
 
 ### Lint
@@ -64,7 +64,7 @@ forge test --gas-report
 Lint the contracts:
 
 ```sh
-yarn lint
+make lint
 ```
 
 ### Test
@@ -72,7 +72,7 @@ yarn lint
 Run the tests:
 
 ```sh
-forge test
+make test
 ```
 
 ### Environment
@@ -84,98 +84,49 @@ there is a different Etherscan API key for every single network that we are depl
 
 ### Deploy
 
-#### Testnet
-
-Deploy to Goerli:
-
-`StateBridge`: Make sure to uncomment the correct Etherscan ([Ethereum Goerli](https://etherscan.io/myaccount)) API key
-in `.env` and `source .env` before deploying.
+Deploy the WorldID state bridge and all its components to Ethereum mainnet using the CLI tool.
 
 ```sh
-forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url $GOERLI_URL \
- --broadcast --verify -vvvv
-```
-
-`world-id-contracts`:
-
-Mock: Make sure to uncomment the correct Etherscan ([Ethereum Goerli](https://etherscan.io/myaccount)) API key in `.env`
-and `source .env` before deploying.
-
-```sh
-forge script script/deploy/DeployMockWorldID.s.sol --fork-url $GOERLI_URL \
- --broadcast --verify -vvvv
+make deploy
 ```
 
 Integration with full system:
 
 - Download [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
-- `make all`
 - `make deploy`
-- follow the deployment script guide in the command line and input the deployment address of `StateBridge` when
-  prompted.
+- follow the CLI interface for the deployment script and select Ethereum mainnet as the target deployment network, and
+  input the deployment address of `StateBridge` when prompted.
 
-`OpWorldID`:
+#### Testnet
 
-Make sure to uncomment the correct Etherscan ([Optimism](https://optimistic.etherscan.io/login)) API key in `.env` and
-`source .env` before deploying. Put the `StateBridge` deployment address in the constructor of `OpWorldID` in the
-deployment `DeployOpWorldID.s.sol` script.
+Deploy the WorldID state bridge and all its components to the Goerli testnet.
 
 ```sh
-forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url $OP_GOERLI_URL \
- --broadcast --verify -vvvv
+make deploy-testnet
 ```
 
-`PolygonWorldID`:
+Integration with full system:
 
-Make sure to uncomment the correct Etherscan ([Polygon](https://polygonscan.com/myaccount)) API key in `.env` and
-`source .env` before deploying. Put the `StateBridge` deployment address in the constructor of `PolygonWorldID` in the
-deployment `DeployPolygonWorldID.s.sol` script.
+- Download [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
+- `make deploy`
+- follow the CLI interface for the deployment script and select Goerli as the target deployment network, and input the
+  deployment address of `StateBridge` when prompted.
 
-```sh
-forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url $POLYGON_MUMBAI_URL \
- --broadcast --verify -vvvv
-```
+#### Mock
 
-### Initialize
-
-After deploying all of the contracts, you need to update the addresses of the deployed contracts in the initialization
-script `InitializeStateBridgeGoerli.s.sol` in order to make sure that the `StateBridge` is able to communicate with the
-correct target contracts. Make sure to uncomment the correct Etherscan
-([Ethereum Goerli](https://etherscan.io/myaccount)) API key in `.env` and `source .env` before deploying. Then run the
-initialization script:
+Deploy the WorldID state bridge and a mock WorldID identity manager to the Goerli testnet for integration tests.
 
 ```sh
-forge script script/initialize/InitializeStateBridgeGoerli.s.sol --fork-url $GOERLI_URL \
- --broadcast --verify -vvvv
-```
-
-Update the address of the `StateBridge` deployment in the `TransferOwnershipOfOpWorldID.s.sol`. Make sure to uncomment
-the correct Etherscan ([Optimism](https://optimistic.etherscan.io/login)) API key in `.env` and `source .env` before
-deploying. After that run the script like so:
-
-```sh
-forge script script/initialize/TransferOwnershipOfOpWorldID.s.sol --fork-url $OP_GOERLI_URL \
- --broadcast --verify -vvvv
+make mock
 ```
 
 ### Integration test
 
-- `SendStateRootToStateBridge.s.sol`: sends a test root from the mock of `world-id-contracts`
-  `src/mock/WorldIDIdentityManagerV1.sol` contract to the `StateBridge.sol` contract which then sends a new root and
-  timestamp to the target contracts -> `OpWorldID.sol` and `PolygonWorldID.sol` on their respective networks. Make sure
-  to uncomment the correct Etherscan ([Ethereum Goerli](https://etherscan.io/myaccount)) API key in `.env` and
-  `source .env` before deploying.
+<!-- WIP -->
 
-  ```sh
-  forge script script/test/SendStateRootToStateBridge.s.sol --fork-url $GOERLI_URL \
-  --broadcast --verify -vvvv
-  ```
-
-- TODO: `integration.js` script that will verify the successful execution of these transactions across the all the
-  target networks.
-
-For instructions on how to deploy to a testnet or mainnet, check out the
-[Solidity Scripting tutorial](https://book.getfoundry.sh/tutorials/solidity-scripting.html).
+```sh
+make integration
+```
 
 ## Credits
 
