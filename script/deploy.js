@@ -297,7 +297,7 @@ async function deployPolygonWorldID(plan, config) {
 
 async function deployMockWorldID(plan, config) {
   plan.add("Deploy Mock World ID.", async () => {
-    const spinner = ora("Deploying PolygonWorldID...").start();
+    const spinner = ora("Deploying Mock WorldID...").start();
 
     try {
       const data = execSync(
@@ -328,42 +328,6 @@ async function deployOptimismWorldID(plan, config) {
     }
 
     spinner.succeed("DeployOptimismWorldID.s.sol ran successfully!");
-  });
-}
-
-async function initializeStateBridgeGoerli(plan, config) {
-  plan.add("Initialize State Bridge", async () => {
-    const spinner = ora("Initializing StateBridge...").start();
-
-    try {
-      const data = execSync(
-        `forge script script/initialize/InitializeStateBridgeGoerli.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-      );
-      console.log(data.toString());
-    } catch (err) {
-      console.error(err);
-    }
-
-    spinner.succeed("InitializeStateBridgeGoerli.s.sol ran successfully!");
-  });
-}
-
-async function initializeStateBridgeMainnet(plan, config) {
-  plan.add("Initialize State Bridge", async () => {
-    const spinner = ora("Initializing StateBridge...").start();
-
-    try {
-      const data = execSync(
-        `forge script script/initialize/InitializeStateBridgeMainnet.s.sol --fork-url ${config.ethereumEtherscanApiKey} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
-      );
-      console.log(data.toString());
-    } catch (err) {
-      console.error(err);
-    }
-
-    spinner.succeed("InitializeStateBridgeMainnet.s.sol ran successfully!");
   });
 }
 
@@ -487,6 +451,7 @@ async function buildMockActionPlan(plan, config) {
   await deployStateBridgeGoerli(config);
   await getStateBridgeAddress(config);
   await initializeMockWorldID(plan, config);
+  await saveConfiguration(config);
   await transferOwnershipOfOpWorldIDGoerli(plan, config);
   await getNewRoot(config);
   await saveConfiguration(config);
