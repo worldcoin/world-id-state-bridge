@@ -54,22 +54,12 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
         vm.startBroadcast(privateKey);
 
-        crossDomainTransferOwnership(stateBridgeAddress, isLocal);
+        transferOwnershipToStateBridge(stateBridgeAddress, isLocal);
 
         vm.stopBroadcast();
     }
 
-    function crossDomainTransferOwnership(address newOwner, bool _isLocal) internal {
-        bytes memory message;
-
-        message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (newOwner, _isLocal));
-
-        // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
-            // Contract address on Optimism
-            opWorldIDAddress,
-            message,
-            1000000 // within the free gas limit
-        );
+    function transferOwnershipToStateBridge(address newOwner, bool _isLocal) internal {
+        ICrossDomainOwnable3(opWorldIDAddress).transferOwnership(newOwner, _isLocal);
     }
 }
