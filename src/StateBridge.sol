@@ -7,12 +7,10 @@ import {ICrossDomainMessenger} from
 import {IBridge} from "./interfaces/IBridge.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
-import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
-import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import {WorldIDIdentityManagerImplV1} from "./mock/WorldIDIdentityManagerImplV1.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
-contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeable {
+contract StateBridge is IBridge, FxBaseRootTunnel {
     /// @notice The owner of the contract
     address public owner;
 
@@ -26,7 +24,9 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     address internal crossDomainMessengerAddress;
 
     /// @notice Interface for checkValidRoot within the WorldID Identity Manager contract
-    IWorldIDIdentityManager public worldID;
+    address public worldIDAddress;
+
+    WorldIDIdentityManagerImplV1 internal worldID;
 
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
@@ -45,37 +45,33 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
     /// @notice constructor
     /// @param _checkpointManager address of the checkpoint manager contract
     /// @param _fxRoot address of the fxRoot contract (Goerli or Mainnet)
-    constructor(address _checkpointManager, address _fxRoot)
-        FxBaseRootTunnel(_checkpointManager, _fxRoot)
-    {
-        _disableInitializers();
-    }
-
-    /// @notice Sets the addresses for all the WorldID target chains
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _polygonWorldIDAddress Address of the Polygon PoS contract that will receive the new root and timestamps
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
-    function initialize(
+    constructor(
+        address _checkpointManager,
+        address _fxRoot,
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
         address _polygonWorldIDAddress,
         address _crossDomainMessenger
-    ) public virtual reinitializer(1) {
+    ) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
         owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
-        worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
+        worldIDAddress = _worldIDIdentityManager;
         crossDomainMessengerAddress = _crossDomainMessenger;
-        setFxChildTunnel(_polygonWorldIDAddress);
+        worldID = WorldIDIdentityManagerImplV1(_worldIDIdentityManager);
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
-    function sendRootMultichain(uint256 root) external {
+    function sendRootMultichain(uint256 root) public {
         // If the root is not a valid root in the canonical WorldID Identity Manager contract, revert
         // comment out for mock deployments
-        // if (!worldID.checkValidRoot(root)) revert InvalidRoot();
+
+        if (!worldID.checkValidRoot(root)) revert InvalidRoot();
 
         uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
@@ -144,11 +140,4 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
 
     /// @notice boilerplate function to satisfy the FxBaseRootTunnel interface (not going to be used)
     function _processMessageFromChild(bytes memory message) internal virtual override {}
-
-    /*//////////////////////////////////////////////////////////////
-                             UPGRADEABILITY
-    //////////////////////////////////////////////////////////////*/
-
-    ///@dev required by the OZ UUPS module
-    function _authorizeUpgrade(address newImplementation) internal virtual override onlyOwner {}
 }

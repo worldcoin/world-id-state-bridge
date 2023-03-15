@@ -22,14 +22,10 @@ contract DeployOpWorldID is Script {
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
-    // TODO: Fetch the latest preRoot and preRootTimestamp from the WorldIDIdentityManagerV1 in deploy.js
-    uint256 public preRoot = abi.decode(vm.parseJson(json, ".preRoot"), (uint256));
-    uint128 public preRootTimestamp = abi.decode(vm.parseJson(json, ".preRootTimestamp"), (uint128));
-
     function run() external {
         vm.startBroadcast(privateKey);
 
-        opWorldID = new OpWorldID(preRoot, preRootTimestamp);
+        opWorldID = new OpWorldID();
 
         vm.stopBroadcast();
     }

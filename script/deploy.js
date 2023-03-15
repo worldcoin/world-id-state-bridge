@@ -115,7 +115,7 @@ async function getOptimismEtherscanApiKey(config) {
   }
   if (!config.optimismEtherscanApiKey) {
     config.optimismEtherscanApiKey = await ask(
-      `Enter Optimism Etherescan API KEY: (https://optimistic.etherscan.io/myaccount) `,
+      `Enter Optimism Etherscan API KEY: (https://optimistic.etherscan.io/myaccount) `,
     );
   }
 }
@@ -125,7 +125,7 @@ async function getEthereumEtherscanApiKey(config) {
     config.ethereumEtherscanApiKey = process.env.ETHERSCAN_API_KEY;
   }
   if (!config.ethereumEtherscanApiKey) {
-    config.ethereumEtherscanApiKey = await ask(`Enter Ethereum Etherescan API KEY: (https://etherscan.io/myaccount) `);
+    config.ethereumEtherscanApiKey = await ask(`Enter Ethereum Etherscan API KEY: (https://etherscan.io/myaccount) `);
   }
 }
 
@@ -173,24 +173,6 @@ async function getWorldIDIdentityManagerAddress(config) {
     config.worldIDIdentityManagerAddress = await ask(
       "Enter World ID Identity Manager Address (world-id-contracts or WorldIDMock): ",
     );
-  }
-}
-
-async function getPreRoot(config) {
-  if (!config.preRoot) {
-    config.preRoot = process.env.PRE_ROOT;
-  }
-  if (!config.preRoot) {
-    config.preRoot = await ask("Enter the WorldID merkle tree root to initialize the StateBridge with (uint256-hex): ");
-  }
-}
-
-async function getPreRootTimestamp(config) {
-  if (!config.preRootTimestamp) {
-    config.preRootTimestamp = process.env.PRE_ROOT_TIMESTAMP;
-  }
-  if (!config.preRootTimestamp) {
-    config.preRootTimestamp = await ask("Enter the WorldID merkle tree root's timestamp (uint128-hex): ");
   }
 }
 
@@ -271,7 +253,7 @@ async function deployPolygonWorldID(config) {
 
   try {
     const data = execSync(`forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url ${config.polygonRpcUrl} \
-      --etherscan-api-key ${config.polygonscanApiKey} --broadcast --verify -vvvv`);
+      --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
     console.error(err);
@@ -413,16 +395,16 @@ async function mockDeployment(config) {
   await getPolygonscanApiKey(config);
   await saveConfiguration(config);
   await deployMockWorldID(config);
-  await deployPolygonWorldID(config);
   await deployOptimismWorldID(config);
+  await deployPolygonWorldID(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
   await deployStateBridgeGoerli(config);
   await getStateBridgeAddress(config);
-  await initializeMockWorldID(config);
   await saveConfiguration(config);
+  await initializeMockWorldID(config);
   await transferOwnershipOfOpWorldIDGoerli(config);
   await getNewRoot(config);
   await saveConfiguration(config);

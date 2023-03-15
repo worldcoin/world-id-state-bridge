@@ -7,11 +7,9 @@ pragma solidity >=0.8.15;
 
 import {Script} from "forge-std/Script.sol";
 import {StateBridge} from "src/StateBridge.sol";
-import {StateBridgeProxy} from "src/StateBridgeProxy.sol";
 
 contract DeployStateBridge is Script {
     StateBridge public bridge;
-    StateBridgeProxy public bridgeProxy;
 
     address public opWorldIDAddress;
     address public polygonWorldIDAddress;
@@ -31,7 +29,7 @@ contract DeployStateBridge is Script {
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
-    constructor() {
+    function setUp() public {
         /*//////////////////////////////////////////////////////////////
                                 POLYGON
         //////////////////////////////////////////////////////////////*/
@@ -42,9 +40,15 @@ contract DeployStateBridge is Script {
 
         // FxRoot
         fxRootAddress = address(0x3d1d3E34f7fB6D26245E6640E1c50710eFFf15bA);
-    }
 
-    function setUp() public {
+        /*//////////////////////////////////////////////////////////////
+                                OPTIMISM
+        //////////////////////////////////////////////////////////////*/
+        crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+
+        /*//////////////////////////////////////////////////////////////
+                                WORLD ID
+        //////////////////////////////////////////////////////////////*/
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
@@ -54,21 +58,14 @@ contract DeployStateBridge is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new StateBridge(checkpointManagerAddress, fxRootAddress);
-
-        address stateBridgeAddress = address(bridge);
-
-        bytes memory initCallData = abi.encodeCall(
-            StateBridge.initialize,
-            (
-                worldIDIdentityManagerAddress,
-                opWorldIDAddress,
-                polygonWorldIDAddress,
-                crossDomainMessengerAddress
-            )
+        bridge = new StateBridge(
+            checkpointManagerAddress,
+            fxRootAddress,
+            worldIDIdentityManagerAddress,
+            opWorldIDAddress,
+            polygonWorldIDAddress,
+            crossDomainMessengerAddress
         );
-
-        bridgeProxy = new StateBridgeProxy(stateBridgeAddress, initCallData);
 
         vm.stopBroadcast();
     }
