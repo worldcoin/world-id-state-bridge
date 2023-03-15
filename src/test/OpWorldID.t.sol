@@ -29,9 +29,6 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice The OpWorldID contract
     OpWorldID internal id;
 
-    /// @notice The root of the merkle tree before the first update
-    uint256 public preRoot = 0x18f43331537ee2af2e3d758d50f72106467c6eea50371dd528d57eb2b856d238;
-
     /// @notice OpenZeppelin Ownable.sol transferOwnership event
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
@@ -44,12 +41,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         /// @notice CrossDomainOwnable3 setup
         super.setUp();
 
-        /// @notice The timestamp of the root of the merkle tree before the first update
-        uint128 preRootTimestamp = uint128(block.timestamp);
-
         /// @notice Initialize the OpWorldID contract
         vm.prank(alice);
-        id = new OpWorldID(preRoot, preRootTimestamp);
+        id = new OpWorldID();
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");

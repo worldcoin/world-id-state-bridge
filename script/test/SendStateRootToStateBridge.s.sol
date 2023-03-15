@@ -6,7 +6,7 @@ pragma solidity >=0.8.15;
 import {Script} from "forge-std/Script.sol";
 import {WorldIDIdentityManagerImplV1} from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
 
-/// @notice Initializes the StateBridge contract
+/// @notice Sends the a WorldID state root to the state bridge
 contract SendStateRootToStateBridge is Script {
     address public worldIDAddress;
     uint256 public newRoot;

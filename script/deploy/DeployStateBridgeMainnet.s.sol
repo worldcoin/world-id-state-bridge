@@ -7,11 +7,9 @@ pragma solidity >=0.8.15;
 
 import {Script} from "forge-std/Script.sol";
 import {StateBridge} from "src/StateBridge.sol";
-import {StateBridgeProxy} from "src/StateBridgeProxy.sol";
 
 contract DeployStateBridge is Script {
     StateBridge public bridge;
-    StateBridgeProxy public bridgeProxy;
 
     address public opWorldIDAddress;
     address public polygonWorldIDAddress;
@@ -43,6 +41,11 @@ contract DeployStateBridge is Script {
         fxRootAddress = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
 
         /*//////////////////////////////////////////////////////////////
+                                OPTIMISM
+        //////////////////////////////////////////////////////////////*/
+        crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
+
+        /*//////////////////////////////////////////////////////////////
                                 WORLDID
         //////////////////////////////////////////////////////////////*/
         worldIDIdentityManagerAddress =
@@ -54,21 +57,14 @@ contract DeployStateBridge is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new StateBridge(checkpointManagerAddress, fxRootAddress);
-
-        address stateBridgeAddress = address(bridge);
-
-        bytes memory initCallData = abi.encodeCall(
-            StateBridge.initialize,
-            (
-                worldIDIdentityManagerAddress,
-                opWorldIDAddress,
-                polygonWorldIDAddress,
-                crossDomainMessengerAddress
-            )
+        bridge = new StateBridge(
+            checkpointManagerAddress,
+            fxRootAddress,
+            worldIDIdentityManagerAddress,
+            opWorldIDAddress,
+            polygonWorldIDAddress,
+            crossDomainMessengerAddress
         );
-
-        bridgeProxy = new StateBridgeProxy(stateBridgeAddress, initCallData);
 
         vm.stopBroadcast();
     }

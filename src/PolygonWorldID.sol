@@ -41,17 +41,9 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
     /// @notice Initializes the contract with a pre-existing root and timestamp.
     /// @param _fxChild The address of the Polygon PoS child tunnel.
-    /// @param preRoot The root of the merkle tree before the contract was deployed.
-    /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
     /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
-    constructor(
-        address _fxChild,
-        uint256 preRoot,
-        uint128 preRootTimestamp,
-        address stateBridgeAddress
-    ) FxBaseChildTunnel(_fxChild) {
+    constructor(address _fxChild, address stateBridgeAddress) FxBaseChildTunnel(_fxChild) {
         _stateBridgeAddress = stateBridgeAddress;
-        rootHistory[preRoot] = preRootTimestamp;
     }
 
     /*//////////////////////////////////////////////////////////////

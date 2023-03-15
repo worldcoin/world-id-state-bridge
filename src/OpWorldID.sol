@@ -29,13 +29,6 @@ contract OpWorldID is CrossDomainOwnable3 {
     ///         history.
     error NonExistentRoot();
 
-    /// @notice Initializes the contract with a pre-existing root and timestamp.
-    /// @param preRoot The root of the merkle tree before the contract was deployed.
-    /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
-    constructor(uint256 preRoot, uint128 preRootTimestamp) {
-        rootHistory[preRoot] = preRootTimestamp;
-    }
-
     /// @notice receiveRoot is called by the state bridge contract which forwards new WorldID roots to Optimism.
     /// @param newRoot new valid root with ROOT_HISTORY_EXPIRY validity
     /// @param timestamp Ethereum block timestamp of the new Semaphore root
