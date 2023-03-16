@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
-import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
+import {SemaphoreVerifier} from "semaphore/packages/contracts/contracts/base/SemaphoreVerifier.sol";
 import {CrossDomainOwnable3} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title OpWorldID
@@ -9,6 +9,9 @@ import {CrossDomainOwnable3} from "@eth-optimism/contracts-bedrock/contracts/L2/
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
 contract OpWorldID is CrossDomainOwnable3 {
+    /// @notice MarkleTree depth
+    uint8 internal treeDepth;
+
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -31,8 +34,9 @@ contract OpWorldID is CrossDomainOwnable3 {
     /// @notice Initializes the contract with a pre-existing root and timestamp.
     /// @param preRoot The root of the merkle tree before the contract was deployed.
     /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
-    constructor(uint256 preRoot, uint128 preRootTimestamp) {
+    constructor(uint8 _treeDepth, uint256 preRoot, uint128 preRootTimestamp) {
         rootHistory[preRoot] = preRootTimestamp;
+        treeDepth = _treeDepth;
     }
 
     /// @notice receiveRoot is called by the state bridge contract which forwards new WorldID roots to Optimism.
@@ -81,11 +85,9 @@ contract OpWorldID is CrossDomainOwnable3 {
         uint256 externalNullifierHash,
         uint256[8] calldata proof
     ) public view {
-        uint256[4] memory publicSignals = [root, nullifierHash, signalHash, externalNullifierHash];
-
         if (checkValidRoot(root)) {
             semaphoreVerifier.verifyProof(
-                [proof[0], proof[1]], [[proof[2], proof[3]], [proof[4], proof[5]]], [proof[6], proof[7]], publicSignals
+                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
             );
         }
     }

@@ -17,6 +17,9 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice The PolygonWorldID contract
     PolygonWorldID internal id;
 
+    /// @notice MarkleTree depth
+    uint8 internal treeDepth = 16;
+
     /// @notice The root of the merkle tree before the first update
     uint256 public preRoot = 0x18f43331537ee2af2e3d758d50f72106467c6eea50371dd528d57eb2b856d238;
 
@@ -47,7 +50,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(alice);
-        id = new PolygonWorldID(fxChild, preRoot, preRootTimestamp, stateBridgeAddress);
+        id = new PolygonWorldID(treeDepth, fxChild, preRoot, preRootTimestamp, stateBridgeAddress);
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
