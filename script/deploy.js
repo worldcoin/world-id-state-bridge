@@ -294,6 +294,38 @@ async function deployOptimismWorldID(config) {
   spinner.succeed("DeployOpWorldID.s.sol ran successfully!");
 }
 
+async function deployMockOpPolygonWorldID(config) {
+  const spinner = ora("Deploying MockOpPolygonWorldID...").start();
+
+  try {
+    const data = execSync(
+      `forge script script/deploy/DeployMockOpPolygonWorldID.s.sol --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployMockOpPolygonWorldID.s.sol ran successfully!");
+}
+
+async function deployMockStateBridge(config) {
+  const spinner = ora("Deploying MockStateBridge...").start();
+
+  try {
+    const data = execSync(
+      `forge script script/deploy/DeployMockStateBridge.s.sol --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployMockStateBridge.s.sol ran successfully!");
+}
+
 async function initializeMockWorldID(config) {
   const spinner = ora("Initializing MockWorldID...").start();
 
@@ -359,6 +391,22 @@ async function sendStateRootToStateBridge(config) {
   spinner.succeed("SendStateRootToStateBridge.s.sol ran successfully!");
 }
 
+async function checkLocalValidRoot(config) {
+  const spinner = ora("Checking whether the test root was inserted correctly in MockOpPolygonWorldID...").start();
+
+  try {
+    const data = execSync(
+      `forge script script/test/checkLocalValidRoot.s.sol --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("checkLocalValidRoot.s.sol ran successfully!");
+}
+
 async function deployment(config) {
   dotenv.config();
 
@@ -411,7 +459,7 @@ async function mockDeployment(config) {
   await sendStateRootToStateBridge(config);
 }
 
-async function testTest(config) {
+async function mockLocalDeployment(config) {
   dotenv.config();
 
   await getPrivateKey(config);
@@ -422,7 +470,20 @@ async function testTest(config) {
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await saveConfiguration(config);
-  await deployStateBridgeGoerli(config);
+  await deployMockWorldID(config);
+  await deployMockOpPolygonWorldID(config);
+  await getWorldIDIdentityManagerAddress(config);
+  await getOptimismWorldIDAddress(config);
+  await getPolygonWorldIDAddress(config);
+  await saveConfiguration(config);
+  await deployMockStateBridge(config);
+  await getStateBridgeAddress(config);
+  await saveConfiguration(config);
+  await initializeMockWorldID(config);
+  await getNewRoot(config);
+  await saveConfiguration(config);
+  await sendStateRootToStateBridge(config);
+  await checkLocalValidRoot(config);
 }
 
 async function upgrade(config) {
@@ -470,12 +531,14 @@ async function main() {
     });
 
   program
-    .name("test-deploy")
-    .description("test test")
+    .name("local-mock")
+    .command("local-mock")
+    .description("A CLI interface to mock the WorldID identity manager along with the WorldID state bridge.")
     .action(async () => {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
-      await testTest(config);
+      await mockLocalDeployment(config);
+      await saveConfiguration(config);
     });
 
   // program

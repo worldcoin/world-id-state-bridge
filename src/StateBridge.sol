@@ -6,19 +6,14 @@ import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {IBridge} from "./interfaces/IBridge.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
-import {WorldIDIdentityManagerImplV1} from "./mock/WorldIDIdentityManagerImplV1.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
-contract StateBridge is IBridge, FxBaseRootTunnel {
-    /// @notice The owner of the contract
-    address public owner;
-
+contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
     /// @notice The address of the OPWorldID contract on Optimism
     address public opWorldIDAddress;
-
-    /// @notice The address of the PolygonWorldID contract on Polygon
-    address public polygonWorldIDAddress;
 
     /// @notice address for Optimism's Ethereum mainnet Messenger contract
     address internal crossDomainMessengerAddress;
@@ -26,42 +21,28 @@ contract StateBridge is IBridge, FxBaseRootTunnel {
     /// @notice Interface for checkValidRoot within the WorldID Identity Manager contract
     address public worldIDAddress;
 
-    WorldIDIdentityManagerImplV1 internal worldID;
+    IWorldIDIdentityManager internal worldID;
 
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
-
-    /// @notice Emmited when the sender is not the owner of the contract
-    error Unauthorized();
-
-    /// @notice Modifier to restrict access to the owner of the contract
-    modifier onlyOwner() {
-        if (msg.sender != owner) {
-            revert Unauthorized();
-        }
-        _;
-    }
 
     /// @notice constructor
     /// @param _checkpointManager address of the checkpoint manager contract
     /// @param _fxRoot address of the fxRoot contract (Goerli or Mainnet)
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
-    /// @param _polygonWorldIDAddress Address of the Polygon PoS contract that will receive the new root and timestamps
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
     constructor(
         address _checkpointManager,
         address _fxRoot,
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
-        address _polygonWorldIDAddress,
         address _crossDomainMessenger
     ) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
-        owner = msg.sender;
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
+        worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
-        worldID = WorldIDIdentityManagerImplV1(_worldIDIdentityManager);
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
