@@ -62,9 +62,10 @@ contract DeployStateBridge is Script {
             fxRootAddress,
             worldIDIdentityManagerAddress,
             opWorldIDAddress,
-            polygonWorldIDAddress,
             crossDomainMessengerAddress
         );
+
+        bridge.setFxChildTunnel(polygonWorldIDAddress);
 
         vm.stopBroadcast();
     }

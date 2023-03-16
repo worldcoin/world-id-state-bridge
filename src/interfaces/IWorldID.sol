@@ -2,6 +2,8 @@
 pragma solidity >=0.8.15;
 
 interface IWorldID {
+    function sendRootToStateBridge(uint256 root) external;
+
     /// @notice Reverts if the zero-knowledge proof is invalid.
     /// @param root The of the Merkle tree
     /// @param signalHash A keccak256 hash of the Semaphore signal
