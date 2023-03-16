@@ -12,8 +12,7 @@
 	branch = v4.8.0
 [submodule "lib/semaphore"]
 	path = lib/semaphore
-	url = https://github.com/semaphore-protocol/semaphore
-	branch = d001dd9
+	url = https://github.com/worldcoin/semaphore-v3
 [submodule "lib/openzeppelin-contracts-upgradeable"]
 	path = lib/openzeppelin-contracts-upgradeable
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
