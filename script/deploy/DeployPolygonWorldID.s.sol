@@ -27,11 +27,13 @@ contract DeployPolygonWorldID is Script {
     // address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
 
     function run() external {
+        uint8 treeDepth = uint8(vm.envUint("TREE_DEPTH"));
         uint256 PolygonWorldIDKey = vm.envUint("POLYGON_WORLDID_PRIVATE_KEY");
 
         vm.startBroadcast(PolygonWorldIDKey);
 
-        polygonWorldId = new PolygonWorldID(fxChildAddress, preRoot, preRootTimestamp, stateBridgeAddress);
+
+        polygonWorldId = new PolygonWorldID(treeDepth, fxChildAddress, preRoot, preRootTimestamp, stateBridgeAddress);
 
         vm.stopBroadcast();
     }

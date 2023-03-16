@@ -24,6 +24,9 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice The OpWorldID contract
     OpWorldID internal id;
 
+    /// @notice MarkleTree depth
+    uint8 internal treeDepth = 16;
+
     /// @notice The root of the merkle tree before the first update
     uint256 public preRoot = 0x18f43331537ee2af2e3d758d50f72106467c6eea50371dd528d57eb2b856d238;
 
@@ -45,7 +48,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         /// @notice Initialize the OpWorldID contract
         vm.prank(alice);
-        id = new OpWorldID(preRoot, preRootTimestamp);
+        id = new OpWorldID(treeDepth, preRoot, preRootTimestamp);
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
