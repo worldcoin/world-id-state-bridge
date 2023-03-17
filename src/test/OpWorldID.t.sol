@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.15;
+pragma solidity ^0.8.15;
 
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";

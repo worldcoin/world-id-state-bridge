@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.15;
+pragma solidity ^0.8.15;
 
 import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
-import {CrossDomainOwnable3} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
