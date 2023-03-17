@@ -2,13 +2,14 @@
 pragma solidity >=0.8.15;
 
 // Optimism interface for cross domain messaging
-import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import { IBridge } from "./interfaces/IBridge.sol";
-import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
-import { Ownable } from "openzeppelin-contracts/access/Ownable.sol";
-import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
-import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
-import { FxBaseRootTunnel } from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import {ICrossDomainMessenger} from
+    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {IBridge} from "./interfaces/IBridge.sol";
+import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
+import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
+import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
 contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
     /// @notice boilerplate property to satisfy FxBaseRootTunnel inheritance (not going to be used)
