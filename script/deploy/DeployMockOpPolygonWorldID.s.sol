@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.15;
+pragma solidity ^0.8.15;
 
 // Demo deployments
 // Goerli 0x09A02586dAf43Ca837b45F34dC2661d642b8Da15
