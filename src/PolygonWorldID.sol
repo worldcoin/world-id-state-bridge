@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
-import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
-import { FxBaseChildTunnel } from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
+import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
 /// @title PolygonWorldID
 /// @author Worldcoin
@@ -123,11 +123,11 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @param stateId of the message (unused)
     /// @param sender of the message
     /// @param data newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(
-        uint256 stateId,
-        address sender,
-        bytes memory data
-    ) internal override validateSender(sender) {
+    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
+        internal
+        override
+        validateSender(sender)
+    {
         latestStateId = stateId;
 
         latestRootMessageSender = sender;
