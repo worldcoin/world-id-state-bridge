@@ -2,26 +2,29 @@
 pragma solidity >=0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from
-    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {IBridge} from "./interfaces/IBridge.sol";
-import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
-import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
-import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import { IBridge } from "./interfaces/IBridge.sol";
+import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
+import { Ownable } from "openzeppelin-contracts/access/Ownable.sol";
+import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
+import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
+import { FxBaseRootTunnel } from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
 contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
+    /// @notice boilerplate property to satisfy FxBaseRootTunnel inheritance (not going to be used)
+    bytes public latestData;
+
     /// @notice The address of the OPWorldID contract on Optimism
     address public opWorldIDAddress;
 
     /// @notice address for Optimism's Ethereum mainnet Messenger contract
     address internal crossDomainMessengerAddress;
 
-    /// @notice Interface for checkValidRoot within the WorldID Identity Manager contract
-    address public worldIDAddress;
-
+    /// @notice Interface for checkVlidRoot within the WorldID Identity Manager contract
     IWorldIDIdentityManager internal worldID;
+
+    /// @notice worldID Address
+    address public worldIDAddress;
 
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
@@ -102,12 +105,6 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
                                 POLYGON
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Send message to Polygon's StateChild contract
-    /// @param message bytes to send to Polygon
-    function sendMessageToChild(bytes memory message) public {
-        _sendMessageToChild(message);
-    }
-
     /// @notice Sends root and timestamp to Polygon's StateChild contract (PolygonWorldID)
     /// @param root The latest WorldID Identity Manager root to be sent to Polygon
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root
@@ -116,9 +113,12 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
 
         message = abi.encode(root, timestamp);
 
+        /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
     }
 
-    /// @notice boilerplate function to satisfy the FxBaseRootTunnel interface (not going to be used)
-    function _processMessageFromChild(bytes memory message) internal virtual override {}
+    /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)
+    function _processMessageFromChild(bytes memory data) internal override {
+        latestData = data;
+    }
 }
