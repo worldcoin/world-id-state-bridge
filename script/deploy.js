@@ -341,6 +341,21 @@ async function initializeMockWorldID(config) {
   spinner.succeed("InitializeMockWorldID.s.sol ran successfully!");
 }
 
+async function initializePolygonWorldID(config) {
+  const spinner = ora("Initializing PolygonWorldID...").start();
+
+  try {
+    const data = execSync(
+      `forge script script/initialize/InitializePolygonWorldID.s.sol --fork-url ${config.polygonRpcUrl} --broadcast --verify -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("InitializePolygonWorldID.s.sol ran successfully!");
+}
+
 async function transferOwnershipOfOpWorldIDGoerli(config) {
   const spinner = ora("Transfering ownership of OpWorldID to StateBridge...").start();
 
@@ -428,6 +443,7 @@ async function deployment(config) {
   await deployStateBridgeGoerli(config);
   await getStateBridgeAddress(config);
   await saveConfiguration(config);
+  await initializePolygonWorldID(config);
   await transferOwnershipOfOpWorldIDGoerli(config);
 }
 
@@ -453,6 +469,7 @@ async function mockDeployment(config) {
   await getStateBridgeAddress(config);
   await saveConfiguration(config);
   await initializeMockWorldID(config);
+  await initializePolygonWorldID(config);
   await transferOwnershipOfOpWorldIDGoerli(config);
   await getNewRoot(config);
   await saveConfiguration(config);

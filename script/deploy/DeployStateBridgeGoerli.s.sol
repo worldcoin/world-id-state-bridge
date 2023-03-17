@@ -5,8 +5,8 @@ pragma solidity >=0.8.15;
 // Goerli 0x8438ba278cF0bf6dc75a844755C7A805BB45984F
 // https://goerli.etherscan.io/address/0x8438ba278cf0bf6dc75a844755c7a805bb45984f#code
 
-import {Script} from "forge-std/Script.sol";
-import {StateBridge} from "src/StateBridge.sol";
+import { Script } from "forge-std/Script.sol";
+import { StateBridge } from "src/StateBridge.sol";
 
 contract DeployStateBridge is Script {
     StateBridge public bridge;
@@ -36,7 +36,7 @@ contract DeployStateBridge is Script {
 
         // https://static.matic.network/network/testnet/mumbai/index.json
         // RoootChainManagerProxy
-        checkpointManagerAddress = address(0xBbD7cBFA79faee899Eaf900F13C9065bF03B1A74);
+        checkpointManagerAddress = address(0x2890bA17EfE978480615e330ecB65333b880928e);
 
         // FxRoot
         fxRootAddress = address(0x3d1d3E34f7fB6D26245E6640E1c50710eFFf15bA);
@@ -49,8 +49,7 @@ contract DeployStateBridge is Script {
         /*//////////////////////////////////////////////////////////////
                                 WORLD ID
         //////////////////////////////////////////////////////////////*/
-        worldIDIdentityManagerAddress =
-            abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
+        worldIDIdentityManagerAddress = abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
         polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
     }

@@ -1,18 +1,23 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
-import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
-import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import { Verifier as SemaphoreVerifier } from "semaphore/contracts/base/Verifier.sol";
+import { FxBaseChildTunnel } from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
 /// @title PolygonWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for new root insertions.
 contract PolygonWorldID is FxBaseChildTunnel {
+    uint256 public latestStateId;
+
+    /// @notice FxBaseChildTunnel: latest sender (always StateBridge)
+    address public latestRootMessageSender;
+
     /// @notice latest data received from Ethereum mainnet
     bytes public latestData;
 
-    /// @notice The address of the StateBridge contract on Ethereum mainnet
+    /// @notice FxBaseChildTunnel: The address of the StateBridge contract on Ethereum mainnet
     address internal _stateBridgeAddress;
 
     /// @notice The amount of time a root is considered as valid on Polygon.
@@ -118,15 +123,24 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @param stateId of the message (unused)
     /// @param sender of the message
     /// @param data newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
-        internal
-        override
-        validateSender(sender)
-    {
+    function _processMessageFromRoot(
+        uint256 stateId,
+        address sender,
+        bytes memory data
+    ) internal override validateSender(sender) {
+        latestStateId = stateId;
+
+        latestRootMessageSender = sender;
+
         if (sender != _stateBridgeAddress) revert SenderIsNotStateBridge();
 
         latestData = data;
 
         receiveRoot(data);
+    }
+
+    /// @notice boilerplate function to satisfy FxChildTunnel inheritance
+    function sendMessageToRoot(bytes memory message) public {
+        _sendMessageToRoot(message);
     }
 }
