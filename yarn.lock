@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@eth-optimism/contracts-bedrock@0.11.3":
-  version "0.11.3"
-  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.11.3.tgz#102c4de7d741f28bf7ee23ac7866660a0eb40a9e"
-  integrity sha512-WOP69fdv7TIfvTD6pEedW0OVwYe39aX2DXqvKDpDhJNF0W9miHZUY7UaNKiSqlE37SuQJpC4VvGfls/gwfL1Mw==
+"@eth-optimism/contracts-bedrock@0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.12.0.tgz#f5023aa5de2c9ad1a264746a7da3a53429a50af4"
+  integrity sha512-uvpJTo0MJELZ8KmoXgyA9Jc+rbJ+4NRqh36ocynG+V7w3iRMHC4pq2oEnkYq9kZDDs4l6531deX1+ridLA5HLQ==
   dependencies:
     "@eth-optimism/core-utils" "^0.12.0"
     "@openzeppelin/contracts" "4.7.3"
@@ -34,10 +34,10 @@
     ethers "^5.7.0"
     hardhat "^2.9.6"
 
-"@eth-optimism/contracts-bedrock@0.12.0":
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.12.0.tgz#f5023aa5de2c9ad1a264746a7da3a53429a50af4"
-  integrity sha512-uvpJTo0MJELZ8KmoXgyA9Jc+rbJ+4NRqh36ocynG+V7w3iRMHC4pq2oEnkYq9kZDDs4l6531deX1+ridLA5HLQ==
+"@eth-optimism/contracts-bedrock@0.12.1":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.12.1.tgz#87f00d1203426dc2b585f5cee254a0a272d8b500"
+  integrity sha512-ttyaefzmQv9cDF+IZUCHAcClQt3+Qq18jvmSs0UNuzOjLgBG5msaBgBY/OSzr8eiYmym+kgYz2D46/AwsZVmSA==
   dependencies:
     "@eth-optimism/core-utils" "^0.12.0"
     "@openzeppelin/contracts" "4.7.3"
@@ -76,13 +76,13 @@
     bufio "^1.0.7"
     chai "^4.3.4"
 
-"@eth-optimism/sdk@^1.9.1":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@eth-optimism/sdk/-/sdk-1.10.1.tgz#843384985f00e443d6ab1252fa566cdd8421773e"
-  integrity sha512-ypoHVeMZo+PHgujsp2n/LTxkAOHM1P4gmDf1JigGNdQlelu9/83eYQPr9BYHDaYETvCi1YKTmjnT+tqqqVGLeg==
+"@eth-optimism/sdk@^1.10.4":
+  version "1.10.4"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/sdk/-/sdk-1.10.4.tgz#a9bb4550e5cb361b53bc624fc6330d3623ccb7a8"
+  integrity sha512-mFbC6PI+N0zh97a9gbQxvbG6YJdoPkqZdLgXmt4Rddc/ilCoh2YGk0nEt1CB1EAYswj32A0W1lSsFzkAUbuHFQ==
   dependencies:
     "@eth-optimism/contracts" "0.5.40"
-    "@eth-optimism/contracts-bedrock" "0.11.3"
+    "@eth-optimism/contracts-bedrock" "0.12.1"
     "@eth-optimism/core-utils" "0.12.0"
     lodash "^4.17.21"
     merkletreejs "^0.2.27"
