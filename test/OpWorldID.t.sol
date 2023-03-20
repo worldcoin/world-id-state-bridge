@@ -175,4 +175,16 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.expectRevert(OpWorldID.ExpiredRoot.selector);
         id.checkValidRoot(newRoot);
     }
+
+    /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
+    function testCanGetTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        vm.assume(SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        uint128 preRootTimestamp = uint128(block.timestamp);
+
+        id = new OpWorldID(actualTreeDepth, preRoot, preRootTimestamp);
+
+        // Test
+        assert(id.getTreeDepth() == actualTreeDepth);
+    }
 }

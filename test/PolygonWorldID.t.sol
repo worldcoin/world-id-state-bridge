@@ -68,6 +68,15 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         vm.label(address(id), "PolygonWorldID");
     }
 
-    /// pending unit tests, hard to test internal functions that depend on Polygon State Bridge functionality
-    /// no straightforward way to vm.prank as the Polygon State Bridge (fxChildTunnel)
+    /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
+    function testCanGetTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        vm.assume(SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        uint128 preRootTimestamp = uint128(block.timestamp);
+
+        id = new PolygonWorldID(actualTreeDepth, fxChild, preRoot, preRootTimestamp, stateBridgeAddress);
+
+        // Test
+        assert(id.getTreeDepth() == actualTreeDepth);
+    }
 }
