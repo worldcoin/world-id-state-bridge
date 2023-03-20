@@ -143,4 +143,16 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
         receiveRoot(data);
     }
+
+    /// @notice Gets the Semaphore tree depth the contract was initialized with.
+    ///
+    /// @return initializedTreeDepth Tree depth.
+    function getTreeDepth()
+        public
+        view
+        virtual
+        returns (uint8 initializedTreeDepth)
+    {
+        return treeDepth;
+    }
 }
