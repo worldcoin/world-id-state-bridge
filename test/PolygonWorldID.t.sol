@@ -2,6 +2,7 @@
 pragma solidity >=0.8.15;
 
 import {PolygonWorldID} from "../src/PolygonWorldID.sol";
+import {SemaphoreTreeDepthValidator} from "../src/utils/SemaphoreTreeDepthValidator.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 
@@ -39,6 +40,16 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     address public stateBridgeAddress = address(0x3333333);
 
     bytes public data;
+
+    function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        uint128 preRootTimestamp = uint128(block.timestamp);
+        vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
+
+        new PolygonWorldID(actualTreeDepth, fxChild, preRoot, preRootTimestamp, stateBridgeAddress);
+    }
+
 
     function setUp() public {
         /// @notice The timestamp of the root of the merkle tree before the first update

@@ -5,6 +5,7 @@ pragma solidity >=0.8.15;
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
 import {OpWorldID} from "../src/OpWorldID.sol";
+import {SemaphoreTreeDepthValidator} from "../src/utils/SemaphoreTreeDepthValidator.sol";
 import {L2CrossDomainMessenger} from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
 import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
 import {CommonTest, Messenger_Initializer} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
@@ -38,6 +39,15 @@ contract OpWorldIDTest is Messenger_Initializer {
 
     /// @notice CrossDomainOwnable3.sol transferOwnership event
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, bool isLocal);
+
+    function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        uint128 preRootTimestamp = uint128(block.timestamp);
+        vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
+
+        new OpWorldID(actualTreeDepth, preRoot, preRootTimestamp);
+    }
 
     function setUp() public override {
         /// @notice CrossDomainOwnable3 setup

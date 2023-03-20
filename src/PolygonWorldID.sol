@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
+import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/packages/contracts/contracts/base/SemaphoreVerifier.sol";
 import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
@@ -9,7 +10,7 @@ import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.so
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for new root insertions.
 contract PolygonWorldID is FxBaseChildTunnel {
-    /// @notice MarkleTree depth
+    /// @notice The depth of the Semaphore merkle tree.
     uint8 internal treeDepth;
 
     /// @notice latest data received from Ethereum mainnet
@@ -29,6 +30,11 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
     /// @notice Emitted when a new root is inserted into the root history.
     event RootAdded(uint256 root, uint128 timestamp);
+
+    /// @notice Thrown when Semaphore tree depth is not supported.
+    ///
+    /// @param depth Passed tree depth.
+    error UnsupportedTreeDepth(uint8 depth);
 
     /// @notice Thrown when attempting to validate a root that has expired.
     error ExpiredRoot();
@@ -50,6 +56,10 @@ contract PolygonWorldID is FxBaseChildTunnel {
     constructor(uint8 _treeDepth, address _fxChild, uint256 preRoot, uint128 preRootTimestamp, address stateBridgeAddress)
         FxBaseChildTunnel(_fxChild)
     {
+        if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
+            revert UnsupportedTreeDepth(_treeDepth);
+        }
+
         treeDepth = _treeDepth;
         _stateBridgeAddress = stateBridgeAddress;
         rootHistory[preRoot] = preRootTimestamp;
