@@ -27,6 +27,15 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
     /// @notice worldID Address
     address public worldIDAddress;
 
+    /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
+    /// to the WorldID Identity Manager contract away
+    /// @param previousOwner The previous owner of the OPWorldID contract
+    /// @param newOwner The new owner of the OPWorldID contract
+    /// @param isLocal Whether the ownership transfer is local (Optimism EOA/contract) or an Ethereum EOA or contract
+    event OwnershipTransferredOptimism(
+        address indexed previousOwner, address indexed newOwner, bool isLocal
+    );
+
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
 
@@ -89,7 +98,7 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
     /// of OpWorldID to another contract on L1 or to a local Optimism EOA
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
-    function transferOwership(address _owner, bool _isLocal) external onlyOwner {
+    function transferOwnershipOptimism(address _owner, bool _isLocal) external onlyOwner {
         bytes memory message;
 
         message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
@@ -100,6 +109,8 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
             message,
             1000000
         );
+
+        emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
     }
 
     /*//////////////////////////////////////////////////////////////
