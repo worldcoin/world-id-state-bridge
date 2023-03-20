@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.15;
 
+import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/packages/contracts/contracts/base/SemaphoreVerifier.sol";
 import {CrossDomainOwnable3} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
@@ -9,7 +10,7 @@ import {CrossDomainOwnable3} from "@eth-optimism/contracts-bedrock/contracts/L2/
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
 contract OpWorldID is CrossDomainOwnable3 {
-    /// @notice MarkleTree depth
+    /// @notice The depth of the Semaphore merkle tree.
     uint8 internal treeDepth;
 
     /// @notice The amount of time a root is considered as valid on Optimism.
@@ -24,6 +25,11 @@ contract OpWorldID is CrossDomainOwnable3 {
     /// @notice Emitted when a new root is inserted into the root history.
     event RootAdded(uint256 root, uint128 timestamp);
 
+    /// @notice Thrown when Semaphore tree depth is not supported.
+    ///
+    /// @param depth Passed tree depth.
+    error UnsupportedTreeDepth(uint8 depth);
+
     /// @notice Thrown when attempting to validate a root that has expired.
     error ExpiredRoot();
 
@@ -35,6 +41,10 @@ contract OpWorldID is CrossDomainOwnable3 {
     /// @param preRoot The root of the merkle tree before the contract was deployed.
     /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
     constructor(uint8 _treeDepth, uint256 preRoot, uint128 preRootTimestamp) {
+        if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
+            revert UnsupportedTreeDepth(_treeDepth);
+        }
+
         rootHistory[preRoot] = preRootTimestamp;
         treeDepth = _treeDepth;
     }
