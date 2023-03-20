@@ -132,8 +132,6 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
         latestRootMessageSender = sender;
 
-        if (sender != _stateBridgeAddress) revert SenderIsNotStateBridge();
-
         latestData = data;
 
         receiveRoot(data);

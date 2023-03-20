@@ -10,17 +10,20 @@ import {IBridge} from "../interfaces/IBridge.sol";
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
 contract WorldIDIdentityManagerImplV1 is Initializable {
     address public stateBridge;
+    mapping(uint256 => bool) public rootHistory;
 
     function initialize(address _stateBridge) public virtual {
         stateBridge = _stateBridge;
     }
 
     function sendRootToStateBridge(uint256 root) public {
+        rootHistory[root] = true;
+
         (bool success,) =
             stateBridge.call(abi.encodeWithSignature("sendRootMultichain(uint256)", root));
     }
 
     function checkValidRoot(uint256 root) public view returns (bool) {
-        return true;
+        return rootHistory[root];
     }
 }
