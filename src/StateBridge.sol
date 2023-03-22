@@ -36,6 +36,16 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
+    /// @notice Emmitted when a root is sent to OpWorldID
+    /// @param root The latest WorldID Identity Manager root.
+    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
+    event RootSentToOptimism(uint256 root, uint128 timestamp);
+
+    /// @notice Emmitted when a root is sent to PolygonWorldID
+    /// @param root The latest WorldID Identity Manager root.
+    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
+    event RootSentToPolygon(uint256 root, uint128 timestamp);
+
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
 
@@ -92,6 +102,8 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
             message,
             1000000
         );
+
+        emit RootSentToOptimism(root, timestamp);
     }
 
     /// @notice Adds functionality to the StateBridge to transfer ownership
@@ -127,6 +139,8 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
+
+        emit RootSentToPolygon(root, timestamp);
     }
 
     /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)
