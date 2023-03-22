@@ -9,17 +9,6 @@ import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.so
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for new root insertions.
 contract PolygonWorldID is FxBaseChildTunnel {
-    uint256 public latestStateId;
-
-    /// @notice FxBaseChildTunnel: latest sender (always StateBridge)
-    address public latestRootMessageSender;
-
-    /// @notice latest data received from Ethereum mainnet
-    bytes public latestData;
-
-    /// @notice FxBaseChildTunnel: The address of the StateBridge contract on Ethereum mainnet
-    address internal _stateBridgeAddress;
-
     /// @notice The amount of time a root is considered as valid on Polygon.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
