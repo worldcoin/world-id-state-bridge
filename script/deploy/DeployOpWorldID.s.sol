@@ -18,11 +18,12 @@ contract DeployOpWorldID is Script {
     OpWorldID public opWorldID;
 
     function run() external {
+        uint8 treeDepth = uint8(vm.envUint("TREE_DEPTH"));
         uint256 opWorldIDKey = vm.envUint("OP_WORLDID_PRIVATE_KEY");
 
         vm.startBroadcast(opWorldIDKey);
 
-        opWorldID = new OpWorldID(preRoot, preRootTimestamp);
+        opWorldID = new OpWorldID(treeDepth, preRoot, preRootTimestamp);
 
         vm.stopBroadcast();
     }
