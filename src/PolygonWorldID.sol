@@ -118,13 +118,13 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @dev calls receiveRoot upon receiving a message from the StateBridge contract
     /// @param stateId of the message (unused)
     /// @param sender of the message
-    /// @param data newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
+    /// @param message newRoot and timestamp encoded as bytes
+    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory message)
         internal
         override
         validateSender(sender)
     {
-        (uint256 newRoot, uint128 timestamp) = abi.decode(data, (uint256, uint128));
+        (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
 
         receiveRoot(newRoot, timestamp);
     }
