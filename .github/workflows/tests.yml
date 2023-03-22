@@ -25,15 +25,18 @@ jobs:
           node-version: "18"
           cache: "npm"
 
+      - name: Setup Environment variables
+        run: echo ""
+
       - name: Install Dependencies
         run: make install
 
       - name: Build Contracts
-        env:
-          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
         run: make build
 
       - name: Run Tests
+        env:
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
         run: make test
 
       - name: Run Benchmarks
