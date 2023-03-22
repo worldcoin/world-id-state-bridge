@@ -23,8 +23,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
     address public checkpointManager;
     address public owner;
 
-    uint256 public newRoot;
-
     /// @notice OpenZeppelin Ownable.sol transferOwnership event
     /// @param previousOwner The previous owner of the StateBridge contract
     /// @param newOwner The new owner of the StateBridge contract
@@ -80,8 +78,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
             crossDomainMessengerAddress
         );
 
-        newRoot = uint256(0x5d972fd7d82c7a734853ce8b9811040cd1459bae3b1f34d7ea557882ff2cab8f);
-
         owner = stateBridge.owner();
         mockWorldID.initialize(address(stateBridge));
     }
@@ -97,11 +93,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         assertEq(vm.activeFork(), mainnetFork);
     }
 
-    function test_sendRootMultichain_succeeds() public {
-        mockWorldID.sendRootToStateBridge(newRoot);
-
-        assertEq(mockWorldID.checkValidRoot(newRoot), true);
-
+    function test_sendRootMultichain_succeeds(uint256 newRoot) public {
         uint128 timestamp = uint128(block.timestamp);
 
         vm.expectEmit(true, true, true, true);
@@ -109,6 +101,10 @@ contract StateBridgeTest is PRBTest, StdCheats {
         emit RootSentToOptimism(newRoot, timestamp);
 
         emit RootSentToPolygon(newRoot, timestamp);
+
+        mockWorldID.sendRootToStateBridge(newRoot);
+
+        assertEq(mockWorldID.checkValidRoot(newRoot), true);
     }
 
     /// @notice tests whether the owner of the StateBridge contract can transfer ownership of StateBridge
@@ -149,7 +145,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @notice tests that a root that is not is not a valid root in WorldID Identity Manager contract
     /// can't be sent to the StateBridge
     /// @param notNewRoot A root that is not a valid root in the WorldID Identity Manager contract
-    function test_sendRootMultichain_reverts(uint256 notNewRoot) public {
+    function test_sendRootMultichain_reverts(uint256 newRoot, uint256 notNewRoot) public {
         vm.assume(notNewRoot != newRoot);
 
         mockWorldID.sendRootToStateBridge(newRoot);
