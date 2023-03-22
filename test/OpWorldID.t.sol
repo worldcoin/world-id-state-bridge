@@ -5,6 +5,7 @@ pragma solidity >=0.8.15;
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
 import {OpWorldID} from "../src/OpWorldID.sol";
+import {SemaphoreTreeDepthValidator} from "../src/utils/SemaphoreTreeDepthValidator.sol";
 import {L2CrossDomainMessenger} from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
 import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
 import {CommonTest, Messenger_Initializer} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
@@ -24,6 +25,9 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice The OpWorldID contract
     OpWorldID internal id;
 
+    /// @notice MarkleTree depth
+    uint8 internal treeDepth = 16;
+
     /// @notice The root of the merkle tree before the first update
     uint256 public preRoot = 0x18f43331537ee2af2e3d758d50f72106467c6eea50371dd528d57eb2b856d238;
 
@@ -36,6 +40,15 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice CrossDomainOwnable3.sol transferOwnership event
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, bool isLocal);
 
+    function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        uint128 preRootTimestamp = uint128(block.timestamp);
+        vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
+
+        new OpWorldID(actualTreeDepth, preRoot, preRootTimestamp);
+    }
+
     function setUp() public override {
         /// @notice CrossDomainOwnable3 setup
         super.setUp();
@@ -45,7 +58,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         /// @notice Initialize the OpWorldID contract
         vm.prank(alice);
-        id = new OpWorldID(preRoot, preRootTimestamp);
+        id = new OpWorldID(treeDepth, preRoot, preRootTimestamp);
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
@@ -161,5 +174,17 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.expectRevert(OpWorldID.ExpiredRoot.selector);
         id.checkValidRoot(newRoot);
+    }
+
+    /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
+    function testCanGetTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        vm.assume(SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        uint128 preRootTimestamp = uint128(block.timestamp);
+
+        id = new OpWorldID(actualTreeDepth, preRoot, preRootTimestamp);
+
+        // Test
+        assert(id.getTreeDepth() == actualTreeDepth);
     }
 }
