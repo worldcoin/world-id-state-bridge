@@ -25,9 +25,6 @@ jobs:
           node-version: "18"
           cache: "npm"
 
-      - name: Setup Environment variables
-        run: echo ""
-
       - name: Install Dependencies
         run: make install
 
