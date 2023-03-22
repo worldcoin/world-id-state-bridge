@@ -25,15 +25,12 @@ jobs:
           node-version: "18"
           cache: "npm"
 
-      - name: Set environment variable from secret
-        run: echo "export MAINNET_RPC_URL=${{ secrets.MAINNET_RPC_URL }}" >> $GITHUB_ENV
-
       - name: Install Dependencies
         run: make install
 
       - name: Build Contracts
-      env: 
-    WHO_TO_TRUST: ${{ secrets.SECRET_TOKEN }}
+        env:
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
         run: make build
 
       - name: Run Tests
