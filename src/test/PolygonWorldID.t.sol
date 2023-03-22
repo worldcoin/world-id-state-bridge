@@ -29,9 +29,6 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice fxChild contract address
     address public fxChild = address(0x2222222);
 
-    /// @notice state bridge contract address
-    address public stateBridgeAddress = address(0x3333333);
-
     bytes public data;
 
     function setUp() public {
@@ -41,7 +38,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(alice);
-        id = new PolygonWorldID(fxChild, stateBridgeAddress);
+        id = new PolygonWorldID(fxChild);
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
