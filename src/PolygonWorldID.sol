@@ -46,10 +46,7 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
     /// @notice Initializes the contract with a pre-existing root and timestamp.
     /// @param _fxChild The address of the Polygon PoS child tunnel.
-    /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
-    constructor(address _fxChild, address stateBridgeAddress) FxBaseChildTunnel(_fxChild) {
-        _stateBridgeAddress = stateBridgeAddress;
-    }
+    constructor(address _fxChild) FxBaseChildTunnel(_fxChild) {}
 
     /*//////////////////////////////////////////////////////////////
                                 WORLDID
@@ -109,10 +106,9 @@ contract PolygonWorldID is FxBaseChildTunnel {
     //////////////////////////////////////////////////////////////*/
 
     /// @notice receiveRoot is called by the StateBridge contract which forwards new WorldID roots to Polygon.
-    /// @param data newRoot and timestamp encoded as bytes
-    function receiveRoot(bytes memory data) internal {
-        (uint256 newRoot, uint128 timestamp) = abi.decode(data, (uint256, uint128));
-
+    /// @param newRoot The new root of the WorldID merkle tree.
+    /// @param timestamp The timestamp at which the root was submitted.
+    function receiveRoot(uint256 newRoot, uint128 timestamp) internal {
         rootHistory[newRoot] = timestamp;
 
         emit RootAdded(newRoot, timestamp);
@@ -128,17 +124,8 @@ contract PolygonWorldID is FxBaseChildTunnel {
         override
         validateSender(sender)
     {
-        latestStateId = stateId;
+        (uint256 newRoot, uint128 timestamp) = abi.decode(data, (uint256, uint128));
 
-        latestRootMessageSender = sender;
-
-        latestData = data;
-
-        receiveRoot(data);
-    }
-
-    /// @notice boilerplate function to satisfy FxChildTunnel inheritance
-    function sendMessageToRoot(bytes memory message) public {
-        _sendMessageToRoot(message);
+        receiveRoot(newRoot, timestamp);
     }
 }
