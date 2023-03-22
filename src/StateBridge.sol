@@ -98,7 +98,7 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
     /// of OpWorldID to another contract on L1 or to a local Optimism EOA
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
-    function transferOwnershipOptimism(address _owner, bool _isLocal) external onlyOwner {
+    function transferOwnershipOptimism(address _owner, bool _isLocal) public onlyOwner {
         bytes memory message;
 
         message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
