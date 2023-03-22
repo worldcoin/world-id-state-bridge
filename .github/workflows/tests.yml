@@ -32,6 +32,8 @@ jobs:
         run: make install
 
       - name: Build Contracts
+      env: 
+    WHO_TO_TRUST: ${{ secrets.SECRET_TOKEN }}
         run: make build
 
       - name: Run Tests
