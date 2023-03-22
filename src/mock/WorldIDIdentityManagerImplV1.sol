@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import { IBridge } from "../interfaces/IBridge.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import {IBridge} from "../interfaces/IBridge.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
