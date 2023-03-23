@@ -34,6 +34,17 @@
     ethers "^5.7.0"
     hardhat "^2.9.6"
 
+"@eth-optimism/contracts-bedrock@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.13.0.tgz#25d9e4b504b14814b9e7de17259035d05c82e7e9"
+  integrity sha512-FS7IQJ/6kSOjGvukBA5eaNyd2Y6f3lL/gjw88Znyw/mVPNrbfXY+tKK03WHafsxcGGiF3Otamd2vPfn4AmupWQ==
+  dependencies:
+    "@eth-optimism/core-utils" "^0.12.0"
+    "@openzeppelin/contracts" "4.7.3"
+    "@openzeppelin/contracts-upgradeable" "4.7.3"
+    ethers "^5.7.0"
+    hardhat "^2.9.6"
+
 "@eth-optimism/contracts@0.5.40", "@eth-optimism/contracts@^0.5.39":
   version "0.5.40"
   resolved "https://registry.yarnpkg.com/@eth-optimism/contracts/-/contracts-0.5.40.tgz#d13a04a15ea947a69055e6fc74d87e215d4c936a"
