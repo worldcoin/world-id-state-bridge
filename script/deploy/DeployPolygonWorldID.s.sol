@@ -17,6 +17,8 @@ contract DeployPolygonWorldID is Script {
     PolygonWorldID public polygonWorldId;
     uint256 public privateKey;
 
+    uint8 public treeDepth;
+
     /*//////////////////////////////////////////////////////////////
                                 CONFIG
     //////////////////////////////////////////////////////////////*/
@@ -26,7 +28,7 @@ contract DeployPolygonWorldID is Script {
 
     function setUp() public {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-
+        treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
         stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
     }
 
@@ -36,7 +38,7 @@ contract DeployPolygonWorldID is Script {
     function run() external {
         vm.startBroadcast(privateKey);
 
-        polygonWorldId = new PolygonWorldID(fxChildAddress, stateBridgeAddress);
+        polygonWorldId = new PolygonWorldID(treeDepth, fxChildAddress, stateBridgeAddress);
 
         vm.stopBroadcast();
     }
