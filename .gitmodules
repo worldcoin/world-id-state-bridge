@@ -21,3 +21,6 @@
 [submodule "lib/semaphore-v3"]
 	path = lib/semaphore-v3
 	url = https://github.com/worldcoin/semaphore-v3
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/transmissions11/solmate
