@@ -10,14 +10,13 @@ import {PolygonWorldID} from "../../src/PolygonWorldID.sol";
 
 contract DeployPolygonWorldID is Script {
     address public stateBridgeAddress;
+    address public polygonWorldIDAddress;
 
     // Polygon PoS Mumbai Testnet Child Tunnel
     address public fxChildAddress = address(0xCf73231F28B7331BBe3124B907840A94851f9f11);
 
-    PolygonWorldID public polygonWorldId;
+    PolygonWorldID public polygonWorldID;
     uint256 public privateKey;
-
-    uint8 public treeDepth;
 
     /*//////////////////////////////////////////////////////////////
                                 CONFIG
@@ -28,8 +27,9 @@ contract DeployPolygonWorldID is Script {
 
     function setUp() public {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
+
         stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
+        polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
     }
 
     // Polygon PoS Mainnet Child Tunnel
@@ -38,7 +38,9 @@ contract DeployPolygonWorldID is Script {
     function run() external {
         vm.startBroadcast(privateKey);
 
-        polygonWorldId = new PolygonWorldID(treeDepth, fxChildAddress, stateBridgeAddress);
+        polygonWorldID = PolygonWorldID(polygonWorldIDAddress);
+
+        polygonWorldID.setFxRootTunnel(stateBridgeAddress);
 
         vm.stopBroadcast();
     }

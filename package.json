@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "description": "State bridge between the WorldID Ethereum mainnet deployment and WorldID supported networks",
   "license": "MIT",
+  "type": "module",
   "files": [
     "src/**/*.sol"
   ],
+  "engines": {
+    "node": "^18.0.0"
+  },
   "keywords": [
     "blockchain",
     "ethereum",
@@ -27,7 +31,11 @@
   },
   "dependencies": {
     "@eth-optimism/contracts": "^0.5.39",
-    "@eth-optimism/contracts-bedrock": "0.12.1",
+    "commander": "^10.0.0",
+    "dotenv": "^16.0.3",
+    "ethers": "^6.0.8",
+    "ora": "^6.1.2",
+    "@eth-optimism/contracts-bedrock": "^0.13.1",
     "@eth-optimism/sdk": "^1.10.4",
     "prettier": "^2.8.4",
     "solhint": "^3.4.0"
