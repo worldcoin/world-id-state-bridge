@@ -49,7 +49,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
         vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
 
-        new OpWorldID(actualTreeDepth, preRoot, preRootTimestamp);
+        new OpWorldID(actualTreeDepth);
     }
 
     function setUp() public override {
@@ -187,9 +187,8 @@ contract OpWorldIDTest is Messenger_Initializer {
     function testCanGetTreeDepth(uint8 actualTreeDepth) public {
         // Setup
         vm.assume(SemaphoreTreeDepthValidator.validate(actualTreeDepth));
-        uint128 preRootTimestamp = uint128(block.timestamp);
 
-        id = new OpWorldID(actualTreeDepth, preRoot, preRootTimestamp);
+        id = new OpWorldID(actualTreeDepth);
 
         // Test
         assert(id.getTreeDepth() == actualTreeDepth);
