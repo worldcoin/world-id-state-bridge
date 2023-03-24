@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
+import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
+import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
 contract MockOpPolygonWorldID {
+    /// @notice The depth of the Semaphore merkle tree.
+    uint8 internal treeDepth = 16;
+
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -69,15 +73,15 @@ contract MockOpPolygonWorldID {
         uint256 externalNullifierHash,
         uint256[8] calldata proof
     ) public view {
-        uint256[4] memory publicSignals = [root, nullifierHash, signalHash, externalNullifierHash];
-
         if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(
-                [proof[0], proof[1]],
-                [[proof[2], proof[3]], [proof[4], proof[5]]],
-                [proof[6], proof[7]],
-                publicSignals
-            );
+            semaphoreVerifier.verifyProof(root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth);
         }
+    }
+
+    /// @notice Gets the Semaphore tree depth the contract was initialized with.
+    ///
+    /// @return initializedTreeDepth Tree depth.
+    function getTreeDepth() public view virtual returns (uint8 initializedTreeDepth) {
+        return treeDepth;
     }
 }

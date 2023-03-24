@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/packages/contracts/contracts/base/SemaphoreVerifier.sol";
-import {CrossDomainOwnable3} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
+import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
+import { CrossDomainOwnable3 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
@@ -94,28 +94,14 @@ contract OpWorldID is CrossDomainOwnable3 {
         uint256[8] calldata proof
     ) public view {
         if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(
-<<<<<<< HEAD
-                [proof[0], proof[1]],
-                [[proof[2], proof[3]], [proof[4], proof[5]]],
-                [proof[6], proof[7]],
-                publicSignals
-=======
-                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
->>>>>>> eeb005db60ae7fb7f9fccd8de64160eeebd2f566
-            );
+            semaphoreVerifier.verifyProof(root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth);
         }
     }
 
     /// @notice Gets the Semaphore tree depth the contract was initialized with.
     ///
     /// @return initializedTreeDepth Tree depth.
-    function getTreeDepth()
-        public
-        view
-        virtual
-        returns (uint8 initializedTreeDepth)
-    {
+    function getTreeDepth() public view virtual returns (uint8 initializedTreeDepth) {
         return treeDepth;
     }
 }

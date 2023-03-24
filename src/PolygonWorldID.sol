@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/packages/contracts/contracts/base/SemaphoreVerifier.sol";
-import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
+import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
+import { FxBaseChildTunnel } from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
 /// @title PolygonWorldID
 /// @author Worldcoin
@@ -49,9 +49,7 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
     /// @param _fxChild The address of the Polygon PoS child tunnel.
     /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
-    constructor(uint8 _treeDepth, address _fxChild, address stateBridgeAddress)
-        FxBaseChildTunnel(_fxChild)
-    {
+    constructor(uint8 _treeDepth, address _fxChild, address stateBridgeAddress) FxBaseChildTunnel(_fxChild) {
         if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
             revert UnsupportedTreeDepth(_treeDepth);
         }
@@ -102,9 +100,7 @@ contract PolygonWorldID is FxBaseChildTunnel {
         uint256[8] calldata proof
     ) public view {
         if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(
-                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
-            );
+            semaphoreVerifier.verifyProof(root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth);
         }
     }
 
@@ -125,11 +121,11 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @param stateId of the message (unused)
     /// @param sender of the message
     /// @param data newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
-        internal
-        override
-        validateSender(sender)
-    {
+    function _processMessageFromRoot(
+        uint256 stateId,
+        address sender,
+        bytes memory data
+    ) internal override validateSender(sender) {
         (uint256 newRoot, uint128 timestamp) = abi.decode(data, (uint256, uint128));
 
         receiveRoot(newRoot, timestamp);
