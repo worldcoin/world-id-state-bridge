@@ -4,8 +4,8 @@ pragma solidity ^0.8.15;
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
-import {OpWorldID} from "../src/OpWorldID.sol";
-import {SemaphoreTreeDepthValidator} from "../src/utils/SemaphoreTreeDepthValidator.sol";
+import {OpWorldID} from "src/OpWorldID.sol";
+import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
 import {L2CrossDomainMessenger} from
     "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
 import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";

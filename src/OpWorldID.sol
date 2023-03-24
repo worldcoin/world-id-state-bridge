@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
-import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
-import { CrossDomainOwnable3 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import {CrossDomainOwnable3} from
+    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
@@ -94,7 +95,9 @@ contract OpWorldID is CrossDomainOwnable3 {
         uint256[8] calldata proof
     ) public view {
         if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth);
+            semaphoreVerifier.verifyProof(
+                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
+            );
         }
     }
 

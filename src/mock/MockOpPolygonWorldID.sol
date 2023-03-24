@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
-import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
+import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
@@ -74,7 +74,9 @@ contract MockOpPolygonWorldID {
         uint256[8] calldata proof
     ) public view {
         if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth);
+            semaphoreVerifier.verifyProof(
+                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
+            );
         }
     }
 
