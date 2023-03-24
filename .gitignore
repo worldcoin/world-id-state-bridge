@@ -9,11 +9,12 @@
 **/node_modules
 **/out
 node_modules
-
+.vscode
 
 # files
 *.env
 *.log
+script/.deploy-config.json
 .DS_Store
 .pnp.*
 yarn-debug.log*

@@ -1,4 +1,4 @@
-pragma solidity >=0.8.15;
+pragma solidity ^0.8.15;
 
 /// @notice Interface for the CrossDomainOwnable contract
 /// @dev Adds functionality to the StateBridge to transfer ownership

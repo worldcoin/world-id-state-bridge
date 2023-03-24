@@ -1,76 +1,62 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.15;
+pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {ICrossDomainMessenger} from
+    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {IBridge} from "./interfaces/IBridge.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
-import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
-import {Initializable} from "openzeppelin-contracts/proxy/utils/Initializable.sol";
-import {UUPSUpgradeable} from "openzeppelin-contracts/proxy/utils/UUPSUpgradeable.sol";
+import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
-contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeable {
-    /// @notice The owner of the contract
-    address public owner;
+contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
+    /// @notice boilerplate property to satisfy FxBaseRootTunnel inheritance (not going to be used)
+    bytes public latestData;
 
     /// @notice The address of the OPWorldID contract on Optimism
     address public opWorldIDAddress;
 
-    /// @notice The address of the PolygonWorldID contract on Polygon
-    address public polygonWorldIDAddress;
-
     /// @notice address for Optimism's Ethereum mainnet Messenger contract
     address internal crossDomainMessengerAddress;
 
-    /// @notice Interface for checkValidRoot within the WorldID Identity Manager contract
-    IWorldIDIdentityManager public worldID;
+    /// @notice Interface for checkVlidRoot within the WorldID Identity Manager contract
+    IWorldIDIdentityManager internal worldID;
+
+    /// @notice worldID Address
+    address public worldIDAddress;
 
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
 
-    /// @notice Emmited when the sender is not the owner of the contract
-    error Unauthorized();
-
-    /// @notice Modifier to restrict access to the owner of the contract
-    modifier onlyOwner() {
-        if (msg.sender != owner) {
-            revert Unauthorized();
-        }
-        _;
-    }
-
     /// @notice constructor
     /// @param _checkpointManager address of the checkpoint manager contract
     /// @param _fxRoot address of the fxRoot contract (Goerli or Mainnet)
-    constructor(address _checkpointManager, address _fxRoot) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
-        _disableInitializers();
-    }
-
-    /// @notice Sets the addresses for all the WorldID target chains
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
-    function initialize(address _worldIDIdentityManager, address _opWorldIDAddress, address _crossDomainMessenger)
-        public
-        virtual
-        reinitializer(1)
-    {
-        owner = msg.sender;
+    constructor(
+        address _checkpointManager,
+        address _fxRoot,
+        address _worldIDIdentityManager,
+        address _opWorldIDAddress,
+        address _crossDomainMessenger
+    ) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
         opWorldIDAddress = _opWorldIDAddress;
+        worldIDAddress = _worldIDIdentityManager;
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
-        setFxChildTunnel(_opWorldIDAddress);
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
-    function sendRootMultichain(uint256 root) external {
+    function sendRootMultichain(uint256 root) public {
         // If the root is not a valid root in the canonical WorldID Identity Manager contract, revert
         // comment out for mock deployments
-        // if (!worldID.checkValidRoot(root)) revert InvalidRoot();
+
+        if (!worldID.checkValidRoot(root)) revert InvalidRoot();
 
         uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
@@ -120,12 +106,6 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
                                 POLYGON
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Send message to Polygon's StateChild contract
-    /// @param message bytes to send to Polygon
-    function sendMessageToChild(bytes memory message) public {
-        _sendMessageToChild(message);
-    }
-
     /// @notice Sends root and timestamp to Polygon's StateChild contract (PolygonWorldID)
     /// @param root The latest WorldID Identity Manager root to be sent to Polygon
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root
@@ -134,16 +114,12 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Initializable, UUPSUpgradeabl
 
         message = abi.encode(root, timestamp);
 
+        /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
     }
 
-    /// @notice boilerplate function to satisfy the FxBaseRootTunnel interface (not going to be used)
-    function _processMessageFromChild(bytes memory message) internal virtual override {}
-
-    /*//////////////////////////////////////////////////////////////
-                             UPGRADEABILITY
-    //////////////////////////////////////////////////////////////*/
-
-    ///@dev required by the OZ UUPS module
-    function _authorizeUpgrade(address newImplementation) internal virtual override onlyOwner {}
+    /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)
+    function _processMessageFromChild(bytes memory data) internal override {
+        latestData = data;
+    }
 }

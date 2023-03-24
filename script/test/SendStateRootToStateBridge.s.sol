@@ -1,32 +1,42 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.15;
+pragma solidity ^0.8.15;
 
 // demo deployments
 
 import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerImplV1} from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
+import {IWorldID} from "../../src/interfaces/IWorldID.sol";
+import {console2} from "forge-std/console2.sol";
 
-/// @notice Initializes the StateBridge contract
-contract InitializeOpWorldID is Script {
-    address public mockWorldIDAddress;
+/// @notice Sends the a WorldID state root to the state bridge
+contract SendStateRootToStateBridge is Script {
+    address public worldIDAddress;
+    uint256 public newRoot;
 
-    uint256 public immutable postRoot;
+    IWorldID public worldID;
 
-    WorldIDIdentityManagerImplV1 public worldID;
+    uint256 public privateKey;
 
-    constructor() {
-        mockWorldIDAddress = address(0x206d2C6A7A600BC6bD3A26A8A12DfFb64698C23C);
-        postRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
+    function setUp() public {
+        /*//////////////////////////////////////////////////////////////
+                                 CONFIG
+        //////////////////////////////////////////////////////////////*/
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/script/.deploy-config.json");
+        string memory json = vm.readFile(path);
+
+        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+        worldIDAddress = abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
+        newRoot = abi.decode(vm.parseJson(json, ".newRoot"), (uint256));
+
+        vm.label(worldIDAddress, "WorldIDIdentityManagerImplV1");
     }
 
     function run() public {
-        uint256 worldIDKey = vm.envUint("WORLDID_PRIVATE_KEY");
+        vm.startBroadcast(privateKey);
 
-        vm.startBroadcast(worldIDKey);
+        worldID = IWorldID(worldIDAddress);
 
-        worldID = WorldIDIdentityManagerImplV1(mockWorldIDAddress);
-
-        worldID.sendRootToStateBridge(postRoot);
+        worldID.sendRootToStateBridge(newRoot);
 
         vm.stopBroadcast();
     }

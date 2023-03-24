@@ -6,12 +6,12 @@ pragma solidity ^0.8.15;
 // https://goerli-optimism.etherscan.io/address/0x09a02586daf43ca837b45f34dc2661d642b8da15#code
 
 import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "../../src/OpWorldID.sol";
+import {MockOpPolygonWorldID} from "../../src/mock/MockOpPolygonWorldID.sol";
 
 // Optimism Goerli Testnet ChainID = 420
 
-contract DeployOpWorldID is Script {
-    OpWorldID public opWorldID;
+contract DeployMockOpPolygonWorldID is Script {
+    MockOpPolygonWorldID public opPolygonWorldID;
 
     /*//////////////////////////////////////////////////////////////
                                  CONFIG
@@ -21,12 +21,11 @@ contract DeployOpWorldID is Script {
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-    uint8 public treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
 
     function run() external {
         vm.startBroadcast(privateKey);
 
-        opWorldID = new OpWorldID(treeDepth);
+        opPolygonWorldID = new MockOpPolygonWorldID();
 
         vm.stopBroadcast();
     }

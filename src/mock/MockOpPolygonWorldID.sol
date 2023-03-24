@@ -1,18 +1,16 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
-import {CrossDomainOwnable3} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
-contract OpWorldID is CrossDomainOwnable3 {
+contract MockOpPolygonWorldID {
     /// @notice The depth of the Semaphore merkle tree.
-    uint8 internal treeDepth;
+    uint8 internal treeDepth = 16;
 
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
@@ -26,11 +24,6 @@ contract OpWorldID is CrossDomainOwnable3 {
     /// @notice Emitted when a new root is inserted into the root history.
     event RootAdded(uint256 root, uint128 timestamp);
 
-    /// @notice Thrown when Semaphore tree depth is not supported.
-    ///
-    /// @param depth Passed tree depth.
-    error UnsupportedTreeDepth(uint8 depth);
-
     /// @notice Thrown when attempting to validate a root that has expired.
     error ExpiredRoot();
 
@@ -38,21 +31,12 @@ contract OpWorldID is CrossDomainOwnable3 {
     ///         history.
     error NonExistentRoot();
 
-    /// @notice Initializes the contract with a pre-existing root and timestamp.
-    /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
-    constructor(uint8 _treeDepth) {
-        if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
-            revert UnsupportedTreeDepth(_treeDepth);
-        }
-
-        treeDepth = _treeDepth;
-    }
-
     /// @notice receiveRoot is called by the state bridge contract which forwards new WorldID roots to Optimism.
     /// @param newRoot new valid root with ROOT_HISTORY_EXPIRY validity
     /// @param timestamp Ethereum block timestamp of the new Semaphore root
-    function receiveRoot(uint256 newRoot, uint128 timestamp) external onlyOwner {
-        rootHistory[newRoot] = timestamp;
+    function receiveRoot(uint256 newRoot, uint128 timestamp) external {
+        // when running locally on Anvil, block.timestamp will always be 0, so we hardcode 100
+        rootHistory[newRoot] = 100;
 
         emit RootAdded(newRoot, timestamp);
     }
@@ -63,11 +47,6 @@ contract OpWorldID is CrossDomainOwnable3 {
     /// @param root The root of a given identity group.
     function checkValidRoot(uint256 root) public view returns (bool) {
         uint128 rootTimestamp = rootHistory[root];
-
-        // A root is no longer valid if it has expired.
-        if (block.timestamp - rootTimestamp > ROOT_HISTORY_EXPIRY) {
-            revert ExpiredRoot();
-        }
 
         // A root does not exist if it has no associated timestamp.
         if (rootTimestamp == 0) {

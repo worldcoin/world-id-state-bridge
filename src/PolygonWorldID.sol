@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.15;
+pragma solidity ^0.8.15;
 
 import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/packages/contracts/contracts/base/SemaphoreVerifier.sol";
+import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
 /// @title PolygonWorldID
@@ -13,10 +13,7 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @notice The depth of the Semaphore merkle tree.
     uint8 internal treeDepth;
 
-    /// @notice latest data received from Ethereum mainnet
-    bytes public latestData;
-
-    /// @notice The address of the StateBridge contract on Ethereum mainnet
+    /// @notice FxBaseChildTunnel: The address of the StateBridge contract on Ethereum mainnet
     address internal _stateBridgeAddress;
 
     /// @notice The amount of time a root is considered as valid on Polygon.
@@ -49,11 +46,10 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @notice Connects contract to the Polygon PoS child tunnel.
 
     /// @notice Initializes the contract with a pre-existing root and timestamp.
+    /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
     /// @param _fxChild The address of the Polygon PoS child tunnel.
-    /// @param preRoot The root of the merkle tree before the contract was deployed.
-    /// @param preRootTimestamp The timestamp at which the pre-existing root was submitted.
     /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
-    constructor(uint8 _treeDepth, address _fxChild, uint256 preRoot, uint128 preRootTimestamp, address stateBridgeAddress)
+    constructor(uint8 _treeDepth, address _fxChild, address stateBridgeAddress)
         FxBaseChildTunnel(_fxChild)
     {
         if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
@@ -62,7 +58,6 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
         treeDepth = _treeDepth;
         _stateBridgeAddress = stateBridgeAddress;
-        rootHistory[preRoot] = preRootTimestamp;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -118,10 +113,9 @@ contract PolygonWorldID is FxBaseChildTunnel {
     //////////////////////////////////////////////////////////////*/
 
     /// @notice receiveRoot is called by the StateBridge contract which forwards new WorldID roots to Polygon.
-    /// @param data newRoot and timestamp encoded as bytes
-    function receiveRoot(bytes memory data) internal {
-        (uint256 newRoot, uint128 timestamp) = abi.decode(data, (uint256, uint128));
-
+    /// @param newRoot The new root of the WorldID merkle tree.
+    /// @param timestamp The timestamp at which the root was submitted.
+    function receiveRoot(uint256 newRoot, uint128 timestamp) internal {
         rootHistory[newRoot] = timestamp;
 
         emit RootAdded(newRoot, timestamp);
@@ -131,28 +125,21 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @dev calls receiveRoot upon receiving a message from the StateBridge contract
     /// @param stateId of the message (unused)
     /// @param sender of the message
-    /// @param data newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
+    /// @param message newRoot and timestamp encoded as bytes
+    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory message)
         internal
         override
         validateSender(sender)
     {
-        if (sender != _stateBridgeAddress) revert SenderIsNotStateBridge();
+        (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
 
-        latestData = data;
-
-        receiveRoot(data);
+        receiveRoot(newRoot, timestamp);
     }
 
     /// @notice Gets the Semaphore tree depth the contract was initialized with.
     ///
     /// @return initializedTreeDepth Tree depth.
-    function getTreeDepth()
-        public
-        view
-        virtual
-        returns (uint8 initializedTreeDepth)
-    {
+    function getTreeDepth() public view virtual returns (uint8 initializedTreeDepth) {
         return treeDepth;
     }
 }
