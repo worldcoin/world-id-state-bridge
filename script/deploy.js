@@ -503,21 +503,6 @@ async function mockLocalDeployment(config) {
   await checkLocalValidRoot(config);
 }
 
-async function upgrade(config) {
-  dotenv.config();
-
-  await getPrivateKey(config);
-  await getPolygonRpcUrl(config);
-  await getOptimismRpcUrl(config);
-  await getEthereumRpcUrl(config);
-  await getPolygonProvider(config);
-  await getOptimismProvider(config);
-  await getEthereumProvider(config);
-  await getPolygonWallet(config);
-  await getOptimismWallet(config);
-  await getEthereumWallet(config);
-}
-
 async function main() {
   const program = new Command();
 
@@ -557,16 +542,6 @@ async function main() {
       await mockLocalDeployment(config);
       await saveConfiguration(config);
     });
-
-  // program
-  //   .command("upgrade")
-  //   .description("Interactively upgrades the deployed WorldID identity manager.")
-  //   .action(async () => {
-  //     const options = program.opts();
-  //     let config = await loadConfiguration(options.config);
-  //     await buildAndRunPlan(buildUpgradeActionPlan, config);
-  //     await saveConfiguration(config);
-  //   });
 
   await program.parseAsync();
 }
