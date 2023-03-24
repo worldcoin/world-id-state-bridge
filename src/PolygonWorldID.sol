@@ -113,8 +113,9 @@ contract PolygonWorldID is FxBaseChildTunnel {
     //////////////////////////////////////////////////////////////*/
 
     /// @notice receiveRoot is called by the StateBridge contract which forwards new WorldID roots to Polygon.
-    /// @param data newRoot and timestamp encoded as bytes
-    function receiveRoot(uint256 root, uint128 timestamp) internal {
+    /// @param newRoot The new root of the WorldID merkle tree.
+    /// @param timestamp The timestamp at which the root was submitted.
+    function receiveRoot(uint256 newRoot, uint128 timestamp) internal {
         rootHistory[newRoot] = timestamp;
 
         emit RootAdded(newRoot, timestamp);
@@ -124,13 +125,13 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @dev calls receiveRoot upon receiving a message from the StateBridge contract
     /// @param stateId of the message (unused)
     /// @param sender of the message
-    /// @param data newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory data)
+    /// @param message newRoot and timestamp encoded as bytes
+    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory message)
         internal
         override
         validateSender(sender)
     {
-        (uint256 newRoot, uint128 timestamp) = abi.decode(data, (uint256, uint128));
+        (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
 
         receiveRoot(newRoot, timestamp);
     }
