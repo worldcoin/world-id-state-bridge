@@ -138,6 +138,15 @@ async function getPolygonscanApiKey(config) {
   }
 }
 
+async function getTreeDepth(config) {
+  if (!config.treeDepth) {
+    config.treeDepth = process.env.TREE_DEPTH;
+  }
+  if (!config.treeDepth) {
+    config.treeDepth = await ask("Enter WorldID tree depth: ");
+  }
+}
+
 async function getStateBridgeAddress(config) {
   if (!config.stateBridgeAddress) {
     config.stateBridgeAddress = process.env.STATE_BRIDGE_ADDRESS;
@@ -432,7 +441,6 @@ async function deployment(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
-  await getPreRootTimestamp(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
   await deployPolygonWorldID(config);
@@ -457,6 +465,7 @@ async function mockDeployment(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
+  await getTreeDepth(config);
   await saveConfiguration(config);
   await deployMockWorldID(config);
   await deployOptimismWorldID(config);
@@ -486,6 +495,7 @@ async function mockLocalDeployment(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
+  await getTreeDepth(config);
   await saveConfiguration(config);
   await deployMockWorldID(config);
   await deployMockOpPolygonWorldID(config);

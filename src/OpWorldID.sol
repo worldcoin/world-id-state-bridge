@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {Verifier as SemaphoreVerifier} from "semaphore/contracts/base/Verifier.sol";
-import {CrossDomainOwnable3} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreVerifier} from "semaphore/packages/contracts/contracts/base/SemaphoreVerifier.sol";
+import {CrossDomainOwnable3} from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title OpWorldID
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
 contract OpWorldID is CrossDomainOwnable3 {
+    /// @notice The depth of the Semaphore merkle tree.
+    uint8 internal treeDepth;
+
     /// @notice The amount of time a root is considered as valid on Optimism.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -22,12 +25,27 @@ contract OpWorldID is CrossDomainOwnable3 {
     /// @notice Emitted when a new root is inserted into the root history.
     event RootAdded(uint256 root, uint128 timestamp);
 
+    /// @notice Thrown when Semaphore tree depth is not supported.
+    ///
+    /// @param depth Passed tree depth.
+    error UnsupportedTreeDepth(uint8 depth);
+
     /// @notice Thrown when attempting to validate a root that has expired.
     error ExpiredRoot();
 
     /// @notice Thrown when attempting to validate a root that has yet to be added to the root
     ///         history.
     error NonExistentRoot();
+
+    /// @notice Initializes the contract with a pre-existing root and timestamp.
+    /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
+    constructor(uint8 _treeDepth) {
+        if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
+            revert UnsupportedTreeDepth(_treeDepth);
+        }
+
+        treeDepth = _treeDepth;
+    }
 
     /// @notice receiveRoot is called by the state bridge contract which forwards new WorldID roots to Optimism.
     /// @param newRoot new valid root with ROOT_HISTORY_EXPIRY validity
@@ -75,15 +93,29 @@ contract OpWorldID is CrossDomainOwnable3 {
         uint256 externalNullifierHash,
         uint256[8] calldata proof
     ) public view {
-        uint256[4] memory publicSignals = [root, nullifierHash, signalHash, externalNullifierHash];
-
         if (checkValidRoot(root)) {
             semaphoreVerifier.verifyProof(
+<<<<<<< HEAD
                 [proof[0], proof[1]],
                 [[proof[2], proof[3]], [proof[4], proof[5]]],
                 [proof[6], proof[7]],
                 publicSignals
+=======
+                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
+>>>>>>> eeb005db60ae7fb7f9fccd8de64160eeebd2f566
             );
         }
+    }
+
+    /// @notice Gets the Semaphore tree depth the contract was initialized with.
+    ///
+    /// @return initializedTreeDepth Tree depth.
+    function getTreeDepth()
+        public
+        view
+        virtual
+        returns (uint8 initializedTreeDepth)
+    {
+        return treeDepth;
     }
 }
