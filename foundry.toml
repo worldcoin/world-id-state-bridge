@@ -26,6 +26,7 @@ remappings = [
   "src/=src/",
   "semaphore/=lib/semaphore-v3/packages/contracts/contracts/",
   "solmate/=lib/solmate/",
+  "@rari-capital/solmate/=lib/solmate/",
   "@eth-optimism/contracts/=node_modules/@eth-optimism/contracts/",
   "@eth-optimism/contracts-bedrock/=node_modules/@eth-optimism/contracts-bedrock/",
   "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",

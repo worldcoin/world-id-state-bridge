@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title OpWorldID
