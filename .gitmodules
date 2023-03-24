@@ -21,3 +21,6 @@
 	path = lib/contracts
 	url = https://github.com/fx-portal/contracts
 	branch = v1.0.5
+[submodule "lib/semaphore-v3"]
+	path = lib/semaphore-v3
+	url = https://github.com/worldcoin/semaphore-v3
