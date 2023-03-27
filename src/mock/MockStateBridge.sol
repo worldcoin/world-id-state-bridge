@@ -3,6 +3,7 @@ pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
 import {IOpWorldID} from "../interfaces/IOpWorldID.sol";
+import {MockOpPolygonWorldID} from "./MockOpPolygonWorldID.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
 
@@ -49,10 +50,6 @@ contract MockStateBridge is Ownable {
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     function _sendRootToMockOpPolygonWorldID(uint256 root, uint128 timestamp) internal {
-        bytes memory message;
-
-        message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
-
-        mockOpPolygonWorldIDAddress.call(message);
+        MockOpPolygonWorldID(mockOpPolygonWorldIDAddress).receiveRoot(root, timestamp);
     }
 }

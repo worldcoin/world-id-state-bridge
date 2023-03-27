@@ -37,13 +37,9 @@ contract TransferOwnershipOfOpWorldIDMainnet is Script {
 
     constructor() {
         /*//////////////////////////////////////////////////////////////
-                                 GOERLI
+                                MAINNET 
         //////////////////////////////////////////////////////////////*/
-        // crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
-        /*//////////////////////////////////////////////////////////////
-                                MAINNET (TBD)
-        //////////////////////////////////////////////////////////////*/
-        crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+        crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
     }
 
     function run() public {

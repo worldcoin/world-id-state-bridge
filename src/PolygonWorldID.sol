@@ -13,9 +13,6 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @notice The depth of the Semaphore merkle tree.
     uint8 internal treeDepth;
 
-    /// @notice FxBaseChildTunnel: The address of the StateBridge contract on Ethereum mainnet
-    address internal _stateBridgeAddress;
-
     /// @notice The amount of time a root is considered as valid on Polygon.
     uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
 
@@ -48,16 +45,12 @@ contract PolygonWorldID is FxBaseChildTunnel {
     /// @notice Initializes the contract with a pre-existing root and timestamp.
     /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
     /// @param _fxChild The address of the Polygon PoS child tunnel.
-    /// @param stateBridgeAddress The address of the StateBridge contract on Ethereum mainnet.
-    constructor(uint8 _treeDepth, address _fxChild, address stateBridgeAddress)
-        FxBaseChildTunnel(_fxChild)
-    {
+    constructor(uint8 _treeDepth, address _fxChild) FxBaseChildTunnel(_fxChild) {
         if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
             revert UnsupportedTreeDepth(_treeDepth);
         }
 
         treeDepth = _treeDepth;
-        _stateBridgeAddress = stateBridgeAddress;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -123,10 +116,10 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
     /// @notice internal function used to receive messages from the StateBridge contract
     /// @dev calls receiveRoot upon receiving a message from the StateBridge contract
-    /// @param stateId of the message (unused)
+    /// uint256 unused placeholder variable for stateId, fxChild fx signature dependency
     /// @param sender of the message
     /// @param message newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(uint256 stateId, address sender, bytes memory message)
+    function _processMessageFromRoot(uint256, address sender, bytes memory message)
         internal
         override
         validateSender(sender)
