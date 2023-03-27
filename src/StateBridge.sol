@@ -4,14 +4,13 @@ pragma solidity ^0.8.15;
 // Optimism interface for cross domain messaging
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {IBridge} from "./interfaces/IBridge.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
-contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
+contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice boilerplate property to satisfy FxBaseRootTunnel inheritance (not going to be used)
     bytes public latestData;
 
@@ -26,6 +25,25 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
 
     /// @notice worldID Address
     address public worldIDAddress;
+
+    /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
+    /// to the WorldID Identity Manager contract away
+    /// @param previousOwner The previous owner of the OPWorldID contract
+    /// @param newOwner The new owner of the OPWorldID contract
+    /// @param isLocal Whether the ownership transfer is local (Optimism EOA/contract) or an Ethereum EOA or contract
+    event OwnershipTransferredOptimism(
+        address indexed previousOwner, address indexed newOwner, bool isLocal
+    );
+
+    /// @notice Emmitted when a root is sent to OpWorldID
+    /// @param root The latest WorldID Identity Manager root.
+    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
+    event RootSentToOptimism(uint256 root, uint128 timestamp);
+
+    /// @notice Emmitted when a root is sent to PolygonWorldID
+    /// @param root The latest WorldID Identity Manager root.
+    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
+    event RootSentToPolygon(uint256 root, uint128 timestamp);
 
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
@@ -83,13 +101,15 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
             message,
             1000000
         );
+
+        emit RootSentToOptimism(root, timestamp);
     }
 
     /// @notice Adds functionality to the StateBridge to transfer ownership
     /// of OpWorldID to another contract on L1 or to a local Optimism EOA
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
-    function transferOwership(address _owner, bool _isLocal) external onlyOwner {
+    function transferOwnershipOptimism(address _owner, bool _isLocal) public onlyOwner {
         bytes memory message;
 
         message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
@@ -100,6 +120,8 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
             message,
             1000000
         );
+
+        emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -116,10 +138,12 @@ contract StateBridge is IBridge, FxBaseRootTunnel, Ownable {
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
+
+        emit RootSentToPolygon(root, timestamp);
     }
 
     /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)
     function _processMessageFromChild(bytes memory data) internal override {
-        latestData = data;
+        /// WorldID 🌎🆔 State Bridge
     }
 }

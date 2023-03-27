@@ -29,16 +29,12 @@ contract DeployPolygonWorldID is Script {
     function setUp() public {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
         treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
-        stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
     }
-
-    // Polygon PoS Mainnet Child Tunnel
-    // address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
 
     function run() external {
         vm.startBroadcast(privateKey);
 
-        polygonWorldId = new PolygonWorldID(treeDepth, fxChildAddress, stateBridgeAddress);
+        polygonWorldId = new PolygonWorldID(treeDepth, fxChildAddress);
 
         vm.stopBroadcast();
     }

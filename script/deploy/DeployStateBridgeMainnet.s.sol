@@ -35,8 +35,8 @@ contract DeployStateBridge is Script {
         //////////////////////////////////////////////////////////////*/
 
         // https://static.matic.network/network/mainnet/v1/index.json
-        // RoootChainManagerProxy
-        checkpointManagerAddress = address(0xA0c68C638235ee32657e8f720a23ceC1bFc77C77);
+        // RootChainManagerProxy
+        checkpointManagerAddress = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);
         // FxRoot
         fxRootAddress = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
 

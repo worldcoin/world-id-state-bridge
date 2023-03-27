@@ -33,9 +33,6 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice fxChild contract address
     address public fxChild = address(0x2222222);
 
-    /// @notice state bridge contract address
-    address public stateBridgeAddress = address(0x3333333);
-
     bytes public data;
 
     function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
@@ -43,7 +40,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
         vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
 
-        new PolygonWorldID(actualTreeDepth, fxChild, stateBridgeAddress);
+        new PolygonWorldID(actualTreeDepth, fxChild);
     }
 
     function setUp() public {
@@ -51,7 +48,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(alice);
-        id = new PolygonWorldID(treeDepth, fxChild, stateBridgeAddress);
+        id = new PolygonWorldID(treeDepth, fxChild);
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
@@ -63,7 +60,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         // Setup
         vm.assume(SemaphoreTreeDepthValidator.validate(actualTreeDepth));
 
-        id = new PolygonWorldID(actualTreeDepth, fxChild, stateBridgeAddress);
+        id = new PolygonWorldID(actualTreeDepth, fxChild);
 
         // Test
         assert(id.getTreeDepth() == actualTreeDepth);
