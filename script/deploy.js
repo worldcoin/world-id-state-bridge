@@ -269,7 +269,7 @@ async function deployStateBridgeMainnet(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployStateBridgeGoerli.s.sol ran successfully!");
+  spinner.succeed("DeployStateBridgeMainnet.s.sol ran successfully!");
 }
 
 async function deployPolygonWorldID(config) {
