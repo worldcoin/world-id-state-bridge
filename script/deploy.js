@@ -456,6 +456,7 @@ async function deploymentMainnet(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
+  await getTreeDepth(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
   await deployPolygonWorldID(config);
@@ -480,6 +481,7 @@ async function deploymentTestnet(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
+  await getTreeDepth(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
   await deployPolygonWorldID(config);
