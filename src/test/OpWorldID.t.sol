@@ -33,9 +33,6 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice MarkleTree depth
     uint8 internal treeDepth = 16;
 
-    /// @notice The root of the merkle tree after the first update
-    uint256 public newRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
-
     /// @notice OpenZeppelin Ownable.sol transferOwnership event
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
