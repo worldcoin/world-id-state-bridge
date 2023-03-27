@@ -21,11 +21,12 @@ contract DeployOpWorldID is Script {
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint8 public treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
 
     function run() external {
         vm.startBroadcast(privateKey);
 
-        opWorldID = new OpWorldID();
+        opWorldID = new OpWorldID(treeDepth);
 
         vm.stopBroadcast();
     }

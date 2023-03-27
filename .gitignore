@@ -9,7 +9,7 @@
 **/node_modules
 **/out
 node_modules
-
+.vscode
 
 # files
 *.env
