@@ -28,9 +28,6 @@ contract DeployPolygonWorldID is Script {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
     }
 
-    // Polygon PoS Mainnet Child Tunnel
-    // address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
-
     function run() external {
         vm.startBroadcast(privateKey);
 

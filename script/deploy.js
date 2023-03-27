@@ -138,6 +138,15 @@ async function getPolygonscanApiKey(config) {
   }
 }
 
+async function getTreeDepth(config) {
+  if (!config.treeDepth) {
+    config.treeDepth = process.env.TREE_DEPTH;
+  }
+  if (!config.treeDepth) {
+    config.treeDepth = await ask("Enter WorldID tree depth: ");
+  }
+}
+
 async function getStateBridgeAddress(config) {
   if (!config.stateBridgeAddress) {
     config.stateBridgeAddress = process.env.STATE_BRIDGE_ADDRESS;
@@ -239,6 +248,21 @@ async function deployStateBridgeGoerli(config) {
   try {
     const data =
       execSync(`forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployStateBridgeGoerli.s.sol ran successfully!");
+}
+
+async function deployStateBridgeMainnet(config) {
+  const spinner = ora("Deploying State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script script/deploy/DeployStateBridgeMainnet.s.sol --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
@@ -422,7 +446,7 @@ async function checkLocalValidRoot(config) {
   spinner.succeed("checkLocalValidRoot.s.sol ran successfully!");
 }
 
-async function deployment(config) {
+async function deploymentMainnet(config) {
   dotenv.config();
 
   await getPrivateKey(config);
@@ -432,7 +456,30 @@ async function deployment(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
-  await getPreRootTimestamp(config);
+  await saveConfiguration(config);
+  await deployOptimismWorldID(config);
+  await deployPolygonWorldID(config);
+  await getWorldIDIdentityManagerAddress(config);
+  await getOptimismWorldIDAddress(config);
+  await getPolygonWorldIDAddress(config);
+  await saveConfiguration(config);
+  await deployStateBridgeMainnet(config);
+  await getStateBridgeAddress(config);
+  await saveConfiguration(config);
+  await initializePolygonWorldID(config);
+  await transferOwnershipOfOpWorldIDMainnet(config);
+}
+
+async function deploymentTestnet(config) {
+  dotenv.config();
+
+  await getPrivateKey(config);
+  await getEthereumRpcUrl(config);
+  await getOptimismRpcUrl(config);
+  await getPolygonRpcUrl(config);
+  await getEthereumEtherscanApiKey(config);
+  await getOptimismEtherscanApiKey(config);
+  await getPolygonscanApiKey(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
   await deployPolygonWorldID(config);
@@ -457,6 +504,7 @@ async function mockDeployment(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
+  await getTreeDepth(config);
   await saveConfiguration(config);
   await deployMockWorldID(config);
   await deployOptimismWorldID(config);
@@ -486,6 +534,7 @@ async function mockLocalDeployment(config) {
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
+  await getTreeDepth(config);
   await saveConfiguration(config);
   await deployMockWorldID(config);
   await deployMockOpPolygonWorldID(config);
@@ -503,23 +552,23 @@ async function mockLocalDeployment(config) {
   await checkLocalValidRoot(config);
 }
 
-async function upgrade(config) {
-  dotenv.config();
-
-  await getPrivateKey(config);
-  await getPolygonRpcUrl(config);
-  await getOptimismRpcUrl(config);
-  await getEthereumRpcUrl(config);
-  await getPolygonProvider(config);
-  await getOptimismProvider(config);
-  await getEthereumProvider(config);
-  await getPolygonWallet(config);
-  await getOptimismWallet(config);
-  await getEthereumWallet(config);
-}
-
 async function main() {
   const program = new Command();
+
+  program
+    .name("deploy")
+    .description("A CLI interface for deploying the WorldID state bridge on Ethereum mainnet.")
+    .option("--no-config", "Do not use any existing configuration.");
+
+  program
+    .command("deploy")
+    .description("Interactively deploys the WorldID state bridge on Ethereum mainnet.")
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await deploymentMainnet(config);
+      await saveConfiguration(config);
+    });
 
   program
     .name("deploy-testnet")
@@ -532,7 +581,7 @@ async function main() {
     .action(async () => {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
-      await deployment(config);
+      await deploymentTestnet(config);
       await saveConfiguration(config);
     });
 
@@ -557,16 +606,6 @@ async function main() {
       await mockLocalDeployment(config);
       await saveConfiguration(config);
     });
-
-  // program
-  //   .command("upgrade")
-  //   .description("Interactively upgrades the deployed WorldID identity manager.")
-  //   .action(async () => {
-  //     const options = program.opts();
-  //     let config = await loadConfiguration(options.config);
-  //     await buildAndRunPlan(buildUpgradeActionPlan, config);
-  //     await saveConfiguration(config);
-  //   });
 
   await program.parseAsync();
 }
