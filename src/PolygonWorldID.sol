@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
-import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
-import { FxBaseChildTunnel } from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 
 /// @title PolygonWorldID
 /// @author Worldcoin
@@ -95,7 +95,9 @@ contract PolygonWorldID is FxBaseChildTunnel {
         uint256[8] calldata proof
     ) public view {
         if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth);
+            semaphoreVerifier.verifyProof(
+                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
+            );
         }
     }
 
@@ -114,14 +116,14 @@ contract PolygonWorldID is FxBaseChildTunnel {
 
     /// @notice internal function used to receive messages from the StateBridge contract
     /// @dev calls receiveRoot upon receiving a message from the StateBridge contract
-    /// @param uint256 unused placeholder variable for stateId, fxChild fx signature dependency
+    /// uint256 unused placeholder variable for stateId, fxChild fx signature dependency
     /// @param sender of the message
     /// @param message newRoot and timestamp encoded as bytes
-    function _processMessageFromRoot(
-        uint256,
-        address sender,
-        bytes memory message
-    ) internal override validateSender(sender) {
+    function _processMessageFromRoot(uint256, address sender, bytes memory message)
+        internal
+        override
+        validateSender(sender)
+    {
         (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
 
         receiveRoot(newRoot, timestamp);
