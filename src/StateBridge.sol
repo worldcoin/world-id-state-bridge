@@ -93,6 +93,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
+        // The `encodeCall` function is strongly typed, so this checks that we are passing the
+        // correct data to the optimism bridge.
         message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
 
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
@@ -112,6 +114,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function transferOwnershipOptimism(address _owner, bool _isLocal) public onlyOwner {
         bytes memory message;
 
+        // The `encodeCall` function is strongly typed, so this checks that we are passing the
+        // correct data to the optimism bridge.
         message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
 
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
@@ -134,6 +138,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function _sendRootToPolygon(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
+        // This encoding is specified as the encoding of the `bytes` received by
+        // `_processMessageFromRoot` in the Polygon state bridge. Specifically, it requires an ABI-
+        // encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)`.
         message = abi.encode(root, timestamp);
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
