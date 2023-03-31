@@ -2,7 +2,6 @@
 pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
-import {IOpWorldID} from "../interfaces/IOpWorldID.sol";
 import {MockOpPolygonWorldID} from "./MockOpPolygonWorldID.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";

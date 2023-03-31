@@ -5,6 +5,7 @@ pragma solidity ^0.8.15;
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
 import {OpWorldID} from "src/OpWorldID.sol";
+import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
 import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
 import {L2CrossDomainMessenger} from
     "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
@@ -151,7 +152,7 @@ contract OpWorldIDTest is Messenger_Initializer {
             abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
         );
 
-        vm.expectRevert(OpWorldID.NonExistentRoot.selector);
+        vm.expectRevert(WorldIDBridge.NonExistentRoot.selector);
         id.checkValidRoot(randomRoot);
     }
 
@@ -176,7 +177,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         );
         vm.warp(block.timestamp + 8 days);
 
-        vm.expectRevert(OpWorldID.ExpiredRoot.selector);
+        vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         id.checkValidRoot(newRoot);
     }
 

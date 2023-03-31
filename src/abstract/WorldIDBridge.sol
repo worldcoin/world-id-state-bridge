@@ -5,7 +5,6 @@ import {IWorldID} from "../interfaces/IWorldID.sol";
 
 import {SemaphoreTreeDepthValidator} from "../utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 /// @title Bridged World ID
 /// @author Worldcoin
@@ -16,7 +15,7 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 ///      code reuse.
 /// @dev This contract is very explicitly not able to be instantiated. Do not un-mark it as
 ///      `abstract`.
-abstract contract WorldIDBridge is IWorldID, Ownable {
+abstract contract WorldIDBridge is IWorldID {
     ///////////////////////////////////////////////////////////////////////////////
     ///                              CONTRACT DATA                              ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -70,7 +69,9 @@ abstract contract WorldIDBridge is IWorldID, Ownable {
     /// @notice Emitted when a new root is received by the contract.
     ///
     /// @param root The value of the root that was added.
-    event RootAdded(uint256 root);
+    /// @param supersedeTimestamp The L1 time at which `root` became the latest root, and the prior
+    ///        latest root became a member of the root history.
+    event RootAdded(uint256 root, uint128 supersedeTimestamp);
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               CONSTRUCTION                              ///
@@ -79,7 +80,7 @@ abstract contract WorldIDBridge is IWorldID, Ownable {
     /// @notice Constructs a new instance of the state bridge.
     ///
     /// @param _treeDepth The depth of the identities merkle tree.
-    constructor(uint8 _treeDepth) Ownable() {
+    constructor(uint8 _treeDepth) {
         if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
             revert UnsupportedTreeDepth(_treeDepth);
         }
@@ -93,6 +94,8 @@ abstract contract WorldIDBridge is IWorldID, Ownable {
 
     /// @notice This function is called by the state bridge contract when it forwards a new root to
     ///         the bridged WorldID.
+    /// @dev Intended to be called from a privilege-checked implementation of `receiveRoot` or an
+    ///      equivalent operation.
     ///
     /// @param newRoot The value of the new root.
     /// @param supersedeTimestamp The value of the L1 timestamp at the time that `newRoot` became
@@ -101,7 +104,7 @@ abstract contract WorldIDBridge is IWorldID, Ownable {
     ///
     /// @custom:reverts CannotOverwriteRoot If the root already exists in the root history.
     /// @custom:reverts string If the caller is not the owner.
-    function receiveRoot(uint256 newRoot, uint128 supersedeTimestamp) external onlyOwner {
+    function _receiveRoot(uint256 newRoot, uint128 supersedeTimestamp) internal {
         uint256 existingTimestamp = rootHistory[newRoot];
 
         if (existingTimestamp != nullRootTime) {
@@ -111,6 +114,8 @@ abstract contract WorldIDBridge is IWorldID, Ownable {
         uint256 rootBeingReplaced = _latestRoot;
         _latestRoot = newRoot;
         rootHistory[rootBeingReplaced] = supersedeTimestamp;
+
+        emit RootAdded(newRoot, supersedeTimestamp);
     }
 
     /// @notice Checks if a given root value is valid.
@@ -195,12 +200,16 @@ abstract contract WorldIDBridge is IWorldID, Ownable {
     }
 
     /// @notice Sets the amount of time it takes for a root in the root history to expire.
-    /// @dev Can only be called by the owner.
+    /// @dev When implementing this function, ensure that it is guarded on `onlyOwner`.
     ///
     /// @param expiryTime The new amount of time it takes for a root to expire.
+    function setRootHistoryExpiry(uint256 expiryTime) public virtual;
+
+    /// @notice Sets the amount of time it takes for a root in the root history to expire.
+    /// @dev Intended to be called from a privilege-checked implementation of `receiveRoot`.
     ///
-    /// @custom:reverts string If the caller is not the owner.
-    function setRootHistoryExpiry(uint256 expiryTime) public virtual onlyOwner {
+    /// @param expiryTime The new amount of time it takes for a root to expire.
+    function _setRootHistoryExpiry(uint256 expiryTime) internal virtual {
         ROOT_HISTORY_EXPIRY = expiryTime;
     }
 
