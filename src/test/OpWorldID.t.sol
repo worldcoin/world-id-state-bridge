@@ -158,12 +158,13 @@ contract OpWorldIDTest is Messenger_Initializer {
 
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
     /// @param newRoot The root of the merkle tree after the first update
-    function test_expiredRoot_reverts(uint256 newRoot) public {
+    function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot) public {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
 
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
+        uint128 secondRootTimestamp = newRootTimestamp + 1;
 
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
@@ -174,6 +175,14 @@ contract OpWorldIDTest is Messenger_Initializer {
             0,
             0,
             abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+        );
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(3, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, secondRoot, secondRootTimestamp)
         );
         vm.warp(block.timestamp + 8 days);
 
