@@ -4,10 +4,10 @@ pragma solidity ^0.8.15;
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IBridge} from "../interfaces/IBridge.sol";
 
-/// @title OpWorldID
-/// @author Worldcoin
-/// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
-/// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
+/// @title WorldID Identity Manager Mock
+/// @author Worldcoin - dcbuild3r (Telegram/GitHub/Twitter)
+/// @notice  Mock of the WorldID Identity Manager contract (world-id-contracts) to test functionality on a local chain
+/// @dev deployed through make mock and make local-mock
 contract WorldIDIdentityManagerMock is Initializable {
     address public stateBridge;
     mapping(uint256 => bool) public rootHistory;
