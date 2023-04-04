@@ -9,7 +9,7 @@ import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.s
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title Polygon WorldID Bridge
-/// @author Worldcoin
+/// @author Worldcoin - dcbuild3r (Twitter/GitHub/Telegram), iamrecursion, cichaczem
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.
@@ -18,14 +18,14 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     ///                                CONSTRUCTION                             ///
     ///////////////////////////////////////////////////////////////////////////////
 
-    /// @notice Initializes the contract.
+    /// @notice Initializes the contract's storage variables with the correct parameters
     ///
-    /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
-    /// @param _fxChild The address of the FX child tunnel to use.
+    /// @param _treeDepth The depth of the WorldID Identity Manager merkle tree.
+    /// @param _fxChild The address of the FxChild tunnel - the contract that will receive messages on Polygon
+    /// and Broadcasts them to FxPortal which bridges the messages to Ethereum
     constructor(uint8 _treeDepth, address _fxChild)
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
-        Ownable()
     {
         if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
             revert UnsupportedTreeDepth(_treeDepth);
@@ -40,9 +40,12 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
 
     /// @notice An internal function used to receive messages from the StateBridge contract.
     /// @dev Calls `receiveRoot` upon receiving a message from the StateBridge contract via the
-    ///      FxChildTunnel.
+    ///      FxChildTunnel. Can revert if the message is not valid - decoding fails.
+    ///      Can not work if Polygon's StateSync mechanism breaks and FxPortal does not receive the message
+    ///      on the other end.
     ///
-    /// uint256 stateId An unused placeholder variable for `stateId`, required by the signature in fxChild.
+    /// @custom:param uint256 stateId An unused placeholder variable for `stateId`,
+    /// required by the signature in fxChild.
     /// @param sender The sender of the message.
     /// @param message An ABI-encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)` that
     ///        is used to call `receiveRoot`.

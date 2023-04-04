@@ -1,89 +1,57 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
+import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
 import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
-/// @title OpWorldID
-/// @author Worldcoin
-/// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
-/// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
-contract MockOpPolygonWorldID {
-    /// @notice The depth of the Semaphore merkle tree.
-    uint8 internal treeDepth = 16;
+/// @title OPWorldID and PolygonWorldID Mock
+/// @author Worldcoin - dcbuild3r (Telegram/GitHub/Twitter)
+/// @notice Mock of PolygonWorldID and OpWorldID in order to test things on a local chain
+contract MockOpPolygonWorldID is WorldIDBridge, Ownable {
+    ///////////////////////////////////////////////////////////////////////////////
+    ///                                CONSTRUCTION                             ///
+    ///////////////////////////////////////////////////////////////////////////////
 
-    /// @notice The amount of time a root is considered as valid on Optimism.
-    uint256 internal constant ROOT_HISTORY_EXPIRY = 1 weeks;
-
-    /// @notice A mapping from the value of the merkle tree root to the timestamp at which it was submitted
-    mapping(uint256 => uint128) public rootHistory;
-
-    /// @notice The verifier instance needed for operating within the semaphore protocol.
-    SemaphoreVerifier private semaphoreVerifier = new SemaphoreVerifier();
-
-    /// @notice Emitted when a new root is inserted into the root history.
-    event RootAdded(uint256 root, uint128 timestamp);
-
-    /// @notice Thrown when attempting to validate a root that has expired.
-    error ExpiredRoot();
-
-    /// @notice Thrown when attempting to validate a root that has yet to be added to the root
-    ///         history.
-    error NonExistentRoot();
-
-    /// @notice receiveRoot is called by the state bridge contract which forwards new WorldID roots to Optimism.
-    /// @param newRoot new valid root with ROOT_HISTORY_EXPIRY validity
-    /// @param timestamp Ethereum block timestamp of the new Semaphore root
-    function receiveRoot(uint256 newRoot, uint128 timestamp) external {
-        // when running locally on Anvil, block.timestamp will always be 0, so we hardcode 100
-        rootHistory[newRoot] = 100;
-
-        emit RootAdded(newRoot, timestamp);
-    }
-
-    /// @notice Checks if a given root value is valid and has been added to the root history.
-    /// @dev Reverts with `ExpiredRoot` if the root has expired, and `NonExistentRoot` if the root
-    ///      is not in the root history.
-    /// @param root The root of a given identity group.
-    function checkValidRoot(uint256 root) public view returns (bool) {
-        uint128 rootTimestamp = rootHistory[root];
-
-        // A root does not exist if it has no associated timestamp.
-        if (rootTimestamp == 0) {
-            revert NonExistentRoot();
-        }
-
-        return true;
-    }
-
-    /// A verifier for the semaphore protocol.
+    /// @notice Initializes the contract the depth of the associated merkle tree.
     ///
-    /// @notice Reverts if the zero-knowledge proof is invalid.
-    /// @dev Note that a double-signaling check is not included here, and should be carried by the
-    ///      caller.
-    /// @param root The of the Merkle tree
-    /// @param signalHash A keccak256 hash of the Semaphore signal
-    /// @param nullifierHash The nullifier hash
-    /// @param externalNullifierHash A keccak256 hash of the external nullifier
-    /// @param proof The zero-knowledge proof
-    function verifyProof(
-        uint256 root,
-        uint256 signalHash,
-        uint256 nullifierHash,
-        uint256 externalNullifierHash,
-        uint256[8] calldata proof
-    ) public view {
-        if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(
-                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
-            );
-        }
+    /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
+    constructor(uint8 _treeDepth) WorldIDBridge(_treeDepth) {}
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///                               ROOT MIRRORING                            ///
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /// @notice This function is called by the state bridge contract when it forwards a new root to
+    ///         the bridged WorldID.
+    /// @dev    This function can revert if Optimism's CrossDomainMessenger stops processing proofs
+    ///         or if OPLabs stops submitting them. Next iteration of Optimism's cross-domain messaging, will be
+    ///         fully permissionless for message-passing, so this will not be an issue.
+    ///         Sequencer needs to include changes to the CrossDomainMessenger contract on L1, not economically penalized
+    ///         if messages are not included, however the fraud prover (Cannon) can force the sequencer to include it.
+    ///
+    /// @param newRoot The value of the new root.
+    /// @param supersedeTimestamp The value of the L1 timestamp at the time that `newRoot` became
+    ///        the current root. This timestamp is associated with the latest root at the time of
+    ///        the call being inserted into the root history.
+    ///
+    /// @custom:reverts CannotOverwriteRoot If the root already exists in the root history.
+    /// @custom:reverts string If the caller is not the owner.
+    function receiveRoot(uint256 newRoot, uint128 supersedeTimestamp) public virtual {
+        _receiveRoot(newRoot, supersedeTimestamp);
     }
 
-    /// @notice Gets the Semaphore tree depth the contract was initialized with.
+    ///////////////////////////////////////////////////////////////////////////////
+    ///                              DATA MANAGEMENT                            ///
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /// @notice Sets the amount of time it takes for a root in the root history to expire.
     ///
-    /// @return initializedTreeDepth Tree depth.
-    function getTreeDepth() public view virtual returns (uint8 initializedTreeDepth) {
-        return treeDepth;
+    /// @param expiryTime The new amount of time it takes for a root to expire.
+    ///
+    /// @custom:reverts string If the caller is not the owner.
+    function setRootHistoryExpiry(uint256 expiryTime) public virtual override onlyOwner {
+        _setRootHistoryExpiry(expiryTime);
     }
 }

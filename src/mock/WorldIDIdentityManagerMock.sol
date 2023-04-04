@@ -8,7 +8,7 @@ import {IBridge} from "../interfaces/IBridge.sol";
 /// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for new root insertions.
-contract WorldIDIdentityManagerImplV1 is Initializable {
+contract WorldIDIdentityManagerMock is Initializable {
     address public stateBridge;
     mapping(uint256 => bool) public rootHistory;
 

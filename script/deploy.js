@@ -247,7 +247,7 @@ async function deployStateBridgeGoerli(config) {
 
   try {
     const data =
-      execSync(`forge script script/deploy/DeployStateBridgeGoerli.s.sol --fork-url ${config.ethereumRpcUrl} \
+      execSync(`forge script script/deploy/DeployStateBridgeGoerli.s.sol:DeployStateBridge --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
@@ -262,7 +262,7 @@ async function deployStateBridgeMainnet(config) {
 
   try {
     const data =
-      execSync(`forge script script/deploy/DeployStateBridgeMainnet.s.sol --fork-url ${config.ethereumRpcUrl} \
+      execSync(`forge script script/deploy/DeployStateBridgeMainnet.s.sol:DeployStateBridge --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
@@ -272,11 +272,27 @@ async function deployStateBridgeMainnet(config) {
   spinner.succeed("DeployStateBridgeMainnet.s.sol ran successfully!");
 }
 
-async function deployPolygonWorldID(config) {
+async function deployPolygonWorldIDMumbai(config) {
   const spinner = ora("Deploying PolygonWorldID...").start();
 
   try {
-    const data = execSync(`forge script script/deploy/DeployPolygonWorldID.s.sol --fork-url ${config.polygonRpcUrl} \
+    const data =
+      execSync(`forge script script/deploy/DeployPolygonWorldIDMumbai.s.sol:DeployPolygonWorldIDMumbai --fork-url ${config.polygonRpcUrl} \
+      --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployPolygonWorldID.s.sol ran successfully!");
+}
+
+async function deployPolygonWorldIDMainnet(config) {
+  const spinner = ora("Deploying PolygonWorldID...").start();
+
+  try {
+    const data =
+      execSync(`forge script script/deploy/DeployPolygonWorldIDMainnet.s.sol:DeployPolygonWorldIDMainnet --fork-url ${config.polygonRpcUrl} \
       --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
@@ -291,7 +307,7 @@ async function deployMockWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script script/deploy/DeployMockWorldID.s.sol --fork-url ${config.ethereumRpcUrl} \
+      `forge script script/deploy/DeployMockWorldID.s.sol:DeployMockWorldID --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
@@ -307,7 +323,7 @@ async function deployOptimismWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script script/deploy/DeployOpWorldID.s.sol --fork-url ${config.optimismRpcUrl} \
+      `forge script script/deploy/DeployOpWorldID.s.sol:DeployOpWorldID --fork-url ${config.optimismRpcUrl} \
       --etherscan-api-key ${config.optimismEtherscanApiKey} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
@@ -323,7 +339,7 @@ async function deployMockOpPolygonWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script script/deploy/DeployMockOpPolygonWorldID.s.sol --fork-url ${config.ethereumRpcUrl} \
+      `forge script script/deploy/DeployMockOpPolygonWorldID.s.sol:DeployMockOpPolygonWorldID --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
@@ -339,7 +355,7 @@ async function deployMockStateBridge(config) {
 
   try {
     const data = execSync(
-      `forge script script/deploy/DeployMockStateBridge.s.sol --fork-url ${config.ethereumRpcUrl} \
+      `forge script script/deploy/DeployMockStateBridge.s.sol:DeployMockStateBridge --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
@@ -355,7 +371,7 @@ async function initializeMockWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script script/initialize/InitializeMockWorldID.s.sol --fork-url ${config.ethereumRpcUrl} --broadcast --verify -vvvv`,
+      `forge script script/initialize/InitializeMockWorldID.s.sol:InitializeMockWorldID --fork-url ${config.ethereumRpcUrl} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
   } catch (err) {
@@ -370,7 +386,7 @@ async function initializePolygonWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script script/initialize/InitializePolygonWorldID.s.sol --fork-url ${config.polygonRpcUrl} --broadcast --verify -vvvv`,
+      `forge script script/initialize/InitializePolygonWorldID.s.sol:InitializePolygonWorldID --fork-url ${config.polygonRpcUrl} --broadcast -vvvv`,
     );
     console.log(data.toString());
   } catch (err) {
@@ -385,7 +401,7 @@ async function transferOwnershipOfOpWorldIDGoerli(config) {
 
   try {
     const data = execSync(
-      `forge script script/initialize/TransferOwnershipOfOpWorldIDGoerli.s.sol --fork-url ${config.optimismRpcUrl} \
+      `forge script script/initialize/TransferOwnershipOfOpWorldIDGoerli.s.sol:TransferOwnershipOfOpWorldIDGoerli --fork-url ${config.optimismRpcUrl} \
       --broadcast -vvvv`,
     );
     console.log(data.toString());
@@ -401,7 +417,7 @@ async function transferOwnershipOfOpWorldIDMainnet(config) {
 
   try {
     const data = execSync(
-      `forge script script/initialize/TransferOwnershipOfOpWorldIDMainnet.s.sol --fork-url ${config.optimismRpcUrl} \
+      `forge script script/initialize/TransferOwnershipOfOpWorldIDMainnet.s.sol:TransferOwnershipOfOpWorldIDMainnet --fork-url ${config.optimismRpcUrl} \
       --broadcast -vvvv`,
     );
     console.log(data.toString());
@@ -419,7 +435,7 @@ async function sendStateRootToStateBridge(config) {
 
   try {
     const data = execSync(
-      `forge script script/test/SendStateRootToStateBridge.s.sol --fork-url ${config.ethereumRpcUrl} \
+      `forge script script/test/SendStateRootToStateBridge.s.sol:SendStateRootToStateBridge --fork-url ${config.ethereumRpcUrl} \
       --broadcast -vvvv`,
     );
     console.log(data.toString());
@@ -435,7 +451,7 @@ async function checkLocalValidRoot(config) {
 
   try {
     const data = execSync(
-      `forge script script/test/checkLocalValidRoot.s.sol --fork-url ${config.ethereumRpcUrl} \
+      `forge script script/test/checkLocalValidRoot.s.sol:checkLocalValidRoot --fork-url ${config.ethereumRpcUrl} \
       --broadcast -vvvv`,
     );
     console.log(data.toString());
@@ -459,7 +475,7 @@ async function deploymentMainnet(config) {
   await getTreeDepth(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
-  await deployPolygonWorldID(config);
+  await deployPolygonWorldIDMainnet(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
@@ -484,7 +500,7 @@ async function deploymentTestnet(config) {
   await getTreeDepth(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
-  await deployPolygonWorldID(config);
+  await deployPolygonWorldIDMumbai(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
@@ -510,7 +526,7 @@ async function mockDeployment(config) {
   await saveConfiguration(config);
   await deployMockWorldID(config);
   await deployOptimismWorldID(config);
-  await deployPolygonWorldID(config);
+  await deployPolygonWorldIDMumbai(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
