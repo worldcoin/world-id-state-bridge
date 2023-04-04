@@ -5,7 +5,7 @@ import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.s
 import {IBridge} from "../interfaces/IBridge.sol";
 
 /// @title WorldID Identity Manager Mock
-/// @author Worldcoin - dcbuild3r (Telegram/GitHub/Twitter)
+/// @author Worldcoin
 /// @notice  Mock of the WorldID Identity Manager contract (world-id-contracts) to test functionality on a local chain
 /// @dev deployed through make mock and make local-mock
 contract WorldIDIdentityManagerMock is Initializable {

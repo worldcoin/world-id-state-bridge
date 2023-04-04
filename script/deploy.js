@@ -451,7 +451,7 @@ async function checkLocalValidRoot(config) {
 
   try {
     const data = execSync(
-      `forge script script/test/checkLocalValidRoot.s.sol:checkLocalValidRoot --fork-url ${config.ethereumRpcUrl} \
+      `forge script script/test/CheckLocalValidRoot.s.sol:CheckLocalValidRoot --fork-url ${config.ethereumRpcUrl} \
       --broadcast -vvvv`,
     );
     console.log(data.toString());
@@ -459,7 +459,7 @@ async function checkLocalValidRoot(config) {
     console.error(err);
   }
 
-  spinner.succeed("checkLocalValidRoot.s.sol ran successfully!");
+  spinner.succeed("CheckLocalValidRoot.s.sol ran successfully!");
 }
 
 async function deploymentMainnet(config) {

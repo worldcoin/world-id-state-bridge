@@ -9,7 +9,7 @@ import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.s
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title Polygon WorldID Bridge
-/// @author Worldcoin - dcbuild3r (Twitter/GitHub/Telegram), iamrecursion, cichaczem
+/// @author Worldcoin
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.

@@ -6,7 +6,6 @@ pragma solidity ^0.8.15;
 import {Script} from "forge-std/Script.sol";
 import {IWorldID} from "../../src/interfaces/IWorldID.sol";
 import {ISendBridge} from "../../src/interfaces/ISendBridge.sol";
-import {console2} from "forge-std/console2.sol";
 
 /// @notice Sends the a WorldID state root to the state bridge
 contract SendStateRootToStateBridge is Script {

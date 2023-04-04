@@ -7,7 +7,7 @@ import {SemaphoreTreeDepthValidator} from "../utils/SemaphoreTreeDepthValidator.
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title Bridged World ID
-/// @author Worldcoin - dcbuild3r (Twitter/GitHub/Telegram), iamrecursion, cichaczem
+/// @author Worldcoin
 /// @notice A base contract for the WorldID state bridges that exist on other chains. The state
 ///         bridges manage the root history of the identity merkle tree on chains other than
 ///         mainnet.

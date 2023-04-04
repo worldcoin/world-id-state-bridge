@@ -10,7 +10,7 @@ import {CrossDomainOwnable3} from
     "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title Optimism World ID Bridge
-/// @author Worldcoin - dcbuild3r (Twitter/GitHub/Telegram), iamrecursion, cichaczem
+/// @author Worldcoin
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on
 ///         Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for each new

@@ -10,7 +10,7 @@ import {MockOpPolygonWorldID} from "../../src/mock/MockOpPolygonWorldID.sol";
 
 // Optimism Goerli Testnet ChainID = 420
 
-contract checkLocalValidRoot is Script {
+contract CheckLocalValidRoot is Script {
     /*//////////////////////////////////////////////////////////////
                                  CONFIG
     //////////////////////////////////////////////////////////////*/

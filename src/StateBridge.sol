@@ -11,7 +11,7 @@ import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
 /// @title World ID State Bridge
-/// @author Worldcoin - dcbuild3r (Twitter/GitHub/Telegram), iamrecursion, cichaczem
+/// @author Worldcoin
 /// @notice Distributes new World ID Identity Manager roots to World ID supported networks
 /// @dev This contract lives on Ethereum mainnet and is called by the World ID Identity Manager contract
 /// in the registerIdentities method
