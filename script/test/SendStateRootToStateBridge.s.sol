@@ -29,7 +29,7 @@ contract SendStateRootToStateBridge is Script {
         worldIDAddress = abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         newRoot = abi.decode(vm.parseJson(json, ".newRoot"), (uint256));
 
-        vm.label(worldIDAddress, "WorldIDIdentityManagerImplV1");
+        vm.label(worldIDAddress, "WorldIDIdentityManagerMock");
     }
 
     function run() public {

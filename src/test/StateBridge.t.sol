@@ -2,7 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {StateBridge} from "src/StateBridge.sol";
-import {WorldIDIdentityManagerImplV1} from "src/mock/WorldIDIdentityManagerImplV1.sol";
+import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
 
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
@@ -15,7 +15,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
     error invalidCrossDomainMessengerFork();
 
     StateBridge public stateBridge;
-    WorldIDIdentityManagerImplV1 public mockWorldID;
+    WorldIDIdentityManagerMock public mockWorldID;
 
     address public mockWorldIDAddress;
     address public crossDomainMessengerAddress;
@@ -64,7 +64,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
             revert invalidCrossDomainMessengerFork();
         }
 
-        mockWorldID = new WorldIDIdentityManagerImplV1();
+        mockWorldID = new WorldIDIdentityManagerMock();
         mockWorldIDAddress = address(mockWorldID);
 
         checkpointManager = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);

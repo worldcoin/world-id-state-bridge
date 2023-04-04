@@ -8,7 +8,7 @@ pragma solidity ^0.8.15;
 import {Script} from "forge-std/Script.sol";
 import {PolygonWorldID} from "../../src/PolygonWorldID.sol";
 
-contract DeployPolygonWorldID is Script {
+contract DeployPolygonWorldIDMumbai is Script {
     address public stateBridgeAddress;
 
     // Polygon PoS Mumbai Testnet Child Tunnel

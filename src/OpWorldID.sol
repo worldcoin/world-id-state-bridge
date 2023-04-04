@@ -10,7 +10,7 @@ import {CrossDomainOwnable3} from
     "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title Optimism World ID Bridge
-/// @author Worldcoin
+/// @author Worldcoin - dcbuild3r (Twitter/GitHub/Telegram), iamrecursion, cichaczem
 /// @notice A contract that manages the root history of the Semaphore identity merkle tree on
 ///         Optimism.
 /// @dev This contract is deployed on Optimism and is called by the L1 Proxy contract for each new
@@ -31,6 +31,11 @@ contract OpWorldID is WorldIDBridge, CrossDomainOwnable3, IOpWorldID {
 
     /// @notice This function is called by the state bridge contract when it forwards a new root to
     ///         the bridged WorldID.
+    /// @dev    This function can revert if Optimism's CrossDomainMessenger stops processing proofs
+    ///         or if OPLabs stops submitting them. Next iteration of Optimism's cross-domain messaging, will be
+    ///         fully permissionless for message-passing, so this will not be an issue.
+    ///         Sequencer needs to include changes to the CrossDomainMessenger contract on L1, not economically penalized
+    ///         if messages are not included, however the fraud prover (Cannon) can force the sequencer to include it.
     ///
     /// @param newRoot The value of the new root.
     /// @param supersedeTimestamp The value of the L1 timestamp at the time that `newRoot` became

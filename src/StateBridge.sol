@@ -10,14 +10,20 @@ import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol"
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
+/// @title World ID State Bridge
+/// @author Worldcoin - dcbuild3r (Twitter/GitHub/Telegram), iamrecursion, cichaczem
+/// @notice Distributes new World ID Identity Manager roots to World ID supported networks
+/// @dev This contract lives on Ethereum mainnet and is called by the World ID Identity Manager contract
+/// in the registerIdentities method
 contract StateBridge is FxBaseRootTunnel, Ownable {
-    /// @notice boilerplate property to satisfy FxBaseRootTunnel inheritance (not going to be used)
-    bytes public latestData;
+    /*//////////////////////////////////////////////////////////////
+                                STORAGE
+    //////////////////////////////////////////////////////////////*/
 
     /// @notice The address of the OPWorldID contract on Optimism
     address public opWorldIDAddress;
 
-    /// @notice address for Optimism's Ethereum mainnet Messenger contract
+    /// @notice address for Optimism's Ethereum mainnet L1CrossDomainMessenger contract
     address internal crossDomainMessengerAddress;
 
     /// @notice Interface for checkVlidRoot within the WorldID Identity Manager contract
@@ -25,6 +31,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
 
     /// @notice worldID Address
     address public worldIDAddress;
+
+    /*//////////////////////////////////////////////////////////////
+                                 EVENTS
+    //////////////////////////////////////////////////////////////*/
 
     /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
@@ -45,15 +55,23 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentToPolygon(uint256 root, uint128 timestamp);
 
+    /*//////////////////////////////////////////////////////////////
+                                 ERRORS
+    //////////////////////////////////////////////////////////////*/
+
     /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
     error InvalidRoot();
 
+    /*//////////////////////////////////////////////////////////////
+                              CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     /// @notice constructor
     /// @param _checkpointManager address of the checkpoint manager contract
-    /// @param _fxRoot address of the fxRoot contract (Goerli or Mainnet)
+    /// @param _fxRoot address of Polygon's fxRoot contract, part of the FxPortal bridge (Goerli or Mainnet)
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
-    /// @param _crossDomainMessenger Deployment of the CrossDomainMessenger contract
+    /// @param _crossDomainMessenger L1CrossDomainMessenger contract used to communicate with the Optimism network
     constructor(
         address _checkpointManager,
         address _fxRoot,
@@ -66,6 +84,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                               PUBLIC API
+    //////////////////////////////////////////////////////////////*/
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
@@ -101,7 +123,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            1000000
+            200000
         );
 
         emit RootSentToOptimism(root, timestamp);
@@ -122,7 +144,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            1000000
+            200000
         );
 
         emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
@@ -150,7 +172,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     }
 
     /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)
-    function _processMessageFromChild(bytes memory data) internal override {
+    function _processMessageFromChild(bytes memory) internal override {
         /// WorldID 🌎🆔 State Bridge
     }
 }
