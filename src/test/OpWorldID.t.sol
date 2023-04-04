@@ -4,20 +4,15 @@ pragma solidity ^0.8.15;
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
-import {OpWorldID} from "src/OpWorldID.sol";
-import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
-import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
-import {L2CrossDomainMessenger} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
-import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import {
-    CommonTest,
-    Messenger_Initializer
-} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
-import {AddressAliasHelper} from
-    "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
-import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
-import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
+import { OpWorldID } from "src/OpWorldID.sol";
+import { WorldIDBridge } from "src/abstract/WorldIDBridge.sol";
+import { SemaphoreTreeDepthValidator } from "src/utils/SemaphoreTreeDepthValidator.sol";
+import { L2CrossDomainMessenger } from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
+import { Predeploys } from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
+import { CommonTest, Messenger_Initializer } from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
+import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
+import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title OpWorldIDTest
 /// @author Worldcoin
@@ -38,9 +33,7 @@ contract OpWorldIDTest is Messenger_Initializer {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /// @notice CrossDomainOwnable3.sol transferOwnership event
-    event OwnershipTransferred(
-        address indexed previousOwner, address indexed newOwner, bool isLocal
-    );
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, bool isLocal);
 
     function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
         // Setup
@@ -74,7 +67,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         // CrossDomainOwnable3.sol transferOwnership to crossDomain address (as alice and to alice)
         vm.prank(_id.owner());
-        id.transferOwnership({_owner: alice, _isLocal: false});
+        id.transferOwnership({ _owner: alice, _isLocal: false });
     }
 
     /// @notice Test that when _isLocal = false, a contract that is not the L2 Messenger can't call the contract
@@ -160,14 +153,14 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @param newRoot The root of the merkle tree after the first update (forge fuzzing)
     /// @param secondRoot The root of the merkle tree after the second update (forge fuzzing)
     function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot) public {
-        vm.assume(newRoot != secondRoot);
+        vm.assume(newRoot != secondRoot && newRoot != 0 && secondRoot != 0);
 
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
 
         uint128 newRootTimestamp = uint128(block.timestamp + 100);
-        uint128 secondRootTimestamp = newRootTimestamp + 1;
+        uint128 secondRootTimestamp = uint128(newRootTimestamp + 1);
 
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
@@ -182,6 +175,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.roll(block.number + 100);
         vm.warp(block.timestamp + 200);
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
         L2Messenger.relayMessage(
             Encoding.encodeVersionedNonce(1, 1),
             owner,
@@ -191,8 +185,8 @@ contract OpWorldIDTest is Messenger_Initializer {
             abi.encodeWithSelector(id.receiveRoot.selector, secondRoot, secondRootTimestamp)
         );
 
-        vm.warp(block.timestamp + 8 days);
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
+        vm.warp(block.timestamp + 8 days);
         id.checkValidRoot(newRoot);
     }
 
