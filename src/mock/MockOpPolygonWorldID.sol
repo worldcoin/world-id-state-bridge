@@ -8,7 +8,8 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 /// @title OPWorldID and PolygonWorldID Mock
 /// @author Worldcoin - dcbuild3r (Telegram/GitHub/Twitter)
-/// @notice Mock of PolygonWorldID and OpWorldID in order to test things on a local chain
+/// @notice Mock of PolygonWorldID and OpWorldID in order to test functionality on a local chain
+/// @custom:deployment deployed through make local-mock
 contract MockOpPolygonWorldID is WorldIDBridge, Ownable {
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
