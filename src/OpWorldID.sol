@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import { WorldIDBridge } from "./abstract/WorldIDBridge.sol";
+import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
 
-import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
-import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
-import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
-import { CrossDomainOwnable3 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import {CrossDomainOwnable3} from
+    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title Optimism World ID Bridge
 /// @author Worldcoin
