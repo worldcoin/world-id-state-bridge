@@ -144,7 +144,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
         L2Messenger.relayMessage(
-            Encoding.encodeVersionedNonce(1, 1),
+            Encoding.encodeVersionedNonce(0, 1),
             owner,
             address(id),
             0,
@@ -157,8 +157,11 @@ contract OpWorldIDTest is Messenger_Initializer {
     }
 
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
-    /// @param newRoot The root of the merkle tree after the first update
+    /// @param newRoot The root of the merkle tree after the first update (forge fuzzing)
+    /// @param secondRoot The root of the merkle tree after the second update (forge fuzzing)
     function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot) public {
+        vm.assume(newRoot != secondRoot);
+
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
@@ -169,23 +172,26 @@ contract OpWorldIDTest is Messenger_Initializer {
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
         L2Messenger.relayMessage(
-            Encoding.encodeVersionedNonce(2, 1),
+            Encoding.encodeVersionedNonce(0, 1),
             owner,
             address(id),
             0,
             0,
             abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
         );
+
+        vm.roll(block.number + 100);
+        vm.warp(block.timestamp + 200);
         L2Messenger.relayMessage(
-            Encoding.encodeVersionedNonce(3, 1),
+            Encoding.encodeVersionedNonce(1, 1),
             owner,
             address(id),
             0,
             0,
             abi.encodeWithSelector(id.receiveRoot.selector, secondRoot, secondRootTimestamp)
         );
-        vm.warp(block.timestamp + 8 days);
 
+        vm.warp(block.timestamp + 8 days);
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         id.checkValidRoot(newRoot);
     }
