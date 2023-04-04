@@ -2,12 +2,13 @@
 pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
-import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
-import { Ownable } from "openzeppelin-contracts/access/Ownable.sol";
-import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
-import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
-import { FxBaseRootTunnel } from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import {ICrossDomainMessenger} from
+    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
+import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
+import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 import "forge-std/console.sol";
 
 /// @title World ID State Bridge
@@ -41,7 +42,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param previousOwner The previous owner of the OPWorldID contract
     /// @param newOwner The new owner of the OPWorldID contract
     /// @param isLocal Whether the ownership transfer is local (Optimism EOA/contract) or an Ethereum EOA or contract
-    event OwnershipTransferredOptimism(address indexed previousOwner, address indexed newOwner, bool isLocal);
+    event OwnershipTransferredOptimism(
+        address indexed previousOwner, address indexed newOwner, bool isLocal
+    );
 
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
