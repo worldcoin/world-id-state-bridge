@@ -23,7 +23,7 @@ contract OpWorldID is WorldIDBridge, CrossDomainOwnable3, IOpWorldID {
     /// @notice Initializes the contract the depth of the associated merkle tree.
     ///
     /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
-    constructor(uint8 _treeDepth) WorldIDBridge(_treeDepth) CrossDomainOwnable3() {}
+    constructor(uint8 _treeDepth) WorldIDBridge(_treeDepth) {}
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
