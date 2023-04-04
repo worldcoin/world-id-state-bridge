@@ -7,7 +7,7 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
 
 /// @title Mock State Bridge
-/// @author Worldcoin - dcbuild3r (Telegram/GitHub/Twitter)
+/// @author Worldcoin
 /// @notice Mock of the StateBridge to test functionality on a local chain
 /// @custom:deployment deployed through make local-mock
 contract MockStateBridge is Ownable {

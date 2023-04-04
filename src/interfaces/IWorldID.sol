@@ -3,7 +3,8 @@ pragma solidity ^0.8.15;
 
 /// @title WorldID Interface
 /// @author Worldcoin
-/// @notice The interface to the proof verification for WorldID.
+/// @notice The interface to the Semaphore Groth16 proof verification for WorldID.
+/// @custom:usage IWorldID(worldIDIdentityMangerAddress).verifyProof(root, signalHash, nullifierHash, externalNullifierHash, proof);
 interface IWorldID {
     /// @notice Verifies a WorldID zero knowledge proof.
     /// @dev Note that a double-signaling check is not included here, and should be carried by the
