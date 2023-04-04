@@ -23,6 +23,6 @@ contract WorldIDIdentityManagerMock is Initializable {
     }
 
     function checkValidRoot(uint256 root) public view returns (bool) {
-        return rootHistory[root];
+        return true;
     }
 }

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {StateBridge} from "src/StateBridge.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import { StateBridge } from "src/StateBridge.sol";
+import { WorldIDIdentityManagerMock } from "src/mock/WorldIDIdentityManagerMock.sol";
 
-import {PRBTest} from "@prb/test/PRBTest.sol";
-import {StdCheats} from "forge-std/StdCheats.sol";
+import { PRBTest } from "@prb/test/PRBTest.sol";
+import { StdCheats } from "forge-std/StdCheats.sol";
 
 contract StateBridgeTest is PRBTest, StdCheats {
     uint256 public mainnetFork;
@@ -33,9 +33,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param previousOwner The previous owner of the OPWorldID contract
     /// @param newOwner The new owner of the OPWorldID contract
     /// @param isLocal Whether the ownership transfer is local (Optimism EOA/contract) or an Ethereum EOA or contract
-    event OwnershipTransferredOptimism(
-        address indexed previousOwner, address indexed newOwner, bool isLocal
-    );
+    event OwnershipTransferredOptimism(address indexed previousOwner, address indexed newOwner, bool isLocal);
 
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
@@ -47,8 +45,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentToPolygon(uint256 root, uint128 timestamp);
 
-    /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
-    error InvalidRoot();
+    /// @notice
+    error NotWorldIDIdentityManager();
 
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
@@ -102,6 +100,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         emit RootSentToPolygon(newRoot, timestamp);
 
+        vm.prank(mockWorldIDAddress);
         mockWorldID.sendRootToStateBridge(newRoot);
 
         assertEq(mockWorldID.checkValidRoot(newRoot), true);
@@ -144,17 +143,14 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
     /// @notice tests that a root that is not is not a valid root in WorldID Identity Manager contract
     /// can't be sent to the StateBridge
-    /// @param notNewRoot A root that is not a valid root in the WorldID Identity Manager contract
-    function test_sendRootMultichain_reverts(uint256 newRoot, uint256 notNewRoot) public {
-        vm.assume(notNewRoot != newRoot);
+    function test_sendRootMultichain_reverts(uint256 newRoot, address notWorldID) public {
+        vm.assume(notWorldID != mockWorldIDAddress);
 
         mockWorldID.sendRootToStateBridge(newRoot);
 
-        vm.expectRevert(InvalidRoot.selector);
-
-        stateBridge.sendRootMultichain(notNewRoot);
-
-        assertEq(mockWorldID.checkValidRoot(notNewRoot), false);
+        vm.expectRevert(StateBridge.NotWorldIDIdentityManager.selector);
+        vm.prank(notWorldID);
+        stateBridge.sendRootMultichain(newRoot);
     }
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
@@ -170,11 +166,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
     /// @param newOwner The new owner of the StateBridge contract (foundry fuzz)
-    function test_notOwner_transferOwnershipOptimism_reverts(
-        address nonOwner,
-        address newOwner,
-        bool isLocal
-    ) public {
+    function test_notOwner_transferOwnershipOptimism_reverts(address nonOwner, address newOwner, bool isLocal) public {
         vm.assume(nonOwner != owner && newOwner != address(0x0));
 
         vm.expectRevert("Ownable: caller is not the owner");

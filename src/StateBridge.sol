@@ -2,13 +2,13 @@
 pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from
-    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
-import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
-import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import { ICrossDomainMessenger } from "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
+import { Ownable } from "openzeppelin-contracts/access/Ownable.sol";
+import { IWorldIDIdentityManager } from "./interfaces/IWorldIDIdentityManager.sol";
+import { ICrossDomainOwnable3 } from "./interfaces/ICrossDomainOwnable3.sol";
+import { FxBaseRootTunnel } from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import "forge-std/console.sol";
 
 /// @title World ID State Bridge
 /// @author Worldcoin
@@ -41,9 +41,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param previousOwner The previous owner of the OPWorldID contract
     /// @param newOwner The new owner of the OPWorldID contract
     /// @param isLocal Whether the ownership transfer is local (Optimism EOA/contract) or an Ethereum EOA or contract
-    event OwnershipTransferredOptimism(
-        address indexed previousOwner, address indexed newOwner, bool isLocal
-    );
+    event OwnershipTransferredOptimism(address indexed previousOwner, address indexed newOwner, bool isLocal);
 
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
@@ -59,8 +57,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
-    error InvalidRoot();
+    /// @notice Thrown when caller of sendRootMultichain is not the WorldID Identity Manager contract
+    error NotWorldIDIdentityManager();
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -92,11 +90,13 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
-    function sendRootMultichain(uint256 root) public {
+    function sendRootMultichain(uint256 root) external {
         // If the root is not a valid root in the canonical WorldID Identity Manager contract, revert
         // comment out for mock deployments
 
-        if (!worldID.checkValidRoot(root)) revert InvalidRoot();
+        if (msg.sender != worldIDAddress) {
+            revert NotWorldIDIdentityManager();
+        }
 
         uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
@@ -113,11 +113,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
-        bytes memory message;
-
+        console.log("sendRootToOptimism called");
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the optimism bridge.
-        message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
+        bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
 
         ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
@@ -158,6 +157,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param root The latest WorldID Identity Manager root to be sent to Polygon
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root
     function _sendRootToPolygon(uint256 root, uint128 timestamp) internal {
+        console.log("sendRootToPolygon called");
         bytes memory message;
 
         // This encoding is specified as the encoding of the `bytes` received by
