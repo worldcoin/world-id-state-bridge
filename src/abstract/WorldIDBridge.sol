@@ -1,10 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {IWorldID} from "../interfaces/IWorldID.sol";
+import { IWorldID } from "../interfaces/IWorldID.sol";
 
-import {SemaphoreTreeDepthValidator} from "../utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import { SemaphoreTreeDepthValidator } from "../utils/SemaphoreTreeDepthValidator.sol";
+import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
+
+import "forge-std/console.sol";
 
 /// @title Bridged World ID
 /// @author Worldcoin
@@ -169,9 +171,7 @@ abstract contract WorldIDBridge is IWorldID {
         uint256[8] calldata proof
     ) public view virtual {
         if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(
-                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
-            );
+            semaphoreVerifier.verifyProof(root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth);
         }
     }
 
