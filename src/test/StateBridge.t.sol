@@ -2,7 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {StateBridge} from "src/StateBridge.sol";
-import {WorldIDIdentityManagerImplV1} from "src/mock/WorldIDIdentityManagerImplV1.sol";
+import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
 
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
@@ -15,7 +15,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
     error invalidCrossDomainMessengerFork();
 
     StateBridge public stateBridge;
-    WorldIDIdentityManagerImplV1 public mockWorldID;
+    WorldIDIdentityManagerMock public mockWorldID;
 
     address public mockWorldIDAddress;
     address public crossDomainMessengerAddress;
@@ -47,8 +47,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentToPolygon(uint256 root, uint128 timestamp);
 
-    /// @notice Emmited when the root is not a valid root in the canonical WorldID Identity Manager contract
-    error InvalidRoot();
+    /// @notice
+    error NotWorldIDIdentityManager();
 
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
@@ -64,7 +64,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
             revert invalidCrossDomainMessengerFork();
         }
 
-        mockWorldID = new WorldIDIdentityManagerImplV1();
+        mockWorldID = new WorldIDIdentityManagerMock();
         mockWorldIDAddress = address(mockWorldID);
 
         checkpointManager = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);
@@ -102,6 +102,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         emit RootSentToPolygon(newRoot, timestamp);
 
+        vm.prank(mockWorldIDAddress);
         mockWorldID.sendRootToStateBridge(newRoot);
 
         assertEq(mockWorldID.checkValidRoot(newRoot), true);
@@ -144,17 +145,14 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
     /// @notice tests that a root that is not is not a valid root in WorldID Identity Manager contract
     /// can't be sent to the StateBridge
-    /// @param notNewRoot A root that is not a valid root in the WorldID Identity Manager contract
-    function test_sendRootMultichain_reverts(uint256 newRoot, uint256 notNewRoot) public {
-        vm.assume(notNewRoot != newRoot);
+    function test_sendRootMultichain_reverts(uint256 newRoot, address notWorldID) public {
+        vm.assume(notWorldID != mockWorldIDAddress);
 
         mockWorldID.sendRootToStateBridge(newRoot);
 
-        vm.expectRevert(InvalidRoot.selector);
-
-        stateBridge.sendRootMultichain(notNewRoot);
-
-        assertEq(mockWorldID.checkValidRoot(notNewRoot), false);
+        vm.expectRevert(StateBridge.NotWorldIDIdentityManager.selector);
+        vm.prank(notWorldID);
+        stateBridge.sendRootMultichain(newRoot);
     }
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
