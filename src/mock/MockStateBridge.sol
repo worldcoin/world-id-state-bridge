@@ -2,11 +2,14 @@
 pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
-import {IOpWorldID} from "../interfaces/IOpWorldID.sol";
 import {MockOpPolygonWorldID} from "./MockOpPolygonWorldID.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
 
+/// @title Mock State Bridge
+/// @author Worldcoin
+/// @notice Mock of the StateBridge to test functionality on a local chain
+/// @custom:deployment deployed through make local-mock
 contract MockStateBridge is Ownable {
     /// @notice The address of the MockOpPolygonWorldID contract
     address public mockOpPolygonWorldIDAddress;

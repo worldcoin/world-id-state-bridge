@@ -4,11 +4,11 @@ pragma solidity ^0.8.15;
 // demo deployments
 
 import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerImplV1} from "../../src/mock/WorldIDIdentityManagerImplV1.sol";
+import {WorldIDIdentityManagerMock} from "../../src/mock/WorldIDIdentityManagerMock.sol";
 
 /// @notice Initializes the StateBridge contract
-contract InitializeOpWorldID is Script {
-    WorldIDIdentityManagerImplV1 public worldID;
+contract InitializeMockWorldID is Script {
+    WorldIDIdentityManagerMock public worldID;
 
     /*//////////////////////////////////////////////////////////////
                                  CONFIG
@@ -27,7 +27,7 @@ contract InitializeOpWorldID is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        worldID = WorldIDIdentityManagerImplV1(worldIDIdentityManagerAddress);
+        worldID = WorldIDIdentityManagerMock(worldIDIdentityManagerAddress);
 
         worldID.initialize(stateBridgeAddress);
 

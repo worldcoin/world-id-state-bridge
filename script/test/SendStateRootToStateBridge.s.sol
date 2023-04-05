@@ -5,14 +5,14 @@ pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
 import {IWorldID} from "../../src/interfaces/IWorldID.sol";
-import {console2} from "forge-std/console2.sol";
+import {ISendBridge} from "../../src/interfaces/ISendBridge.sol";
 
 /// @notice Sends the a WorldID state root to the state bridge
 contract SendStateRootToStateBridge is Script {
     address public worldIDAddress;
     uint256 public newRoot;
 
-    IWorldID public worldID;
+    ISendBridge public worldID;
 
     uint256 public privateKey;
 
@@ -28,13 +28,13 @@ contract SendStateRootToStateBridge is Script {
         worldIDAddress = abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         newRoot = abi.decode(vm.parseJson(json, ".newRoot"), (uint256));
 
-        vm.label(worldIDAddress, "WorldIDIdentityManagerImplV1");
+        vm.label(worldIDAddress, "WorldIDIdentityManagerMock");
     }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
-        worldID = IWorldID(worldIDAddress);
+        worldID = ISendBridge(worldIDAddress);
 
         worldID.sendRootToStateBridge(newRoot);
 
