@@ -9,7 +9,6 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
-import "forge-std/console.sol";
 
 /// @title World ID State Bridge
 /// @author Worldcoin
@@ -116,7 +115,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
-        console.log("sendRootToOptimism called");
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the optimism bridge.
         bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
@@ -160,7 +158,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param root The latest WorldID Identity Manager root to be sent to Polygon
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root
     function _sendRootToPolygon(uint256 root, uint128 timestamp) internal {
-        console.log("sendRootToPolygon called");
         bytes memory message;
 
         // This encoding is specified as the encoding of the `bytes` received by
