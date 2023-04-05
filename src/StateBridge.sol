@@ -60,7 +60,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Thrown when caller of sendRootMultichain is not the WorldID Identity Manager contract
+    /// @notice Thrown when the caller of `sendRootMultichain` is not the WorldID Identity Manager contract.
     error NotWorldIDIdentityManager();
 
     /*//////////////////////////////////////////////////////////////
