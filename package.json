@@ -37,7 +37,7 @@
     "ora": "^6.1.2",
     "@eth-optimism/contracts-bedrock": "^0.13.1",
     "@eth-optimism/sdk": "^1.10.4",
-    "prettier": "^2.8.4",
+    "prettier": "^2.8.6",
     "solhint": "^3.4.0"
   },
   "scripts": {
