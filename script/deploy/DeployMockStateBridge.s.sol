@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
 import {MockStateBridge} from "src/mock/MockStateBridge.sol";
