@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.15;
-
-// Demo deployments
-// Goerli 0x09A02586dAf43Ca837b45F34dC2661d642b8Da15
-// https://goerli-optimism.etherscan.io/address/0x09a02586daf43ca837b45f34dc2661d642b8da15#code
+pragma solidity ^0.8.19;
 
 import {Script} from "forge-std/Script.sol";
 import {PolygonWorldID} from "../../src/PolygonWorldID.sol";
 
+/// @title PolygonWorldID deployment script on Polygon PoS mainnet
+/// @notice forge script to deploy PolygonWorldID.sol
+/// @author Worldcoin
+/// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
 contract DeployPolygonWorldID is Script {
     address public stateBridgeAddress;
 
@@ -18,9 +18,9 @@ contract DeployPolygonWorldID is Script {
     uint256 public privateKey;
     uint8 public treeDepth;
 
-    /*//////////////////////////////////////////////////////////////
-                                CONFIG
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            CONFIG                           ///
+    ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
     string public path = string.concat(root, "/script/.deploy-config.json");
     string public json = vm.readFile(path);

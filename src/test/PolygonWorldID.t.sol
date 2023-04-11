@@ -12,9 +12,9 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 /// @dev The PolygonWorldID contract is deployed on Polygon PoS and is called by the StateBridge contract.
 /// @dev This contract uses the Optimism CommonTest.t.sol tool suite to test the PolygonWorldID contract.
 contract PolygonWorldIDTest is PRBTest, StdCheats {
-    /*//////////////////////////////////////////////////////////////
-                                WORLD ID
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                           WORLD ID                          ///
+    ///////////////////////////////////////////////////////////////////
     /// @notice The PolygonWorldID contract
     PolygonWorldID internal id;
 

@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-// Demo deployments
-// Goerli 0x8438ba278cF0bf6dc75a844755C7A805BB45984F
-// https://goerli.etherscan.io/address/0x8438ba278cf0bf6dc75a844755c7a805bb45984f#code
-
+/// @dev Demo deployments
+/// @custom:deployment Goerli 0x1ca56798e14fc4cb75de85cc1d465231eaf242e3
+/// @custom:link https://goerli.etherscan.io/address/0x1ca56798e14fc4cb75de85cc1d465231eaf242e3
 import {Script} from "forge-std/Script.sol";
 import {StateBridge} from "src/StateBridge.sol";
 
+/// @title State Bridge deployment script
+/// @notice forge script to deploy StateBridge.sol
+/// @author Worldcoin
+/// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
 contract DeployStateBridge is Script {
     StateBridge public bridge;
 
@@ -20,9 +23,9 @@ contract DeployStateBridge is Script {
     address public checkpointManagerAddress;
     address public fxRootAddress;
 
-    /*//////////////////////////////////////////////////////////////
-                                 CONFIG
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            CONFIG                           ///
+    ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
     string public path = string.concat(root, "/script/.deploy-config.json");
     string public json = vm.readFile(path);
@@ -30,9 +33,9 @@ contract DeployStateBridge is Script {
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
     function setUp() public {
-        /*//////////////////////////////////////////////////////////////
-                                POLYGON
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                           POLYGON                           ///
+        ///////////////////////////////////////////////////////////////////
 
         // https://static.matic.network/network/testnet/mumbai/index.json
         // RoootChainManagerProxy
@@ -41,14 +44,14 @@ contract DeployStateBridge is Script {
         // FxRoot
         fxRootAddress = address(0x3d1d3E34f7fB6D26245E6640E1c50710eFFf15bA);
 
-        /*//////////////////////////////////////////////////////////////
-                                OPTIMISM
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                           OPTIMISM                          ///
+        ///////////////////////////////////////////////////////////////////
         crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
 
-        /*//////////////////////////////////////////////////////////////
-                                WORLD ID
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                           WORLD ID                          ///
+        ///////////////////////////////////////////////////////////////////
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
