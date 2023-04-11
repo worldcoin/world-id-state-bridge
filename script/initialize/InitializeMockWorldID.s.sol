@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-// demo deployments
-
 import {Script} from "forge-std/Script.sol";
 import {WorldIDIdentityManagerMock} from "../../src/mock/WorldIDIdentityManagerMock.sol";
 
@@ -10,9 +8,9 @@ import {WorldIDIdentityManagerMock} from "../../src/mock/WorldIDIdentityManagerM
 contract InitializeMockWorldID is Script {
     WorldIDIdentityManagerMock public worldID;
 
-    /*//////////////////////////////////////////////////////////////
-                                 CONFIG
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            CONFIG                           ///
+    ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
     string public path = string.concat(root, "/script/.deploy-config.json");
     string public json = vm.readFile(path);

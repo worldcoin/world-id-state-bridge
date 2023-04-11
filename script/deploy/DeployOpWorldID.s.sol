@@ -1,21 +1,22 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-// Demo deployments
-// Goerli 0x09A02586dAf43Ca837b45F34dC2661d642b8Da15
-// https://goerli-optimism.etherscan.io/address/0x09a02586daf43ca837b45f34dc2661d642b8da15#code
-
+/// @dev Demo deployments
+/// @custom:deployment Optimism Goerli (420) 0x0ed95bda37cc9c14596adba8bf37fc60e2fd9080
+/// @custom:link https://goerli-optimism.etherscan.io/address/0x0ed95bda37cc9c14596adba8bf37fc60e2fd9080
 import {Script} from "forge-std/Script.sol";
 import {OpWorldID} from "../../src/OpWorldID.sol";
 
-// Optimism Goerli Testnet ChainID = 420
-
+/// @title OpWorldID deployment script
+/// @notice forge script to deploy OpWorldID.sol
+/// @author Worldcoin
+/// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
 contract DeployOpWorldID is Script {
     OpWorldID public opWorldID;
 
-    /*//////////////////////////////////////////////////////////////
-                                 CONFIG
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            CONFIG                           ///
+    ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
     string public path = string.concat(root, "/script/.deploy-config.json");
     string public json = vm.readFile(path);

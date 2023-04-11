@@ -25,9 +25,9 @@ import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 /// @dev The OpWorldID contract is deployed on Optimism and is called by the StateBridge contract.
 /// @dev This contract uses the Optimism CommonTest.t.sol testing tool suite.
 contract OpWorldIDTest is Messenger_Initializer {
-    /*//////////////////////////////////////////////////////////////
-                                WORLD ID
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                           WORLD ID                          ///
+    ///////////////////////////////////////////////////////////////////
     /// @notice The OpWorldID contract
     OpWorldID internal id;
 
@@ -63,6 +63,10 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.label(address(id), "OPWorldID");
     }
 
+    ///////////////////////////////////////////////////////////////////
+    ///                           SUCCEEDS                          ///
+    ///////////////////////////////////////////////////////////////////
+
     function _switchToCrossDomainOwnership(OpWorldID _id) internal {
         vm.expectEmit(true, true, true, true);
 
@@ -76,6 +80,44 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.prank(_id.owner());
         id.transferOwnership({_owner: alice, _isLocal: false});
     }
+
+    /// @notice Test that you can insert new root and check if it is valid
+    /// @param newRoot The root of the merkle tree after the first update
+    function test_receiveVerifyRoot_succeeds(uint256 newRoot) public {
+        _switchToCrossDomainOwnership(id);
+
+        address owner = id.owner();
+        uint128 newRootTimestamp = uint128(block.timestamp + 100);
+        vm.warp(block.timestamp + 200);
+
+        // set the xDomainMsgSender storage slot to the L1Messenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(0, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+        );
+
+        assertTrue(id.checkValidRoot(newRoot));
+    }
+
+    /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
+    function testCanGetTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        vm.assume(SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+
+        id = new OpWorldID(actualTreeDepth);
+
+        // Test
+        assert(id.getTreeDepth() == actualTreeDepth);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                           REVERTS                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice Test that when _isLocal = false, a contract that is not the L2 Messenger can't call the contract
     /// @param newRoot The root of the merkle tree after the first update
@@ -105,29 +147,6 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.prank(address(L2Messenger));
         vm.expectRevert("CrossDomainOwnable3: caller is not the owner");
         id.receiveRoot(newRoot, newRootTimestamp);
-    }
-
-    /// @notice Test that you can insert new root and check if it is valid
-    /// @param newRoot The root of the merkle tree after the first update
-    function test_receiveVerifyRoot_succeeds(uint256 newRoot) public {
-        _switchToCrossDomainOwnership(id);
-
-        address owner = id.owner();
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
-        vm.warp(block.timestamp + 200);
-
-        // set the xDomainMsgSender storage slot to the L1Messenger
-        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
-        L2Messenger.relayMessage(
-            Encoding.encodeVersionedNonce(0, 1),
-            owner,
-            address(id),
-            0,
-            0,
-            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
-        );
-
-        assertTrue(id.checkValidRoot(newRoot));
     }
 
     /// @notice Test that a root that hasn't been inserted is invalid
@@ -195,16 +214,5 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         vm.warp(block.timestamp + 8 days);
         id.checkValidRoot(newRoot);
-    }
-
-    /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
-    function testCanGetTreeDepth(uint8 actualTreeDepth) public {
-        // Setup
-        vm.assume(SemaphoreTreeDepthValidator.validate(actualTreeDepth));
-
-        id = new OpWorldID(actualTreeDepth);
-
-        // Test
-        assert(id.getTreeDepth() == actualTreeDepth);
     }
 }

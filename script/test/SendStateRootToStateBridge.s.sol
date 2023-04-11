@@ -17,9 +17,9 @@ contract SendStateRootToStateBridge is Script {
     uint256 public privateKey;
 
     function setUp() public {
-        /*//////////////////////////////////////////////////////////////
-                                 CONFIG
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                            CONFIG                           ///
+        ///////////////////////////////////////////////////////////////////
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/script/.deploy-config.json");
         string memory json = vm.readFile(path);
