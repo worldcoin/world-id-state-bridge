@@ -30,8 +30,6 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
             revert UnsupportedTreeDepth(_treeDepth);
         }
-
-        treeDepth = _treeDepth;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
