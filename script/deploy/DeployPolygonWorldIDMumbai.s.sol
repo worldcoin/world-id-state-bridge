@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.15;
 
 /// @dev Demo deployments
 /// @custom:deployment Polygon Mumbai 0x771ef55049f02f08101f68c6e71653ab920a98e9
