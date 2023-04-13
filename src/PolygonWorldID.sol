@@ -26,13 +26,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     constructor(uint8 _treeDepth, address _fxChild)
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
-    {
-        if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
-            revert UnsupportedTreeDepth(_treeDepth);
-        }
-
-        treeDepth = _treeDepth;
-    }
+    {}
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
