@@ -131,21 +131,21 @@ abstract contract WorldIDBridge is IWorldID {
     /// @custom:reverts ExpiredRoot If the provided `root` has expired.
     /// @custom:reverts NonExistentRoot If the provided `root` does not exist in the history.
     function checkValidRoot(uint256 root) public view returns (bool isValid) {
-        if (root == _latestRoot) {
-            return true;
+        if (root != _latestRoot) {
+            uint128 rootTimestamp = rootHistory[root];
+
+            // A root does not exist if it has no associated timestamp.
+            if (rootTimestamp == 0) {
+                revert NonExistentRoot();
+            }
+
+            // A root is no longer valid if it has expired.
+            if (block.timestamp - rootTimestamp > ROOT_HISTORY_EXPIRY) {
+                revert ExpiredRoot();
+            }
         }
 
-        uint128 rootTimestamp = rootHistory[root];
-
-        // Expired roots are not valid.
-        if (block.timestamp - rootTimestamp > ROOT_HISTORY_EXPIRY) {
-            revert ExpiredRoot();
-        }
-
-        // And roots do not exist if they don't have an associated timestamp.
-        if (rootTimestamp == 0) {
-            revert NonExistentRoot();
-        }
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -174,6 +174,8 @@ abstract contract WorldIDBridge is IWorldID {
             semaphoreVerifier.verifyProof(
                 root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
             );
+        } else {
+            revert("Unreachable");
         }
     }
 

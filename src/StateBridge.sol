@@ -110,7 +110,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
                                 OPTIMISM
     //////////////////////////////////////////////////////////////*/
 
-    // @notice Sends the latest WorldID Identity Manager root to all chains.
+    /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
