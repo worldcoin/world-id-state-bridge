@@ -6,7 +6,6 @@ import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
@@ -25,10 +24,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
 
     /// @notice address for Optimism's Ethereum mainnet L1CrossDomainMessenger contract
     address internal crossDomainMessengerAddress;
-
-    /// @notice Interface for checkVlidRoot within the WorldID Identity Manager contract
-    IWorldIDIdentityManager internal worldID;
-
+    
     /// @notice worldID Address
     address public worldIDAddress;
 
@@ -81,7 +77,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     ) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
-        worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
     }
 
