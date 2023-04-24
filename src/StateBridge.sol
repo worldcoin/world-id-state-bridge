@@ -5,8 +5,8 @@ pragma solidity ^0.8.15;
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {IRootHistory} from "./interfaces/IRootHistory.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
@@ -26,9 +26,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice address for Optimism's Ethereum mainnet L1CrossDomainMessenger contract
     address internal crossDomainMessengerAddress;
 
-    /// @notice Interface for checkVlidRoot within the WorldID Identity Manager contract
-    IWorldIDIdentityManager internal worldID;
-
     /// @notice worldID Address
     address public worldIDAddress;
 
@@ -44,6 +41,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     event OwnershipTransferredOptimism(
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
+
+    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID (on Optimism)
+    /// @param rootHistoryExpiry The new root history expiry for OpWorldID
+    event SetRootHistoryExpiryOptimism(uint256 rootHistoryExpiry);
 
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
@@ -81,7 +82,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     ) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
-        worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
     }
 
@@ -148,6 +148,25 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         );
 
         emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
+    }
+
+    /// @notice Adds functionality to the StateBridge to set the root history expiry on OpWorldID
+    /// @param _rootHistoryExpiry new root history expiry
+    function setRootHistoryExpiryOptimism(uint256 _rootHistoryExpiry) public onlyOwner {
+        bytes memory message;
+
+        // The `encodeCall` function is strongly typed, so this checks that we are passing the
+        // correct data to the optimism bridge.
+        message = abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
+
+        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+            // Contract address on Optimism
+            opWorldIDAddress,
+            message,
+            200000
+        );
+
+        emit SetRootHistoryExpiryOptimism(_rootHistoryExpiry);
     }
 
     ///////////////////////////////////////////////////////////////////
