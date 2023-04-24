@@ -6,7 +6,6 @@ import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
