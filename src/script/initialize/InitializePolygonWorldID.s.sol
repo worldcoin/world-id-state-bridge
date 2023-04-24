@@ -18,11 +18,11 @@ contract InitializePolygonWorldID is Script {
     PolygonWorldID public polygonWorldID;
     uint256 public privateKey;
 
-    /*//////////////////////////////////////////////////////////////
-                                CONFIG
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            CONFIG                           ///
+    ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script.deploy-config.json");
+    string public path = string.concat(root, "/src/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
     function setUp() public {

@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-// demo deployments
-
 import {Script} from "forge-std/Script.sol";
 import {OpWorldID} from "src/OpWorldID.sol";
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
 
-/// @notice Initializes the StateBridge contract
+/// @title Ownership Transfer of OpWorldID script for Mainnet
+/// @notice forge script for transferring ownership of OpWorldID to an local (Optimism)
+/// or cross-chain (Ethereum) EOA or contract
+/// @author Worldcoin
+/// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
 contract TransferOwnershipOfOpWorldIDMainnet is Script {
     address public stateBridgeAddress;
     address public opWorldIDAddress;
@@ -23,11 +25,11 @@ contract TransferOwnershipOfOpWorldIDMainnet is Script {
     bool public isLocal;
 
     function setUp() public {
-        /*//////////////////////////////////////////////////////////////
-                                 CONFIG
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                            CONFIG                           ///
+        ///////////////////////////////////////////////////////////////////
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/src/script.deploy-config.json");
+        string memory path = string.concat(root, "/src/script/.deploy-config.json");
         string memory json = vm.readFile(path);
 
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
@@ -36,9 +38,9 @@ contract TransferOwnershipOfOpWorldIDMainnet is Script {
     }
 
     constructor() {
-        /*//////////////////////////////////////////////////////////////
-                                MAINNET 
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                           MAINNET                           ///
+        ///////////////////////////////////////////////////////////////////
         crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
     }
 
