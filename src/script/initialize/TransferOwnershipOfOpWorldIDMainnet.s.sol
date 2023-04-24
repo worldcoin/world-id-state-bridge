@@ -4,13 +4,13 @@ pragma solidity ^0.8.15;
 // demo deployments
 
 import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "../../src/OpWorldID.sol";
+import {OpWorldID} from "src/OpWorldID.sol";
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {ICrossDomainOwnable3} from "../../src/interfaces/ICrossDomainOwnable3.sol";
+import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
 
 /// @notice Initializes the StateBridge contract
-contract TransferOwnershipOfOpWorldIDGoerli is Script {
+contract TransferOwnershipOfOpWorldIDMainnet is Script {
     address public stateBridgeAddress;
     address public opWorldIDAddress;
     address public immutable crossDomainMessengerAddress;
@@ -27,7 +27,7 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
                                  CONFIG
         //////////////////////////////////////////////////////////////*/
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/script/.deploy-config.json");
+        string memory path = string.concat(root, "/src/script.deploy-config.json");
         string memory json = vm.readFile(path);
 
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
@@ -37,9 +37,9 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
     constructor() {
         /*//////////////////////////////////////////////////////////////
-                                 GOERLI
+                                MAINNET 
         //////////////////////////////////////////////////////////////*/
-        crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+        crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
     }
 
     function run() public {
@@ -50,12 +50,22 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
         vm.startBroadcast(privateKey);
 
-        transferOwnershipToStateBridge(stateBridgeAddress, isLocal);
+        crossDomainTransferOwnership(stateBridgeAddress, isLocal);
 
         vm.stopBroadcast();
     }
 
-    function transferOwnershipToStateBridge(address newOwner, bool _isLocal) internal {
-        ICrossDomainOwnable3(opWorldIDAddress).transferOwnership(newOwner, _isLocal);
+    function crossDomainTransferOwnership(address newOwner, bool _isLocal) internal {
+        bytes memory message;
+
+        message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (newOwner, _isLocal));
+
+        // ICrossDomainMessenger is an interface for the L1 Messenger contract deployed on Goerli address
+        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+            // Contract address on Optimism
+            opWorldIDAddress,
+            message,
+            1000000 // within the free gas limit
+        );
     }
 }

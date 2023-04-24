@@ -11,10 +11,17 @@
 node_modules
 .vscode
 
+docs/src/*
+docs/book/*
+docs/book.css
+docs/book.toml
+docs/solidity.min.js
+docs/.gitignore
+
 # files
 *.env
 *.log
-script/.deploy-config.json
+src/script/.deploy-config.json
 .DS_Store
 .pnp.*
 yarn-debug.log*

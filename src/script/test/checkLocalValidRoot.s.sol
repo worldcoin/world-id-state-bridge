@@ -6,27 +6,34 @@ pragma solidity ^0.8.15;
 // https://goerli-optimism.etherscan.io/address/0x09a02586daf43ca837b45f34dc2661d642b8da15#code
 
 import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "../../src/OpWorldID.sol";
+import {MockOpPolygonWorldID} from "src/mock/MockOpPolygonWorldID.sol";
 
 // Optimism Goerli Testnet ChainID = 420
 
-contract DeployOpWorldID is Script {
-    OpWorldID public opWorldID;
-
+contract CheckLocalValidRoot is Script {
     /*//////////////////////////////////////////////////////////////
                                  CONFIG
     //////////////////////////////////////////////////////////////*/
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/script/.deploy-config.json");
+    string public path = string.concat(root, "/src/script.deploy-config.json");
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-    uint8 public treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
+
+    address public opPolygonWorldIDAddress =
+        abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
+
+    uint256 public newRoot = abi.decode(vm.parseJson(json, ".newRoot"), (uint256));
+    MockOpPolygonWorldID public opPolygonWorldID = MockOpPolygonWorldID(opPolygonWorldIDAddress);
+
+    function setUp() public {
+        vm.label(opPolygonWorldIDAddress, "MockOpPolygonWorldID");
+    }
 
     function run() external {
         vm.startBroadcast(privateKey);
 
-        opWorldID = new OpWorldID(treeDepth);
+        opPolygonWorldID.requireValidRoot(newRoot);
 
         vm.stopBroadcast();
     }
