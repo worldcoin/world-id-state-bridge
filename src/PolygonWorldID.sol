@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
+import { WorldIDBridge } from "./abstract/WorldIDBridge.sol";
 
-import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import { FxBaseChildTunnel } from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import { Ownable } from "openzeppelin-contracts/access/Ownable.sol";
+import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
+import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title Polygon WorldID Bridge
 /// @author Worldcoin
@@ -23,14 +23,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     /// @param _treeDepth The depth of the WorldID Identity Manager merkle tree.
     /// @param _fxChild The address of the FxChild tunnel - the contract that will receive messages on Polygon
     /// and Broadcasts them to FxPortal which bridges the messages to Ethereum
-    constructor(uint8 _treeDepth, address _fxChild)
-        WorldIDBridge(_treeDepth)
-        FxBaseChildTunnel(_fxChild)
-    {
-        if (!SemaphoreTreeDepthValidator.validate(_treeDepth)) {
-            revert UnsupportedTreeDepth(_treeDepth);
-        }
-    }
+    constructor(uint8 _treeDepth, address _fxChild) WorldIDBridge(_treeDepth) FxBaseChildTunnel(_fxChild) {}
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
@@ -50,11 +43,11 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     ///
     /// @custom:reverts string If the sender is not valid.
     /// @custom:reverts EvmError If the provided `message` does not match the expected format.
-    function _processMessageFromRoot(uint256, address sender, bytes memory message)
-        internal
-        override
-        validateSender(sender)
-    {
+    function _processMessageFromRoot(
+        uint256,
+        address sender,
+        bytes memory message
+    ) internal override validateSender(sender) {
         // This decodes as specified in the parameter block. If this fails, it will revert.
         (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
 
