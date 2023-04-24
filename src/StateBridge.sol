@@ -26,9 +26,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice address for Optimism's Ethereum mainnet L1CrossDomainMessenger contract
     address internal crossDomainMessengerAddress;
 
-    /// @notice Interface for checkVlidRoot within the WorldID Identity Manager contract
-    IWorldIDIdentityManager internal worldID;
-
     /// @notice worldID Address
     address public worldIDAddress;
 
@@ -81,7 +78,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     ) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
-        worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
         crossDomainMessengerAddress = _crossDomainMessenger;
     }
 
