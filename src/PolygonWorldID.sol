@@ -73,4 +73,20 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     function setRootHistoryExpiry(uint256 expiryTime) public virtual override onlyOwner {
         _setRootHistoryExpiry(expiryTime);
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///                             TUNNEL MANAGEMENT                           ///
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /// @notice Sets the `fxRootTunnel` address if not already set.
+    /// @dev This implementation replicates the logic from `FxBaseChildTunnel` due to the inability
+    ///      to call `external` superclass methods when overriding them.
+    ///
+    /// @param _fxRootTunnel The address of the root (L1) tunnel contract.
+    ///
+    /// @custom:reverts string If the root tunnel has already been set.
+    function setFxRootTunnel(address _fxRootTunnel) external virtual override onlyOwner {
+        require(fxRootTunnel == address(0x0), "FxBaseChildTunnel: ROOT_TUNNEL_ALREADY_SET");
+        fxRootTunnel = _fxRootTunnel;
+    }
 }

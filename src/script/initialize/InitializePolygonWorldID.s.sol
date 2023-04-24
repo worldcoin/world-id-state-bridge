@@ -6,7 +6,7 @@ pragma solidity ^0.8.15;
 // https://goerli-optimism.etherscan.io/address/0x09a02586daf43ca837b45f34dc2661d642b8da15#code
 
 import {Script} from "forge-std/Script.sol";
-import {PolygonWorldID} from "../../src/PolygonWorldID.sol";
+import {PolygonWorldID} from "src/PolygonWorldID.sol";
 
 contract InitializePolygonWorldID is Script {
     address public stateBridgeAddress;
@@ -22,7 +22,7 @@ contract InitializePolygonWorldID is Script {
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/script/.deploy-config.json");
+    string public path = string.concat(root, "/src/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
     function setUp() public {

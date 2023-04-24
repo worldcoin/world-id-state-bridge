@@ -1,6 +1,6 @@
 # world-id-state-bridge
 
-![spec](./docs/state-bridge.svg)
+![spec](https://raw.githubusercontent.com/worldcoin/world-id-state-bridge/2cba98da38cfc5173ad773824126ce4285d240b1/docs/state-bridge.svg)
 
 ## Description
 

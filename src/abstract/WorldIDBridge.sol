@@ -120,31 +120,31 @@ abstract contract WorldIDBridge is IWorldID {
         emit RootAdded(newRoot, supersedeTimestamp);
     }
 
-    /// @notice Checks if a given root value is valid.
+    /// @notice Reverts if the provided root value is not valid.
     /// @dev A root is valid if it is either the latest root, or not the latest root but has not
     ///      expired.
     ///
     /// @param root The root of the merkle tree to check for validity.
     ///
-    /// @return isValid `true` if `root` is a valid root
-    ///
     /// @custom:reverts ExpiredRoot If the provided `root` has expired.
     /// @custom:reverts NonExistentRoot If the provided `root` does not exist in the history.
-    function checkValidRoot(uint256 root) public view returns (bool isValid) {
+    function requireValidRoot(uint256 root) public view {
+        // The latest root is always valid.
         if (root == _latestRoot) {
-            return true;
+            return;
         }
 
+        // Otherwise, we need to check things via the timestamp.
         uint128 rootTimestamp = rootHistory[root];
 
-        // Expired roots are not valid.
-        if (block.timestamp - rootTimestamp > ROOT_HISTORY_EXPIRY) {
-            revert ExpiredRoot();
-        }
-
-        // And roots do not exist if they don't have an associated timestamp.
+        // A root does not exist if it has no associated timestamp.
         if (rootTimestamp == 0) {
             revert NonExistentRoot();
+        }
+
+        // A root is no longer valid if it has expired.
+        if (block.timestamp - rootTimestamp > ROOT_HISTORY_EXPIRY) {
+            revert ExpiredRoot();
         }
     }
 
@@ -170,11 +170,13 @@ abstract contract WorldIDBridge is IWorldID {
         uint256 externalNullifierHash,
         uint256[8] calldata proof
     ) public view virtual {
-        if (checkValidRoot(root)) {
-            semaphoreVerifier.verifyProof(
-                root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
-            );
-        }
+        // Check the preconditions on the inputs.
+        requireValidRoot(root);
+
+        // With that done we can now verify the proof.
+        semaphoreVerifier.verifyProof(
+            root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////////

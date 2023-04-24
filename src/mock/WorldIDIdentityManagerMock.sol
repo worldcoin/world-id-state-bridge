@@ -2,7 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import {IBridge} from "../interfaces/IBridge.sol";
+import {IBridge} from "src/interfaces/IBridge.sol";
 
 /// @title WorldID Identity Manager Mock
 /// @author Worldcoin

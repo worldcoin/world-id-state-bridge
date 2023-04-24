@@ -1,32 +1,28 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-/// @dev Demo deployments
-/// @custom:deployment Polygon Mumbai 0x771ef55049f02f08101f68c6e71653ab920a98e9
-/// @custom:link https://mumbai.polygonscan.com/address/0x771ef55049f02f08101f68c6e71653ab920a98e9#code
 import {Script} from "forge-std/Script.sol";
-import {PolygonWorldID} from "../../src/PolygonWorldID.sol";
+import {PolygonWorldID} from "src/PolygonWorldID.sol";
 
-/// @title PolygonWorldID deployment script on Polygon Mumbai
+/// @title PolygonWorldID deployment script on Polygon PoS mainnet
 /// @notice forge script to deploy PolygonWorldID.sol
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
-contract DeployPolygonWorldIDMumbai is Script {
+contract DeployPolygonWorldID is Script {
     address public stateBridgeAddress;
 
-    // Polygon PoS Mumbai Testnet Child Tunnel
-    address public fxChildAddress = address(0xCf73231F28B7331BBe3124B907840A94851f9f11);
+    // Polygon PoS Mainnet Child Tunnel
+    address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
 
     PolygonWorldID public polygonWorldId;
     uint256 public privateKey;
-
     uint8 public treeDepth;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/script/.deploy-config.json");
+    string public path = string.concat(root, "/src/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
     function setUp() public {

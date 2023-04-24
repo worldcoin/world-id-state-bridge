@@ -5,7 +5,7 @@ pragma solidity ^0.8.15;
 /// @custom:deployment Optimism Goerli (420) 0x0ed95bda37cc9c14596adba8bf37fc60e2fd9080
 /// @custom:link https://goerli-optimism.etherscan.io/address/0x0ed95bda37cc9c14596adba8bf37fc60e2fd9080
 import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "../../src/OpWorldID.sol";
+import {OpWorldID} from "src/OpWorldID.sol";
 
 /// @title OpWorldID deployment script
 /// @notice forge script to deploy OpWorldID.sol
@@ -18,7 +18,7 @@ contract DeployOpWorldID is Script {
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/script/.deploy-config.json");
+    string public path = string.concat(root, "/src/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
