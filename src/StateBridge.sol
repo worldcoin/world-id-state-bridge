@@ -16,9 +16,9 @@ import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol"
 /// @dev This contract lives on Ethereum mainnet and is called by the World ID Identity Manager contract
 /// in the registerIdentities method
 contract StateBridge is FxBaseRootTunnel, Ownable {
-    /*//////////////////////////////////////////////////////////////
-                                STORAGE
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                           STORAGE                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice The address of the OPWorldID contract on Optimism
     address public opWorldIDAddress;
@@ -32,9 +32,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice worldID Address
     address public worldIDAddress;
 
-    /*//////////////////////////////////////////////////////////////
-                                 EVENTS
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            EVENTS                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
@@ -55,16 +55,16 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentToPolygon(uint256 root, uint128 timestamp);
 
-    /*//////////////////////////////////////////////////////////////
-                                 ERRORS
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            ERRORS                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice Thrown when the caller of `sendRootMultichain` is not the WorldID Identity Manager contract.
     error NotWorldIDIdentityManager();
 
-    /*//////////////////////////////////////////////////////////////
-                              CONSTRUCTOR
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                         CONSTRUCTOR                         ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice constructor
     /// @param _checkpointManager address of the checkpoint manager contract
@@ -85,9 +85,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         crossDomainMessengerAddress = _crossDomainMessenger;
     }
 
-    /*//////////////////////////////////////////////////////////////
-                               PUBLIC API
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                          PUBLIC API                         ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
@@ -106,9 +106,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         // add other chains here
     }
 
-    /*//////////////////////////////////////////////////////////////
-                                OPTIMISM
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                           OPTIMISM                          ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
@@ -150,9 +150,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    ///                                  POLYGON                                ///
-    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+    ///                           POLYGON                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice Sends root and timestamp to Polygon's StateChild contract (PolygonWorldID)
     /// @param root The latest WorldID Identity Manager root to be sent to Polygon
