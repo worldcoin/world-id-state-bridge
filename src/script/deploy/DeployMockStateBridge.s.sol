@@ -6,47 +6,28 @@ pragma solidity ^0.8.15;
 // https://goerli.etherscan.io/address/0x8438ba278cf0bf6dc75a844755c7a805bb45984f#code
 
 import {Script} from "forge-std/Script.sol";
-import {StateBridge} from "src/StateBridge.sol";
+import {MockStateBridge} from "src/mock/MockStateBridge.sol";
 
-contract DeployStateBridge is Script {
-    StateBridge public bridge;
+contract DeployMockStateBridge is Script {
+    MockStateBridge public bridge;
 
     address public opWorldIDAddress;
     address public polygonWorldIDAddress;
     address public worldIDIdentityManagerAddress;
-    address public crossDomainMessengerAddress;
     address public stateBridgeAddress;
-
-    address public checkpointManagerAddress;
-    address public fxRootAddress;
 
     /*//////////////////////////////////////////////////////////////
                                  CONFIG
     //////////////////////////////////////////////////////////////*/
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/script/.deploy-config.json");
+    string public path = string.concat(root, "/src/script.deploy-config.json");
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
     function setUp() public {
         /*//////////////////////////////////////////////////////////////
-                                POLYGON
-        //////////////////////////////////////////////////////////////*/
-
-        // https://static.matic.network/network/mainnet/v1/index.json
-        // RootChainManagerProxy
-        checkpointManagerAddress = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);
-        // FxRoot
-        fxRootAddress = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
-
-        /*//////////////////////////////////////////////////////////////
-                                OPTIMISM
-        //////////////////////////////////////////////////////////////*/
-        crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
-
-        /*//////////////////////////////////////////////////////////////
-                                WORLDID
+                                WORLD ID
         //////////////////////////////////////////////////////////////*/
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
@@ -57,13 +38,7 @@ contract DeployStateBridge is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new StateBridge(
-            checkpointManagerAddress,
-            fxRootAddress,
-            worldIDIdentityManagerAddress,
-            opWorldIDAddress,
-            crossDomainMessengerAddress
-        );
+        bridge = new MockStateBridge(worldIDIdentityManagerAddress, opWorldIDAddress);
 
         vm.stopBroadcast();
     }
