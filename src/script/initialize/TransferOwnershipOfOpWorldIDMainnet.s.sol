@@ -2,10 +2,10 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "../../src/OpWorldID.sol";
+import {OpWorldID} from "src/OpWorldID.sol";
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-import {ICrossDomainOwnable3} from "../../src/interfaces/ICrossDomainOwnable3.sol";
+import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
 
 /// @title Ownership Transfer of OpWorldID script for Mainnet
 /// @notice forge script for transferring ownership of OpWorldID to an local (Optimism)
@@ -29,7 +29,7 @@ contract TransferOwnershipOfOpWorldIDMainnet is Script {
         ///                            CONFIG                           ///
         ///////////////////////////////////////////////////////////////////
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/script/.deploy-config.json");
+        string memory path = string.concat(root, "/src/script/.deploy-config.json");
         string memory json = vm.readFile(path);
 
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));

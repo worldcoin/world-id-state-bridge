@@ -101,7 +101,7 @@ contract OpWorldIDTest is Messenger_Initializer {
             abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
         );
 
-        assertTrue(id.checkValidRoot(newRoot));
+        id.requireValidRoot(newRoot);
     }
 
     /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
@@ -172,7 +172,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         );
 
         vm.expectRevert(WorldIDBridge.NonExistentRoot.selector);
-        id.checkValidRoot(randomRoot);
+        id.requireValidRoot(randomRoot);
     }
 
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
@@ -213,6 +213,6 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         vm.warp(block.timestamp + 8 days);
-        id.checkValidRoot(newRoot);
+        id.requireValidRoot(newRoot);
     }
 }
