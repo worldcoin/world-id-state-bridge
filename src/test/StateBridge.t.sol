@@ -47,6 +47,10 @@ contract StateBridgeTest is PRBTest, StdCheats {
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
+    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID (on Optimism)
+    /// @param rootHistoryExpiry The new root history expiry for OpWorldID
+    event SetRootHistoryExpiryOptimism(uint256 rootHistoryExpiry);
+
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
@@ -154,6 +158,20 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.transferOwnershipOptimism(newOwner, isLocal);
     }
 
+    /// @notice tests whether the StateBridge contract can set root history expiry on Optimism
+    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID
+    function test_owner_setRootHistoryOptimism_succeeds(uint256 _rootHistoryExpiry) public {
+        vm.assume(_rootHistoryExpiry != 0);
+
+        vm.expectEmit(true, true, true, true);
+
+        // .sol transferOwnership event
+        emit SetRootHistoryExpiryOptimism(_rootHistoryExpiry);
+
+        vm.prank(owner);
+        stateBridge.setRootHistoryExpiryOptimism(_rootHistoryExpiry);
+    }
+
     ///////////////////////////////////////////////////////////////////
     ///                           REVERTS                           ///
     ///////////////////////////////////////////////////////////////////
@@ -194,5 +212,19 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         vm.prank(nonOwner);
         stateBridge.transferOwnershipOptimism(newOwner, isLocal);
+    }
+
+    /// @notice tests whether the StateBridge contract can set root history expiry on Optimism
+    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID
+    function test_notOwner_setRootHistoryOptimism_reverts(
+        address nonOwner,
+        uint256 _rootHistoryExpiry
+    ) public {
+        vm.assume(nonOwner != owner && _rootHistoryExpiry != 0);
+
+        vm.expectRevert("Ownable: caller is not the owner");
+
+        vm.prank(nonOwner);
+        stateBridge.setRootHistoryExpiryOptimism(_rootHistoryExpiry);
     }
 }
