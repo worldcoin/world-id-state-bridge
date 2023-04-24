@@ -1,0 +1,15 @@
+{
+  "privateKey": "0x7aa6f061a6f7e6b2e6f28a2baa2daaa749fa9e51b6b6e1d936a21b685fb15beb",
+  "ethereumRpcUrl": "https://eth-goerli.g.alchemy.com/v2/ndp7_d3yNW20ue2s_Ae4VWStGoP1xZ9-",
+  "optimismRpcUrl": "https://opt-goerli.g.alchemy.com/v2/j_P7s2aPT3HJcVcptSnEroQjQ5cBJp34",
+  "polygonRpcUrl": "https://polygon-mumbai.g.alchemy.com/v2/MIFUyq3e5zjYq-lXjgR9CtEyUWVlwHkU",
+  "ethereumEtherscanApiKey": "Q4IED6Z6SX1ITTRQ2GSC6XBEYSQWV5I772",
+  "optimismEtherscanApiKey": "A45GXGM4CJB6T8WZH3UNKXNYTDK54S2PQF",
+  "polygonscanApiKey": "E32MD4QVE5EYYDWBK45AN22WZZYDCDVMZW",
+  "worldIDIdentityManagerAddress": "0x0a4501CDA7D0DEcb737376F0eFbb692b4922bc56",
+  "optimismWorldIDAddress": "0x0Ed95BdA37CC9c14596adbA8BF37FC60e2fd9080",
+  "polygonWorldIDAddress": "0x771Ef55049F02f08101f68c6E71653Ab920a98e9",
+  "stateBridgeAddress": "0x1cA56798E14FC4cB75De85CC1d465231eAf242e3",
+  "newRoot": "0x2222222222222222222222222222222222222222",
+  "treeDepth": "16"
+}
