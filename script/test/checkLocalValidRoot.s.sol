@@ -27,7 +27,7 @@ contract CheckLocalValidRoot is Script {
     function run() external {
         vm.startBroadcast(privateKey);
 
-        opPolygonWorldID.checkValidRoot(newRoot);
+        opPolygonWorldID.requireValidRoot(newRoot);
 
         vm.stopBroadcast();
     }

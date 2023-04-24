@@ -110,7 +110,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     ///                           OPTIMISM                          ///
     ///////////////////////////////////////////////////////////////////
 
-    // @notice Sends the latest WorldID Identity Manager root to all chains.
+    /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
@@ -174,5 +174,21 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)
     function _processMessageFromChild(bytes memory) internal override {
         /// WorldID 🌎🆔 State Bridge
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///                             TUNNEL MANAGEMENT                           ///
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /// @notice Sets the `fxChildTunnel` address if not already set.
+    /// @dev This implementation replicates the logic from `FxBaseRootTunnel` due to the inability
+    ///      to call `external` superclass methods when overriding them.
+    ///
+    /// @param _fxChildTunnel The address of the child (non-L1) tunnel contract.
+    ///
+    /// @custom:reverts string If the root tunnel has already been set.
+    function setFxChildTunnel(address _fxChildTunnel) public virtual override onlyOwner {
+        require(fxChildTunnel == address(0x0), "FxBaseRootTunnel: CHILD_TUNNEL_ALREADY_SET");
+        fxChildTunnel = _fxChildTunnel;
     }
 }

@@ -149,6 +149,29 @@ contract OpWorldIDTest is Messenger_Initializer {
         id.receiveRoot(newRoot, newRootTimestamp);
     }
 
+    /// @notice Test that you can insert new root and check if it is valid
+    /// @param newRoot The root of the merkle tree after the first update
+    function test_receiveVerifyRoot_succeeds(uint256 newRoot) public {
+        _switchToCrossDomainOwnership(id);
+
+        address owner = id.owner();
+        uint128 newRootTimestamp = uint128(block.timestamp + 100);
+        vm.warp(block.timestamp + 200);
+
+        // set the xDomainMsgSender storage slot to the L1Messenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(0, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+        );
+
+        id.requireValidRoot(newRoot);
+    }
+
     /// @notice Test that a root that hasn't been inserted is invalid
     /// @param newRoot The root of the merkle tree after the first update
     function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot) public {
@@ -172,7 +195,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         );
 
         vm.expectRevert(WorldIDBridge.NonExistentRoot.selector);
-        id.checkValidRoot(randomRoot);
+        id.requireValidRoot(randomRoot);
     }
 
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
@@ -213,6 +236,6 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         vm.warp(block.timestamp + 8 days);
-        id.checkValidRoot(newRoot);
+        id.requireValidRoot(newRoot);
     }
 }
