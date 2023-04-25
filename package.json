@@ -33,7 +33,7 @@
     "@eth-optimism/contracts": "^0.5.39",
     "commander": "^10.0.0",
     "dotenv": "^16.0.3",
-    "ethers": "^6.0.8",
+    "ethers": "^6.2.3",
     "ora": "^6.1.2",
     "@eth-optimism/contracts-bedrock": "^0.13.1",
     "@eth-optimism/sdk": "^1.10.4",
