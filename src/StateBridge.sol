@@ -46,6 +46,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param rootHistoryExpiry The new root history expiry for OpWorldID
     event SetRootHistoryExpiryOptimism(uint256 rootHistoryExpiry);
 
+    /// @notice Emmitted when the the StateBridge sets the root history expiry for PolygonWorldID (on Polygon)
+    /// @param rootHistoryExpiry The new root history expiry for PolygonWorldID
+    event SetRootHistoryExpiryPolygon(uint256 rootHistoryExpiry);
+
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
@@ -182,12 +186,32 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         // This encoding is specified as the encoding of the `bytes` received by
         // `_processMessageFromRoot` in the Polygon state bridge. Specifically, it requires an ABI-
         // encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)`.
-        message = abi.encode(root, timestamp);
+        message = abi.encodeWithSignature(
+            "receiveRoot(bytes memory calldata)", abi.encode(root, timestamp)
+        );
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
 
         emit RootSentToPolygon(root, timestamp);
+    }
+
+    /// @notice Sets the root history expiry for PolygonWorldID
+    /// @param _rootHistoryExpiry The new root history expiry
+    function setRootHistoryExpiryPolygon(uint256 _rootHistoryExpiry) public onlyOwner {
+        bytes memory message;
+
+        // This encoding is specified as the encoding of the `bytes` received by
+        // `_processMessageFromRoot` in the Polygon state bridge. Specifically, it requires an ABI-
+        // encoded tuple of `(uint256 _rootHistoryExpiry)`.
+        message = abi.encodeWithSignature(
+            "receiveRootHistoryExpiry(bytes memory calldata)", abi.encode(_rootHistoryExpiry)
+        );
+
+        /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
+        _sendMessageToChild(message);
+
+        emit SetRootHistoryExpiryPolygon(_rootHistoryExpiry);
     }
 
     /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)

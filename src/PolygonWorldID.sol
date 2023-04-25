@@ -14,6 +14,13 @@ import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.
 contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
+    ///////////////////////////////////////////////////////////////////
+    ///                            ERRORS                           ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice Thrown when calling setRootHistoryExpiry which is a placeholder function.
+    error SetRootHistoryExpiryPlaceholder();
+
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -51,6 +58,13 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         override
         validateSender(sender)
     {
+        address(this).call(message);
+    }
+
+    /// @notice Updates the WorldID root history with a new root.
+    /// @param message An ABI-encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)`
+    /// @dev This function is called by the StateBridge contract.
+    function receiveRoot(bytes memory message) internal {
         // This decodes as specified in the parameter block. If this fails, it will revert.
         (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
 
@@ -61,13 +75,19 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     ///                              DATA MANAGEMENT                            ///
     ///////////////////////////////////////////////////////////////////////////////
 
-    /// @notice Sets the amount of time it takes for a root in the root history to expire.
-    ///
-    /// @param expiryTime The new amount of time it takes for a root to expire.
-    ///
-    /// @custom:reverts string If the caller is not the owner.
-    function setRootHistoryExpiry(uint256 expiryTime) public virtual override onlyOwner {
+    /// @notice Sets the `rootHistoryExpiry` variable to the provided value.
+    /// @param message An ABI-encoded tuple of `(uint256 expiryTime)`
+    /// @dev This function is called by the StateBridge contract.
+    function receiveRootHistoryExpiry(bytes memory message) internal {
+        uint256 expiryTime = abi.decode(message, (uint256));
+
         _setRootHistoryExpiry(expiryTime);
+    }
+
+    /// @notice Placeholder to satisfy WorldIDBridge inheritance
+    /// @dev This function is not used on Polygon PoS because of FxPortal message passing architecture
+    function setRootHistoryExpiry(uint256) public virtual override {
+        revert SetRootHistoryExpiryPlaceholder();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

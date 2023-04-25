@@ -35,13 +35,12 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
     bytes public data;
 
-    function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
-        // Setup
-        vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
-        vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
+    ///////////////////////////////////////////////////////////////////
+    ///                            ERRORS                           ///
+    ///////////////////////////////////////////////////////////////////
 
-        new PolygonWorldID(actualTreeDepth, fxChild);
-    }
+    /// @notice Thrown when calling setRootHistoryExpiry which is a placeholder function.
+    error SetRootHistoryExpiryPlaceholder();
 
     function setUp() public {
         data = abi.encode(newRoot, newRootTimestamp);
@@ -55,6 +54,18 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         vm.label(address(id), "PolygonWorldID");
     }
 
+    ///////////////////////////////////////////////////////////////////
+    ///                            TESTS                            ///
+    ///////////////////////////////////////////////////////////////////
+
+    function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
+
+        new PolygonWorldID(actualTreeDepth, fxChild);
+    }
+
     /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
     function testCanGetTreeDepth(uint8 actualTreeDepth) public {
         // Setup
@@ -64,5 +75,12 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         // Test
         assert(id.getTreeDepth() == actualTreeDepth);
+    }
+
+    /// @notice Checks that calling the placeholder setRootHistoryExpiry function reverts.
+    function testSetRootHistoryExpiryReverts(uint256 expiryTime) public {
+        // Test
+        vm.expectRevert(SetRootHistoryExpiryPlaceholder.selector);
+        id.setRootHistoryExpiry(expiryTime);
     }
 }
