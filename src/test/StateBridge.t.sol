@@ -162,30 +162,19 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.transferOwnershipOptimism(newOwner, isLocal);
     }
 
-    /// @notice tests whether the StateBridge contract can set root history expiry on Optimism
-    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID
-    function test_owner_setRootHistoryExpiryOptimism_succeeds(uint256 _rootHistoryExpiry) public {
+    /// @notice tests whether the StateBridge contract can set root history expiry on Optimism and Polygon
+    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID and PolygonWorldID
+    function test_owner_setRootHistoryExpiry_succeeds(uint256 _rootHistoryExpiry) public {
         vm.assume(_rootHistoryExpiry != 0);
 
         vm.expectEmit(true, true, true, true);
 
         emit SetRootHistoryExpiryOptimism(_rootHistoryExpiry);
 
-        vm.prank(owner);
-        stateBridge.setRootHistoryExpiryOptimism(_rootHistoryExpiry);
-    }
-
-    /// @notice tests whether the StateBridge contract can set root history expiry on Polygon
-    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID
-    function test_owner_setRootHistoryExpirtyPolygon_succeeds(uint256 _rootHistoryExpiry) public {
-        vm.assume(_rootHistoryExpiry != 0);
-
-        vm.expectEmit(true, true, true, true);
-
         emit SetRootHistoryExpiryPolygon(_rootHistoryExpiry);
 
-        vm.prank(owner);
-        stateBridge.setRootHistoryExpiryPolygon(_rootHistoryExpiry);
+        vm.prank(mockWorldIDAddress);
+        stateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -230,31 +219,17 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.transferOwnershipOptimism(newOwner, isLocal);
     }
 
-    /// @notice tests whether the StateBridge contract can set root history expiry on Optimism
-    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID
-    function test_notOwner_setRootHistoryOptimism_reverts(
-        address nonOwner,
+    /// @notice tests whether the StateBridge contract can set root history expiry on Optimism and Polygon
+    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID and PolygonWorldID
+    function test_notOwner_setRootHistoryExpiry_reverts(
+        address nonWorldID,
         uint256 _rootHistoryExpiry
     ) public {
-        vm.assume(nonOwner != owner && _rootHistoryExpiry != 0);
+        vm.assume(nonWorldID != mockWorldIDAddress && _rootHistoryExpiry != 0);
 
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(NotWorldIDIdentityManager.selector);
 
-        vm.prank(nonOwner);
-        stateBridge.setRootHistoryExpiryOptimism(_rootHistoryExpiry);
-    }
-
-    /// @notice tests whether the StateBridge contract can set root history expiry on Polygon
-    /// @param _rootHistoryExpiry The new root history expiry for PolygonWorldID
-    function test_notOwner_setRootHistoryPolygon_reverts(
-        address nonOwner,
-        uint256 _rootHistoryExpiry
-    ) public {
-        vm.assume(nonOwner != owner && _rootHistoryExpiry != 0);
-
-        vm.expectRevert("Ownable: caller is not the owner");
-
-        vm.prank(nonOwner);
-        stateBridge.setRootHistoryPolygon(_rootHistoryExpiry);
+        vm.prank(nonWorldID);
+        stateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
     }
 }
