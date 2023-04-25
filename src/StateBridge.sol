@@ -195,9 +195,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         // This encoding is specified as the encoding of the `bytes` received by
         // `_processMessageFromRoot` in the Polygon state bridge. Specifically, it requires an ABI-
         // encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)`.
-        message = abi.encodeWithSignature(
-            "receiveRoot(bytes memory calldata)", abi.encode(root, timestamp)
-        );
+        message = abi.encodeWithSignature("receiveRoot(bytes)", abi.encode(root, timestamp));
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
@@ -214,7 +212,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         // `_processMessageFromRoot` in the Polygon state bridge. Specifically, it requires an ABI-
         // encoded tuple of `(uint256 _rootHistoryExpiry)`.
         message = abi.encodeWithSignature(
-            "receiveRootHistoryExpiry(bytes memory calldata)", abi.encode(_rootHistoryExpiry)
+            "receiveRootHistoryExpiry(bytes)", abi.encode(_rootHistoryExpiry)
         );
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
