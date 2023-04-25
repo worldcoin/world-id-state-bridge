@@ -114,9 +114,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice Sets the root history expiry for OpWorldID (on Optimism) and PolygonWorldID (on Polygon)
     /// @param expiryTime The new root history expiry for OpWorldID and PolygonWorldID
     /// @dev
-    function setRootHistoryExpiryExpiry(uint256 expiryTime) public onlyWorldIDIdentityManager {
-        _setRootHistoryExpiryOptimism(expiryTime);
-        _setRootHistoryExpiryPolygon(expiryTime);
+    function setRootHistoryExpiry(uint256 expiryTime) public onlyWorldIDIdentityManager {
+        setRootHistoryExpiryOptimism(expiryTime);
+        setRootHistoryExpiryPolygon(expiryTime);
     }
 
     ///////////////////////////////////////////////////////////////////
