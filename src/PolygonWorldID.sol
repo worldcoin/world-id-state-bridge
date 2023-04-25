@@ -14,12 +14,21 @@ import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.
 contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
+    /// @notice The selector of the `receiveRoot` function.
+    bytes4 receiveRootSelector;
+
+    /// @notice The selector of the `receiveRootHistoryExpiry` function.
+    bytes4 receiveRootHistoryExpirySelector;
+
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
     ///////////////////////////////////////////////////////////////////
 
     /// @notice Thrown when calling setRootHistoryExpiry which is a placeholder function.
     error SetRootHistoryExpiryPlaceholder();
+
+    /// @notice Thrown when the message selector passed from FxRoot is invalid.
+    error InvalidMessageSelector(bytes4 selector);
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
@@ -33,7 +42,10 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     constructor(uint8 _treeDepth, address _fxChild)
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
-    {}
+    {
+        receiveRootSelector = bytes4(keccak256("receiveRoot(bytes)"));
+        receiveRootHistoryExpirySelector = bytes4(keccak256("receiveRootHistoryExpiry(bytes)"));
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
@@ -58,7 +70,13 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         override
         validateSender(sender)
     {
-        address(this).call(message);
+        bytes4 selector = abi.decode(message, (bytes4));
+
+        if (selector == receiveRootSelector || selector == receiveRootHistoryExpirySelector) {
+            address(this).call(message);
+        } else {
+            revert InvalidMessageSelector(selector);
+        }
     }
 
     /// @notice Updates the WorldID root history with a new root.
