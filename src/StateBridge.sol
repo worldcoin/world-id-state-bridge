@@ -183,6 +183,16 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     }
 
     ///////////////////////////////////////////////////////////////////
+    ///                            UTILS                            ///
+    ///////////////////////////////////////////////////////////////////
+
+    function grabSelector(bytes memory _payload) internal pure returns (bytes4 _selector) {
+        assembly ("memory-safe") {
+            _selector := shl(0xE0, shr(0xE0, mload(add(_payload, 0x20))))
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////
     ///                           POLYGON                           ///
     ///////////////////////////////////////////////////////////////////
 

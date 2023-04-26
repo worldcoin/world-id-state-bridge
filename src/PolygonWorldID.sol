@@ -47,6 +47,53 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         receiveRootHistoryExpirySelector = bytes4(keccak256("receiveRootHistoryExpiry(bytes)"));
     }
 
+    ///////////////////////////////////////////////////////////////////
+    ///                            UTILS                            ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice Loads the first word of the encoded data and cleans the upper 224 bits
+    /// (leaving only the 4 byte selector)
+    /// @param _payload The encoded data (_payload = abi.encodeWithSignature("fnName(type)", arg1))
+    ///
+    /// @return _selector The selector of the function called in the encoded data
+    function grabSelector(bytes memory _payload) internal pure returns (bytes4 _selector) {
+        assembly ("memory-safe") {
+            _selector := shl(0xE0, shr(0xE0, mload(add(_payload, 0x20))))
+        }
+    }
+
+    /// @notice Extracts the payload from an abi.encodeWithSignature object
+    /// @param _payload The encoded data (_payload = abi.encodeWithSignature("fnName(type)", arg1))
+    ///
+    /// @return _payloadData The payload (abi.encoded params) of the encoded data
+    function grabParams(bytes memory _payload) internal pure returns (bytes memory _payloadData) {
+        assembly ("memory-safe") {
+            // Grab the pointer to some free memory
+            _payloadData := mload(0x40)
+
+            // Copy the length - 4
+            let newLength := sub(mload(_payload), 0x04)
+            mstore(_payloadData, newLength)
+
+            // Copy the data following the selector
+            let dataStart := add(_payloadData, 0x20)
+            let payloadStart := add(_payload, 0x24)
+            for { let i := 0x00 } lt(i, mload(_payload)) { i := add(i, 0x20) } {
+                mstore(add(dataStart, i), mload(add(payloadStart, i)))
+            }
+
+            // Account for the full length of the copied data
+            // length word + data length
+            let fullLength := add(newLength, 0x20)
+
+            // Update the free memory pointer
+            mstore(0x40, add(_payloadData, and(add(fullLength, 0x1F), not(0x1F))))
+
+            // TODO: Probably also want to clean any erroniously copied bits in the
+            //       last word of the payload for full safety.
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -70,10 +117,14 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         override
         validateSender(sender)
     {
-        bytes4 selector = abi.decode(message, (bytes4));
+        // I need to decode selector and payload here
+        bytes4 selector = grabSelector(message);
+        bytes memory payload = grabParams(message);
 
-        if (selector == receiveRootSelector || selector == receiveRootHistoryExpirySelector) {
-            address(this).call(message);
+        if (selector == receiveRootSelector) {
+            receiveRoot(payload);
+        } else if (selector == receiveRootHistoryExpirySelector) {
+            receiveRootHistoryExpiry(payload);
         } else {
             revert InvalidMessageSelector(selector);
         }
