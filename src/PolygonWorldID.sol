@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
+import { WorldIDBridge } from "./abstract/WorldIDBridge.sol";
 
-import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import { FxBaseChildTunnel } from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import { Ownable } from "openzeppelin-contracts/access/Ownable.sol";
+import { SemaphoreTreeDepthValidator } from "./utils/SemaphoreTreeDepthValidator.sol";
+import { SemaphoreVerifier } from "semaphore/base/SemaphoreVerifier.sol";
 
 /// @title Polygon WorldID Bridge
 /// @author Worldcoin
@@ -39,12 +39,9 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     /// @param _treeDepth The depth of the WorldID Identity Manager merkle tree.
     /// @param _fxChild The address of the FxChild tunnel - the contract that will receive messages on Polygon
     /// and Broadcasts them to FxPortal which bridges the messages to Ethereum
-    constructor(uint8 _treeDepth, address _fxChild)
-        WorldIDBridge(_treeDepth)
-        FxBaseChildTunnel(_fxChild)
-    {
-        receiveRootSelector = bytes4(keccak256("receiveRoot(bytes)"));
-        receiveRootHistoryExpirySelector = bytes4(keccak256("receiveRootHistoryExpiry(bytes)"));
+    constructor(uint8 _treeDepth, address _fxChild) WorldIDBridge(_treeDepth) FxBaseChildTunnel(_fxChild) {
+        receiveRootSelector = bytes4(keccak256("receiveRoot(uint256,uint128)"));
+        receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -65,11 +62,11 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     ///
     /// @custom:reverts string If the sender is not valid.
     /// @custom:reverts EvmError If the provided `message` does not match the expected format.
-    function _processMessageFromRoot(uint256, address sender, bytes memory message)
-        internal
-        override
-        validateSender(sender)
-    {
+    function _processMessageFromRoot(
+        uint256,
+        address sender,
+        bytes memory message
+    ) internal override validateSender(sender) {
         // I need to decode selector and payload here
 
         // TODO: requires message to be bytes calldata instead of bytes memory
