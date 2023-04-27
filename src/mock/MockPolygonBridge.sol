@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-// Optimism interface for cross domain messaging
 import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {console} from "forge-std/console.sol";
 
-/// @title Polygon Bridge (FxPortal) Mock
+/// @title Polygon WorldID Bridge Mock
 /// @author Worldcoin
-/// @notice Mock of the Polygon FxPortal Bridge to test low-level assembly functions
+/// @dev of the Polygon FxPortal Bridge to test low-level assembly functions
 /// `grabSelector` and `stripSelector` in the PolygonWorldID contract
 contract MockPolygonBridge is Ownable {
     /// @notice mock rootHistory
@@ -22,6 +20,10 @@ contract MockPolygonBridge is Ownable {
 
     /// @notice The selector of the `receiveRootHistoryExpiry` function.
     bytes4 receiveRootHistoryExpirySelector;
+
+    /// @title FxPortal Mock
+    /// @author Worldcoin
+    /// @notice
 
     /// @notice Thrown when root history expiry is set
     event RootHistoryExpirySet(uint256 rootHistoryExpiry);
@@ -103,9 +105,6 @@ contract MockPolygonBridge is Ownable {
         // I need to decode selector and payload here
         bytes4 selector = grabSelector(message);
         bytes memory payload = stripSelector(message);
-        console.logBytes4(selector);
-        console.logBytes4(receiveRootSelector);
-        console.logBytes4(receiveRootHistoryExpirySelector);
 
         if (selector == receiveRootSelector) {
             (uint256 root, uint128 timestamp) = abi.decode(payload, (uint256, uint128));
