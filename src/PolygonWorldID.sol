@@ -28,7 +28,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     error SetRootHistoryExpiryPlaceholder();
 
     /// @notice Thrown when the message selector passed from FxRoot is invalid.
-    error InvalidMessageSelector(bytes4 selector);
+    error InvalidMessageSelector();
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
@@ -45,53 +45,6 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     {
         receiveRootSelector = bytes4(keccak256("receiveRoot(bytes)"));
         receiveRootHistoryExpirySelector = bytes4(keccak256("receiveRootHistoryExpiry(bytes)"));
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    ///                            UTILS                            ///
-    ///////////////////////////////////////////////////////////////////
-
-    /// @notice Loads the first word of the encoded data and cleans the upper 224 bits
-    /// (leaving only the 4 byte selector)
-    /// @param _payload The encoded data (_payload = abi.encodeWithSignature("fnName(type)", arg1))
-    ///
-    /// @return _selector The selector of the function called in the encoded data
-    function grabSelector(bytes memory _payload) internal pure returns (bytes4 _selector) {
-        assembly ("memory-safe") {
-            _selector := shl(0xE0, shr(0xE0, mload(add(_payload, 0x20))))
-        }
-    }
-
-    /// @notice Extracts the payload from an abi.encodeWithSignature object
-    /// @param _payload The encoded data (_payload = abi.encodeWithSignature("fnName(type)", arg1))
-    ///
-    /// @return _payloadData The payload (abi.encoded params) of the encoded data
-    function grabParams(bytes memory _payload) internal pure returns (bytes memory _payloadData) {
-        assembly ("memory-safe") {
-            // Grab the pointer to some free memory
-            _payloadData := mload(0x40)
-
-            // Copy the length - 4
-            let newLength := sub(mload(_payload), 0x04)
-            mstore(_payloadData, newLength)
-
-            // Copy the data following the selector
-            let dataStart := add(_payloadData, 0x20)
-            let payloadStart := add(_payload, 0x24)
-            for { let i := 0x00 } lt(i, mload(_payload)) { i := add(i, 0x20) } {
-                mstore(add(dataStart, i), mload(add(payloadStart, i)))
-            }
-
-            // Account for the full length of the copied data
-            // length word + data length
-            let fullLength := add(newLength, 0x20)
-
-            // Update the free memory pointer
-            mstore(0x40, add(_payloadData, and(add(fullLength, 0x1F), not(0x1F))))
-
-            // TODO: Probably also want to clean any erroniously copied bits in the
-            //       last word of the payload for full safety.
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -118,40 +71,24 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         validateSender(sender)
     {
         // I need to decode selector and payload here
-        bytes4 selector = grabSelector(message);
-        bytes memory payload = grabParams(message);
+
+        // TODO: requires message to be bytes calldata instead of bytes memory
+        bytes4 selector = bytes4(message[:4]);
 
         if (selector == receiveRootSelector) {
-            receiveRoot(payload);
+            (uint256 root, uint128 timestamp) = abi.decode(message[4:], (uint256, uint128));
+            _receiveRoot(root, timestamp);
         } else if (selector == receiveRootHistoryExpirySelector) {
-            receiveRootHistoryExpiry(payload);
+            uint256 rootHistoryExpiry = abi.decode(message[4:], (uint256));
+            _setRootHistoryExpiry(rootHistoryExpiry);
         } else {
-            revert InvalidMessageSelector(selector);
+            revert InvalidMessageSelector();
         }
-    }
-
-    /// @notice Updates the WorldID root history with a new root.
-    /// @param message An ABI-encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)`
-    /// @dev This function is called by the StateBridge contract.
-    function receiveRoot(bytes memory message) internal {
-        // This decodes as specified in the parameter block. If this fails, it will revert.
-        (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
-
-        _receiveRoot(newRoot, timestamp);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                              DATA MANAGEMENT                            ///
     ///////////////////////////////////////////////////////////////////////////////
-
-    /// @notice Sets the `rootHistoryExpiry` variable to the provided value.
-    /// @param message An ABI-encoded tuple of `(uint256 expiryTime)`
-    /// @dev This function is called by the StateBridge contract.
-    function receiveRootHistoryExpiry(bytes memory message) internal {
-        uint256 expiryTime = abi.decode(message, (uint256));
-
-        _setRootHistoryExpiry(expiryTime);
-    }
 
     /// @notice Placeholder to satisfy WorldIDBridge inheritance
     /// @dev This function is not used on Polygon PoS because of FxPortal message passing architecture

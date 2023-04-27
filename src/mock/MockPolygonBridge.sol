@@ -4,6 +4,7 @@ pragma solidity ^0.8.15;
 // Optimism interface for cross domain messaging
 import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Mock Polygon Bridge Functionality
 /// @author Worldcoin
@@ -32,59 +33,12 @@ contract MockPolygonBridge is Ownable {
     error InvalidRoot();
 
     /// @notice Thrown when the message selector passed from FxRoot is invalid.
-    error InvalidMessageSelector(bytes4 selector);
+    error InvalidMessageSelector();
 
     /// @notice constructor
     constructor() {
-        receiveRootSelector = bytes4(keccak256("receiveRoot(bytes)"));
-        receiveRootHistoryExpirySelector = bytes4(keccak256("receiveRootHistoryExpiry(bytes)"));
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    ///                            UTILS                            ///
-    ///////////////////////////////////////////////////////////////////
-
-    /// @notice Loads the first word of the encoded data and cleans the upper 224 bits
-    /// (leaving only the 4 byte selector)
-    /// @param _payload The encoded data (_payload = abi.encodeWithSignature("fnName(type)", arg1))
-    ///
-    /// @return _selector The selector of the function called in the encoded data
-    function grabSelector(bytes memory _payload) internal pure returns (bytes4 _selector) {
-        assembly ("memory-safe") {
-            _selector := shl(0xE0, shr(0xE0, mload(add(_payload, 0x20))))
-        }
-    }
-
-    /// @notice Extracts the payload from an abi.encodeWithSignature object
-    /// @param _payload The encoded data (_payload = abi.encodeWithSignature("fnName(type)", arg1))
-    ///
-    /// @return _payloadData The payload (abi.encoded params) of the encoded data
-    function grabParams(bytes memory _payload) internal pure returns (bytes memory _payloadData) {
-        assembly ("memory-safe") {
-            // Grab the pointer to some free memory
-            _payloadData := mload(0x40)
-
-            // Copy the length - 4
-            let newLength := sub(mload(_payload), 0x04)
-            mstore(_payloadData, newLength)
-
-            // Copy the data following the selector
-            let dataStart := add(_payloadData, 0x20)
-            let payloadStart := add(_payload, 0x24)
-            for { let i := 0x00 } lt(i, mload(_payload)) { i := add(i, 0x20) } {
-                mstore(add(dataStart, i), mload(add(payloadStart, i)))
-            }
-
-            // Account for the full length of the copied data
-            // length word + data length
-            let fullLength := add(newLength, 0x20)
-
-            // Update the free memory pointer
-            mstore(0x40, add(_payloadData, and(add(fullLength, 0x1F), not(0x1F))))
-
-            // TODO: Probably also want to clean any erroniously copied bits in the
-            //       last word of the payload for full safety.
-        }
+        receiveRootSelector = bytes4(keccak256("receiveRoot(uint256,uint128)"));
+        receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -95,30 +49,29 @@ contract MockPolygonBridge is Ownable {
     ///
     /// @param message An ABI-encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)` that
     ///        is used to call `receiveRoot`.
-    function processMessageFromRoot(bytes memory message) public onlyOwner {
+    function processMessageFromRoot(bytes calldata message) public onlyOwner {
         // I need to decode selector and payload here
-        bytes4 selector = grabSelector(message);
-        bytes memory payload = grabParams(message);
+        bytes4 selector = bytes4(message[:4]);
 
         if (selector == receiveRootSelector) {
-            receiveRoot(payload);
+            (uint256 root, uint128 timestamp) = abi.decode(message[4:], (uint256, uint128));
+            receiveRoot(root, timestamp);
         } else if (selector == receiveRootHistoryExpirySelector) {
-            setRootHistoryExpiry(payload);
+            uint256 newRootHistoryExpiry = abi.decode(message[4:], (uint256));
+            setRootHistoryExpiry(newRootHistoryExpiry);
         } else {
-            revert InvalidMessageSelector(selector);
+            revert InvalidMessageSelector();
         }
     }
 
     /// @notice Updates the WorldID root history with a new root.
-    /// @param message An ABI-encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)`
+    /// @param newRoot The new root to add to the root history.
+    /// @param supersedeTimestamp The timestamp at which the new root supersedes the current root.
     /// @dev This function is called by the StateBridge contract.
-    function receiveRoot(bytes memory message) internal {
-        // This decodes as specified in the parameter block. If this fails, it will revert.
-        (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
+    function receiveRoot(uint256 newRoot, uint128 supersedeTimestamp) internal {
+        rootHistory[newRoot] = supersedeTimestamp;
 
-        rootHistory[newRoot] = timestamp;
-
-        emit ReceivedRoot(newRoot, timestamp);
+        emit ReceivedRoot(newRoot, supersedeTimestamp);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -126,13 +79,11 @@ contract MockPolygonBridge is Ownable {
     ///////////////////////////////////////////////////////////////////////////////
 
     /// @notice Sets the `rootHistoryExpiry` variable to the provided value.
-    /// @param message An ABI-encoded tuple of `(uint256 expiryTime)`
+    /// @param newRootHistoryExpiry The new value for `rootHistoryExpiry`.
     /// @dev This function is called by the StateBridge contract.
-    function setRootHistoryExpiry(bytes memory message) internal {
-        uint256 expiryTime = abi.decode(message, (uint256));
+    function setRootHistoryExpiry(uint256 newRootHistoryExpiry) internal {
+        rootHistoryExpiry = newRootHistoryExpiry;
 
-        rootHistoryExpiry = expiryTime;
-
-        emit RootHistoryExpirySet(expiryTime);
+        emit RootHistoryExpirySet(newRootHistoryExpiry);
     }
 }
