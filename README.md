@@ -1,6 +1,6 @@
 # world-id-state-bridge
 
-![spec](./docs/state-bridge.svg)
+![spec](https://raw.githubusercontent.com/worldcoin/world-id-state-bridge/2cba98da38cfc5173ad773824126ce4285d240b1/docs/state-bridge.svg)
 
 ## Description
 
@@ -12,6 +12,13 @@ can be found in `docs/spec.md`.
 Currently, the supported networks are Polygon PoS (for backwards compatibility) and Optimism. The next iteration of the
 bridge will most-likely be based on storage proofs and will support most EVM networks off the get-go, with other
 networks pending storage proof verifier and Semaphore verifier implementations and deployments.
+
+## Documentation
+
+Run `make doc` to build and deploy a simple documentation webpage on [localhost:3000](https://localhost:3000). Uses
+[`forge doc`](https://book.getfoundry.sh/reference/forge/forge-doc#forge-doc) under the hood and sources information
+from the `world-id-state-bridge` contracts [NatSpec](https://docs.soliditylang.org/en/latest/natspec-format.html)
+documentation.
 
 ## Usage
 

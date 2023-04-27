@@ -7,7 +7,13 @@ import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.so
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 
+/// @title State Bridge Test
+/// @author Worldcoin
+/// @notice A test contract for StateBridge.sol
 contract StateBridgeTest is PRBTest, StdCheats {
+    ///////////////////////////////////////////////////////////////////
+    ///                        STORAGE CONFIG                       ///
+    ///////////////////////////////////////////////////////////////////
     uint256 public mainnetFork;
     string private MAINNET_RPC_URL = vm.envString("MAINNET_RPC_URL");
 
@@ -22,6 +28,10 @@ contract StateBridgeTest is PRBTest, StdCheats {
     address public fxRoot;
     address public checkpointManager;
     address public owner;
+
+    ///////////////////////////////////////////////////////////////////
+    ///                            EVENTS                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice OpenZeppelin Ownable.sol transferOwnership event
     /// @param previousOwner The previous owner of the StateBridge contract
@@ -46,6 +56,10 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentToPolygon(uint256 root, uint128 timestamp);
+
+    ///////////////////////////////////////////////////////////////////
+    ///                            ERRORS                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice
     error NotWorldIDIdentityManager();
@@ -82,9 +96,9 @@ contract StateBridgeTest is PRBTest, StdCheats {
         mockWorldID.initialize(address(stateBridge));
     }
 
-    /*//////////////////////////////////////////////////////////////
-                                SUCCEEDS
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                           SUCCEEDS                          ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice select a specific fork
     function test_canSelectFork_succeeds() public {
@@ -93,6 +107,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         assertEq(vm.activeFork(), mainnetFork);
     }
 
+    /// @notice tests that a root can be sent successfully to other networks
     function test_sendRootMultichain_succeeds(uint256 newRoot) public {
         uint128 timestamp = uint128(block.timestamp);
 
@@ -139,9 +154,9 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.transferOwnershipOptimism(newOwner, isLocal);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                                REVERTS
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                           REVERTS                           ///
+    ///////////////////////////////////////////////////////////////////
 
     /// @notice tests that a root that is not is not a valid root in WorldID Identity Manager contract
     /// can't be sent to the StateBridge
