@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-// Demo deployments
-// Goerli 0x8438ba278cF0bf6dc75a844755C7A805BB45984F
-// https://goerli.etherscan.io/address/0x8438ba278cf0bf6dc75a844755c7a805bb45984f#code
-
 import {Script} from "forge-std/Script.sol";
 import {StateBridge} from "src/StateBridge.sol";
 
+/// @title PolygonWorldID deployment script on Polygon Mumbai
+/// @notice forge script to deploy PolygonWorldID.sol
+/// @author Worldcoin
+/// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
 contract DeployStateBridge is Script {
     StateBridge public bridge;
 
@@ -20,19 +20,19 @@ contract DeployStateBridge is Script {
     address public checkpointManagerAddress;
     address public fxRootAddress;
 
-    /*//////////////////////////////////////////////////////////////
-                                 CONFIG
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                            CONFIG                           ///
+    ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/script/.deploy-config.json");
+    string public path = string.concat(root, "/src/script/.deploy-config.json");
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
     function setUp() public {
-        /*//////////////////////////////////////////////////////////////
-                                POLYGON
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                           POLYGON                           ///
+        ///////////////////////////////////////////////////////////////////
 
         // https://static.matic.network/network/mainnet/v1/index.json
         // RootChainManagerProxy
@@ -40,14 +40,14 @@ contract DeployStateBridge is Script {
         // FxRoot
         fxRootAddress = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
 
-        /*//////////////////////////////////////////////////////////////
-                                OPTIMISM
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                           OPTIMISM                          ///
+        ///////////////////////////////////////////////////////////////////
         crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
 
-        /*//////////////////////////////////////////////////////////////
-                                WORLDID
-        //////////////////////////////////////////////////////////////*/
+        ///////////////////////////////////////////////////////////////////
+        ///                           WORLD ID                          ///
+        ///////////////////////////////////////////////////////////////////
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));

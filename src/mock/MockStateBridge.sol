@@ -44,9 +44,9 @@ contract MockStateBridge is Ownable {
         _sendRootToMockOpPolygonWorldID(root, timestamp);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                                OPTIMISM
-    //////////////////////////////////////////////////////////////*/
+    ///////////////////////////////////////////////////////////////////
+    ///                           OPTIMISM                          ///
+    ///////////////////////////////////////////////////////////////////
 
     // @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
