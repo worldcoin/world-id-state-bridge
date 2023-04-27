@@ -47,12 +47,33 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
     }
 
+    /// @notice grabSelector, takes a byte array _payload as input and returns the first 4 bytes
+    /// of the array as a bytes4 value _selector. The function uses EVM assembly language
+    /// to load the 4-byte selector from the _payload array and then shift it left by 224 bits
+    /// (0xE0 in hexadecimal) to get the correct value.
+    /// @param _payload The byte array from which to extract the selector
+    /// @return _selector The first 4 bytes of the _payload array (the function selector from encodeWithSignature)
     function grabSelector(bytes memory _payload) internal pure returns (bytes4 _selector) {
         assembly ("memory-safe") {
+            /// @dev uses mload to load the first 32 bytes of _payload
+            /// (starting at memory address _payload + 0x20) into memory,
+            /// then shr to shift the loaded value right by 224 bits
+            /// (0xE0 in hexadecimal). Therefore only the last 4 bytes (32 bits remain),
+            /// and finally we pad the value to the left by using shl to shift
+            /// the by 224 bits to the left to get the correct value for _selector.
             _selector := shl(0xE0, shr(0xE0, mload(add(_payload, 0x20))))
         }
     }
 
+    /// @notice  stripSelector, takes a byte array _payload as input and returns a new byte array
+    /// _payloadData that contains all the data in _payload except for the first 4 bytes (the selector).
+    /// The function first allocates a new block of memory to store the new byte array, then copies the
+    /// length of the original _payload array (minus 4 bytes) into the new array, and then copies the
+    /// remaining data from the original _payload array into the new array, starting from the fifth byte.
+    /// The function then updates the free memory pointer to account for the new memory allocation.
+    /// @param _payload The byte array from which to extract the payload data
+    /// @return _payloadData The payload data from the _payload array
+    /// (payload minus selector which is 4 bytes long)
     function stripSelector(bytes memory _payload)
         internal
         pure
