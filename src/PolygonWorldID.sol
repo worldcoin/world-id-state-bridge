@@ -88,6 +88,12 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
             mstore(_payloadData, newLength)
 
             // Copy the data following the selector
+            /// @dev These lines copy the length of the original _payload array
+            /// (minus 4 bytes for the selector) into the first 32 bytes of the new
+            /// _payloadData array. Specifically, it uses mload to load the value stored
+            /// at memory address _payload, which is the length of the _payload array,
+            /// and then sub to subtract 4 from this value to get the correct length for
+            /// _payloadData. Finally, it uses mstore to store this value at memory address _payloadData.
             let dataStart := add(_payloadData, 0x20)
             let payloadStart := add(_payload, 0x24)
             for { let i := 0x00 } lt(i, mload(_payload)) { i := add(i, 0x20) } {
@@ -101,8 +107,21 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
             // Update the free memory pointer
             mstore(0x40, add(_payloadData, and(add(fullLength, 0x1F), not(0x1F))))
 
-            // TODO: Probably also want to clean any erroniously copied bits in the
-            //       last word of the payload for full safety.
+            // Compute the last 32-byte aligned memory address of the copied data
+            let lastAlignedAddr := add(dataStart, and(newLength, not(0x1F)))
+
+            // Compute the number of bytes beyond the end of the copied data
+            let endBytes := sub(newLength, sub(lastAlignedAddr, dataStart))
+
+            // Load the last 32-byte word of the copied data
+            let lastWord := mload(lastAlignedAddr)
+
+            // Zero out any erroneously copied bits beyond the end of the payload data
+            let mask := sub(shl(endBytes, 0x8), 0x1)
+            lastWord := and(lastWord, not(mask))
+
+            // Store the modified word back to memory
+            mstore(lastAlignedAddr, lastWord)
         }
     }
 
