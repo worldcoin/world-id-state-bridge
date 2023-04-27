@@ -42,13 +42,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID (on Optimism)
-    /// @param rootHistoryExpiry The new root history expiry for OpWorldID
-    event SetRootHistoryExpiryOptimism(uint256 rootHistoryExpiry);
-
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for PolygonWorldID (on Polygon)
-    /// @param rootHistoryExpiry The new root history expiry for PolygonWorldID
-    event SetRootHistoryExpiryPolygon(uint256 rootHistoryExpiry);
+    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @param rootHistoryExpiry The new root history expiry
+    event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
@@ -71,7 +67,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     ///                          MODIFIERS                          ///
     ///////////////////////////////////////////////////////////////////
     modifier onlyWorldIDIdentityManager() {
-        if (msg.sender != worldIDAddress) revert NotWorldIDIdentityManager();
+        if (msg.sender != worldIDAddress) {
+            revert NotWorldIDIdentityManager();
+        }
         _;
     }
 
@@ -116,6 +114,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function setRootHistoryExpiry(uint256 expiryTime) public onlyWorldIDIdentityManager {
         setRootHistoryExpiryOptimism(expiryTime);
         setRootHistoryExpiryPolygon(expiryTime);
+
+        emit SetRootHistoryExpiry(expiryTime);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -177,8 +177,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
             message,
             200000
         );
-
-        emit SetRootHistoryExpiryOptimism(_rootHistoryExpiry);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -191,10 +189,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function _sendRootToPolygon(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
-        // This encoding is specified as the encoding of the `bytes` received by
-        // `_processMessageFromRoot` in the Polygon state bridge. Specifically, it requires an ABI-
-        // encoded tuple of `(uint256 newRoot, uint128 supersedeTimestamp)`.
-        message = abi.encodeWithSignature("receiveRoot(bytes)", abi.encode(root, timestamp));
+        message = abi.encodeWithSignature("receiveRoot(uint256,uint128)", root, timestamp);
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
@@ -207,17 +202,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function setRootHistoryExpiryPolygon(uint256 _rootHistoryExpiry) internal {
         bytes memory message;
 
-        // This encoding is specified as the encoding of the `bytes` received by
-        // `_processMessageFromRoot` in the Polygon state bridge. Specifically, it requires an ABI-
-        // encoded tuple of `(uint256 _rootHistoryExpiry)`.
-        message = abi.encodeWithSignature(
-            "receiveRootHistoryExpiry(bytes)", abi.encode(_rootHistoryExpiry)
-        );
+        message = abi.encodeWithSignature("setRootHistoryExpiry(uint256)", _rootHistoryExpiry);
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
-
-        emit SetRootHistoryExpiryPolygon(_rootHistoryExpiry);
     }
 
     /// @notice boilerplate function to satisfy FxBaseRootTunnel inheritance (not going to be used)

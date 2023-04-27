@@ -47,13 +47,9 @@ contract StateBridgeTest is PRBTest, StdCheats {
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID (on Optimism)
-    /// @param rootHistoryExpiry The new root history expiry for OpWorldID
-    event SetRootHistoryExpiryOptimism(uint256 rootHistoryExpiry);
-
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for PolygonWorldID (on Polygon)
-    /// @param rootHistoryExpiry The new root history expiry for PolygonWorldID
-    event SetRootHistoryExpiryPolygon(uint256 rootHistoryExpiry);
+    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @param rootHistoryExpiry The new root history expiry
+    event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
     /// @notice Emmitted when a root is sent to OpWorldID
     /// @param root The latest WorldID Identity Manager root.
@@ -169,9 +165,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         vm.expectEmit(true, true, true, true);
 
-        emit SetRootHistoryExpiryOptimism(_rootHistoryExpiry);
-
-        emit SetRootHistoryExpiryPolygon(_rootHistoryExpiry);
+        emit SetRootHistoryExpiry(_rootHistoryExpiry);
 
         vm.prank(mockWorldIDAddress);
         stateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
