@@ -20,7 +20,7 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
     event ReceivedRoot(uint256 root, uint128 supersedeTimestamp);
 
     /// @notice Thrown when the message selector passed from FxRoot is invalid.
-    error InvalidMessageSelector();
+    error InvalidMessageSelector(bytes4 selector);
 
     function setUp() public {
         owner = address(0x1234);
@@ -58,15 +58,15 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
     }
 
     /// @notice tests that an invalid function signature reverts
-    function testProcessMessageFromRootReverts(bytes4 invalidFnSig, bytes32 param) public {
+    function testProcessMessageFromRootReverts(bytes4 invalidSelector, bytes32 param) public {
         vm.assume(
-            invalidFnSig != bytes4(keccak256("receiveRoot(uint256,uint128)"))
-                && invalidFnSig != bytes4(keccak256("setRootHistoryExpiry(uint256)"))
+            invalidSelector != bytes4(keccak256("receiveRoot(uint256,uint128)"))
+                && invalidSelector != bytes4(keccak256("setRootHistoryExpiry(uint256)"))
         );
 
-        bytes memory message = abi.encode(invalidFnSig, param);
+        bytes memory message = abi.encode(invalidSelector, param);
 
-        vm.expectRevert(InvalidMessageSelector.selector);
+        vm.expectRevert(abi.encodeWithSelector(InvalidMessageSelector.selector, invalidSelector));
 
         vm.prank(owner);
         polygonWorldID.processMessageFromRoot(message);

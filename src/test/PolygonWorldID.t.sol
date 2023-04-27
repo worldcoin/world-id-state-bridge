@@ -80,7 +80,9 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice Checks that calling the placeholder setRootHistoryExpiry function reverts.
     function testSetRootHistoryExpiryReverts(uint256 expiryTime) public {
         // Test
-        vm.expectRevert(SetRootHistoryExpiryPlaceholder.selector);
+        vm.expectRevert(
+            "PolygonWorldID: Root history expiry should only be set via the state bridge"
+        );
         id.setRootHistoryExpiry(expiryTime);
     }
 }
