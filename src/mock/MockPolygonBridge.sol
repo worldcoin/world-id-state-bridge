@@ -6,10 +6,10 @@ import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {console} from "forge-std/console.sol";
 
-/// @title Mock Polygon Bridge Functionality
+/// @title Polygon Bridge (FxPortal) Mock
 /// @author Worldcoin
-/// @notice Mock of the StateBridge to test functionality on a local chain
-/// @custom:deployment deployed through make local-mock
+/// @notice Mock of the Polygon FxPortal Bridge to test low-level assembly functions
+/// `grabSelector` and `stripSelector` in the PolygonWorldID contract
 contract MockPolygonBridge is Ownable {
     /// @notice mock rootHistory
     mapping(uint256 => uint128) public rootHistory;
@@ -41,8 +41,20 @@ contract MockPolygonBridge is Ownable {
         receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
     }
 
+    /// @notice grabSelector, takes a byte array _payload as input and returns the first 4 bytes
+    /// of the array as a bytes4 value _selector. The function uses EVM assembly language
+    /// to load the 4-byte selector from the _payload array and then shift it left by 224 bits
+    /// (0xE0 in hexadecimal) to get the correct value.
+    /// @param _payload The byte array from which to extract the selector
+    /// @return _selector The first 4 bytes of the _payload array (the function selector from encodeWithSignature)
     function grabSelector(bytes memory _payload) internal pure returns (bytes4 _selector) {
         assembly ("memory-safe") {
+            /// @dev uses mload to load the first 32 bytes of _payload
+            /// (starting at memory address _payload + 0x20) into memory,
+            /// then shr to shift the loaded value right by 224 bits
+            /// (0xE0 in hexadecimal). Therefore only the last 4 bytes (32 bits remain),
+            /// and finally we pad the value to the left by using shl to shift
+            /// the by 224 bits to the left to get the correct value for _selector.
             _selector := shl(0xE0, shr(0xE0, mload(add(_payload, 0x20))))
         }
     }

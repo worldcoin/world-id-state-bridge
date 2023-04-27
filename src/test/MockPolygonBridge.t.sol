@@ -4,6 +4,10 @@ import {MockPolygonBridge} from "src/mock/MockPolygonBridge.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 
+/// @title Mock Polygon Bridge Test
+/// @author Worldcoin
+/// @notice Mock of the Polygon FxPortal Bridge to test low-level assembly functions
+/// `grabSelector` and `stripSelector` in the PolygonWorldID contract
 contract MockPolygonBridgeTest is PRBTest, StdCheats {
     MockPolygonBridge polygonWorldID;
 
