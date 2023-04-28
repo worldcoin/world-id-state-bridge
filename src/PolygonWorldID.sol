@@ -2,11 +2,11 @@
 pragma solidity ^0.8.15;
 
 import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
-
 import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import {BytesUtils} from "./utils/BytesUtils.sol";
 
 /// @title Polygon WorldID Bridge
 /// @author Worldcoin
@@ -14,6 +14,27 @@ import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.
 contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
+    ///////////////////////////////////////////////////////////////////
+    ///                           STORAGE                           ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice The selector of the `receiveRoot` function.
+    /// @dev this selector is precomputed in the constructor to not have to recompute them for every
+    /// call of the _processMesageFromRoot function
+    bytes4 private receiveRootSelector;
+
+    /// @notice The selector of the `receiveRootHistoryExpiry` function.
+    /// @dev this selector is precomputed in the constructor to not have to recompute them for every
+    /// call of the _processMesageFromRoot function
+    bytes4 private receiveRootHistoryExpirySelector;
+
+    ///////////////////////////////////////////////////////////////////
+    ///                            ERRORS                           ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice Thrown when the message selector passed from FxRoot is invalid.
+    error InvalidMessageSelector(bytes4 selector);
+
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -26,7 +47,10 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     constructor(uint8 _treeDepth, address _fxChild)
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
-    {}
+    {
+        receiveRootSelector = bytes4(keccak256("receiveRoot(uint256,uint128)"));
+        receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
@@ -51,23 +75,28 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
         override
         validateSender(sender)
     {
-        // This decodes as specified in the parameter block. If this fails, it will revert.
-        (uint256 newRoot, uint128 timestamp) = abi.decode(message, (uint256, uint128));
+        bytes4 selector = bytes4(BytesUtils.substring(message, 0, 4));
+        bytes memory payload = BytesUtils.substring(message, 4, message.length - 4);
 
-        _receiveRoot(newRoot, timestamp);
+        if (selector == receiveRootSelector) {
+            (uint256 root, uint128 timestamp) = abi.decode(payload, (uint256, uint128));
+            _receiveRoot(root, timestamp);
+        } else if (selector == receiveRootHistoryExpirySelector) {
+            uint256 rootHistoryExpiry = abi.decode(payload, (uint256));
+            _setRootHistoryExpiry(rootHistoryExpiry);
+        } else {
+            revert InvalidMessageSelector(selector);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                              DATA MANAGEMENT                            ///
     ///////////////////////////////////////////////////////////////////////////////
 
-    /// @notice Sets the amount of time it takes for a root in the root history to expire.
-    ///
-    /// @param expiryTime The new amount of time it takes for a root to expire.
-    ///
-    /// @custom:reverts string If the caller is not the owner.
-    function setRootHistoryExpiry(uint256 expiryTime) public virtual override onlyOwner {
-        _setRootHistoryExpiry(expiryTime);
+    /// @notice Placeholder to satisfy WorldIDBridge inheritance
+    /// @dev This function is not used on Polygon PoS because of FxPortal message passing architecture
+    function setRootHistoryExpiry(uint256) public virtual override {
+        revert("PolygonWorldID: Root history expiry should only be set via the state bridge");
     }
 
     ///////////////////////////////////////////////////////////////////////////////

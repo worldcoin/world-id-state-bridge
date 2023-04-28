@@ -21,31 +21,13 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice MarkleTree depth
     uint8 internal treeDepth = 16;
 
-    /// @notice The root of the merkle tree after the first update
-    uint256 public newRoot = 0x5c1e52b41a571293b30efacd2afdb7173b20cfaf1f646c4ac9f96eb75848270;
-
-    /// @notice The timestamp of the root of the merkle tree after the first update
-    uint128 public newRootTimestamp;
-
     /// @notice demo address
     address public alice = address(0x1111111);
 
     /// @notice fxChild contract address
     address public fxChild = address(0x2222222);
 
-    bytes public data;
-
-    function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
-        // Setup
-        vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
-        vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
-
-        new PolygonWorldID(actualTreeDepth, fxChild);
-    }
-
     function setUp() public {
-        data = abi.encode(newRoot, newRootTimestamp);
-
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(alice);
         id = new PolygonWorldID(treeDepth, fxChild);
@@ -53,6 +35,18 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         /// @dev label important addresses
         vm.label(address(this), "Sender");
         vm.label(address(id), "PolygonWorldID");
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                            TESTS                            ///
+    ///////////////////////////////////////////////////////////////////
+
+    function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
+        // Setup
+        vm.assume(!SemaphoreTreeDepthValidator.validate(actualTreeDepth));
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedTreeDepth(uint8)", actualTreeDepth));
+
+        new PolygonWorldID(actualTreeDepth, fxChild);
     }
 
     /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
@@ -64,5 +58,14 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         // Test
         assert(id.getTreeDepth() == actualTreeDepth);
+    }
+
+    /// @notice Checks that calling the placeholder setRootHistoryExpiry function reverts.
+    function testSetRootHistoryExpiryReverts(uint256 expiryTime) public {
+        // Test
+        vm.expectRevert(
+            "PolygonWorldID: Root history expiry should only be set via the state bridge"
+        );
+        id.setRootHistoryExpiry(expiryTime);
     }
 }
