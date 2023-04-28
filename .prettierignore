@@ -6,6 +6,9 @@
 **/out
 **/node_modules
 
+# Solidity
+*.sol
+
 # files
 *.env
 *.log
