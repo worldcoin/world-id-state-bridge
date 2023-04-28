@@ -34,7 +34,11 @@ library BytesUtils {
     /// @param _payload The byte array from which to extract the payload data
     /// @return _payloadData The payload data from the _payload array
     /// (payload minus selector which is 4 bytes long)
-    function stripSelector(bytes memory _payload) internal pure returns (bytes memory _payloadData) {
+    function stripSelector(bytes memory _payload)
+        internal
+        pure
+        returns (bytes memory _payloadData)
+    {
         if (_payload.length <= 4) {
             revert PayloadTooShort();
         }
@@ -55,11 +59,7 @@ library BytesUtils {
             /// _payloadData. Finally, it uses mstore to store this value at memory address _payloadData.
             let dataStart := add(_payloadData, 0x20)
             let payloadStart := add(_payload, 0x24)
-            for {
-                let i := 0x00
-            } lt(i, mload(_payload)) {
-                i := add(i, 0x20)
-            } {
+            for { let i := 0x00 } lt(i, mload(_payload)) { i := add(i, 0x20) } {
                 mstore(add(dataStart, i), mload(add(payloadStart, i)))
             }
 
@@ -94,7 +94,11 @@ library BytesUtils {
     /// @param self The byte string to copy from.
     /// @param offset The offset to start copying at.
     /// @param len The number of bytes to copy.
-    function substring(bytes memory self, uint256 offset, uint256 len) internal pure returns (bytes memory) {
+    function substring(bytes memory self, uint256 offset, uint256 len)
+        internal
+        pure
+        returns (bytes memory)
+    {
         require(offset + len <= self.length);
 
         bytes memory ret = new bytes(len);
