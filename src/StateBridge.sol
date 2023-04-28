@@ -5,10 +5,12 @@ pragma solidity ^0.8.15;
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {IPolygonWorldID} from "./interfaces/IPolygonWorldID.sol";
 import {IRootHistory} from "./interfaces/IRootHistory.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import {PolygonWorldID} from "./PolygonWorldID.sol";
 
 /// @title World ID State Bridge
 /// @author Worldcoin
@@ -46,15 +48,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
-    /// @notice Emmitted when a root is sent to OpWorldID
+    /// @notice Emmitted when a root is sent to OpWorldID and PolygonWorldID
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
-    event RootSentToOptimism(uint256 root, uint128 timestamp);
-
-    /// @notice Emmitted when a root is sent to PolygonWorldID
-    /// @param root The latest WorldID Identity Manager root.
-    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
-    event RootSentToPolygon(uint256 root, uint128 timestamp);
+    event RootSentMultichain(uint256 root, uint128 timestamp);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -107,6 +104,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
         _sendRootToOptimism(root, timestamp);
         _sendRootToPolygon(root, timestamp);
         // add other chains here
+
+        emit RootSentMultichain(root, timestamp);
     }
 
     /// @notice Sets the root history expiry for OpWorldID (on Optimism) and PolygonWorldID (on Polygon)
@@ -137,8 +136,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
             message,
             200000
         );
-
-        emit RootSentToOptimism(root, timestamp);
     }
 
     /// @notice Adds functionality to the StateBridge to transfer ownership
@@ -189,12 +186,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function _sendRootToPolygon(uint256 root, uint128 timestamp) internal {
         bytes memory message;
 
-        message = abi.encodeWithSignature("receiveRoot(uint256,uint128)", root, timestamp);
+        message = abi.encodeCall(IPolygonWorldID.receiveRoot, (root, timestamp));
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
-
-        emit RootSentToPolygon(root, timestamp);
     }
 
     /// @notice Sets the root history expiry for PolygonWorldID
@@ -202,7 +197,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function setRootHistoryExpiryPolygon(uint256 _rootHistoryExpiry) internal {
         bytes memory message;
 
-        message = abi.encodeWithSignature("setRootHistoryExpiry(uint256)", _rootHistoryExpiry);
+        message = abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
