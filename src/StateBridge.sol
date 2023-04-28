@@ -10,7 +10,6 @@ import {IRootHistory} from "./interfaces/IRootHistory.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
-import {PolygonWorldID} from "./PolygonWorldID.sol";
 
 /// @title World ID State Bridge
 /// @author Worldcoin
