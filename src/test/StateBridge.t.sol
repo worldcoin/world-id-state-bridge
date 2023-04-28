@@ -51,15 +51,10 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
-    /// @notice Emmitted when a root is sent to OpWorldID
+    /// @notice Emmitted when a root is sent to PolygonWorldID and OpworldID
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
-    event RootSentToOptimism(uint256 root, uint128 timestamp);
-
-    /// @notice Emmitted when a root is sent to PolygonWorldID
-    /// @param root The latest WorldID Identity Manager root.
-    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
-    event RootSentToPolygon(uint256 root, uint128 timestamp);
+    event RootSentMultichain(uint256 root, uint128 timestamp);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -117,9 +112,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         vm.expectEmit(true, true, true, true);
 
-        emit RootSentToOptimism(newRoot, timestamp);
-
-        emit RootSentToPolygon(newRoot, timestamp);
+        emit RootSentMultichain(newRoot, timestamp);
 
         vm.prank(mockWorldIDAddress);
         mockWorldID.sendRootToStateBridge(newRoot);

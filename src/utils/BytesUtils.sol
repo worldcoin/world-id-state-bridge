@@ -10,6 +10,7 @@ library BytesUtils {
     /// (0xE0 in hexadecimal) to get the correct value.
     /// @param _payload The byte array from which to extract the selector
     /// @return _selector The first 4 bytes of the _payload array (the function selector from encodeWithSignature)
+    /// @dev This function is currently unused
     function grabSelector(bytes memory _payload) internal pure returns (bytes4 _selector) {
         if (_payload.length < 4) {
             revert PayloadTooShort();
@@ -34,6 +35,7 @@ library BytesUtils {
     /// @param _payload The byte array from which to extract the payload data
     /// @return _payloadData The payload data from the _payload array
     /// (payload minus selector which is 4 bytes long)
+    /// @dev This function is currently unused
     function stripSelector(bytes memory _payload)
         internal
         pure
@@ -99,39 +101,58 @@ library BytesUtils {
         pure
         returns (bytes memory)
     {
+        // checks that we don't overflow (write past self)
         require(offset + len <= self.length);
 
+        // allocates new bytes array with specified length
         bytes memory ret = new bytes(len);
         uint256 dest;
         uint256 src;
 
+        // sets pointers to memory blocks (first 32 bytes store length)
         assembly {
             dest := add(ret, 32)
+            // offsets self by specified number of bytes and stores it in source
             src := add(add(self, 32), offset)
         }
+
+        // copies specified length of bytes from source (starts at self + offset) to dest
         memcpy(dest, src, len);
 
+        // return substring
         return ret;
     }
 
     /// @custom:fnauthor ENS
     /// @custom:source https://github.com/ensdomains/ens-contracts/blob/09f44a985c901bf86a1c6d00f78c51086d7b9afd/contracts/dnssec-oracle/BytesUtils.sol#LL273C4-L292C6
+    /// @dev Copies a memory block to another memory block.
+    /// @param dest The destination memory pointer.
+    /// @param src The source memory pointer.
+    /// @param len The length of the memory block to copy.
     function memcpy(uint256 dest, uint256 src, uint256 len) private pure {
         // Copy word-length chunks while possible
         for (; len >= 32; len -= 32) {
+            // each 32 bytes
             assembly {
+                // store the current 32 bytes from src into dest
                 mstore(dest, mload(src))
             }
+            // move forward by 32 bytes
             dest += 32;
             src += 32;
         }
 
-        // Copy remaining bytes
+        // Copy remaining bytes (0 < len < 32)
         unchecked {
+            // create mask to zero out bytes that we don't want to overwrite
             uint256 mask = (256 ** (32 - len)) - 1;
             assembly {
+                // apply mask to source
                 let srcpart := and(mload(src), not(mask))
+                // apply mask to destination
                 let destpart := and(mload(dest), mask)
+                // store the result of ORing the two together in dest
+                // (will not copy bytes that we don't want to overwrite)
                 mstore(dest, or(destpart, srcpart))
             }
         }
