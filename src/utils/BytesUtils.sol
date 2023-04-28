@@ -34,11 +34,7 @@ library BytesUtils {
     /// @param _payload The byte array from which to extract the payload data
     /// @return _payloadData The payload data from the _payload array
     /// (payload minus selector which is 4 bytes long)
-    function stripSelector(bytes memory _payload)
-        internal
-        pure
-        returns (bytes memory _payloadData)
-    {
+    function stripSelector(bytes memory _payload) internal pure returns (bytes memory _payloadData) {
         if (_payload.length <= 4) {
             revert PayloadTooShort();
         }
@@ -59,7 +55,11 @@ library BytesUtils {
             /// _payloadData. Finally, it uses mstore to store this value at memory address _payloadData.
             let dataStart := add(_payloadData, 0x20)
             let payloadStart := add(_payload, 0x24)
-            for { let i := 0x00 } lt(i, mload(_payload)) { i := add(i, 0x20) } {
+            for {
+                let i := 0x00
+            } lt(i, mload(_payload)) {
+                i := add(i, 0x20)
+            } {
                 mstore(add(dataStart, i), mload(add(payloadStart, i)))
             }
 
@@ -85,6 +85,51 @@ library BytesUtils {
 
             // Store the modified word back to memory
             mstore(lastAlignedAddr, lastWord)
+        }
+    }
+
+    /// @custom:fnauthor ENS
+    /// @custom:source https://github.com/ensdomains/ens-contracts/blob/09f44a985c901bf86a1c6d00f78c51086d7b9afd/contracts/dnssec-oracle/BytesUtils.sol#L294-L318
+    /// @dev Copies a substring into a new byte string.
+    /// @param self The byte string to copy from.
+    /// @param offset The offset to start copying at.
+    /// @param len The number of bytes to copy.
+    function substring(bytes memory self, uint256 offset, uint256 len) internal pure returns (bytes memory) {
+        require(offset + len <= self.length);
+
+        bytes memory ret = new bytes(len);
+        uint256 dest;
+        uint256 src;
+
+        assembly {
+            dest := add(ret, 32)
+            src := add(add(self, 32), offset)
+        }
+        memcpy(dest, src, len);
+
+        return ret;
+    }
+
+    /// @custom:fnauthor ENS
+    /// @custom:source https://github.com/ensdomains/ens-contracts/blob/09f44a985c901bf86a1c6d00f78c51086d7b9afd/contracts/dnssec-oracle/BytesUtils.sol#LL273C4-L292C6
+    function memcpy(uint256 dest, uint256 src, uint256 len) private pure {
+        // Copy word-length chunks while possible
+        for (; len >= 32; len -= 32) {
+            assembly {
+                mstore(dest, mload(src))
+            }
+            dest += 32;
+            src += 32;
+        }
+
+        // Copy remaining bytes
+        unchecked {
+            uint256 mask = (256 ** (32 - len)) - 1;
+            assembly {
+                let srcpart := and(mload(src), not(mask))
+                let destpart := and(mload(dest), mask)
+                mstore(dest, or(destpart, srcpart))
+            }
         }
     }
 }

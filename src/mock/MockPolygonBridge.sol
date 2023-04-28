@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {BytesUtils} from "src/utils/BytesUtils.sol";
+import { IWorldIDIdentityManager } from "../interfaces/IWorldIDIdentityManager.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { BytesUtils } from "src/utils/BytesUtils.sol";
 
 /// @title Polygon WorldID Bridge Mock
 /// @author Worldcoin
@@ -51,8 +51,8 @@ contract MockPolygonBridge is Ownable {
     ///        is used to call `receiveRoot`.
     function processMessageFromRoot(bytes memory message) public onlyOwner {
         // I need to decode selector and payload here
-        bytes4 selector = BytesUtils.grabSelector(message);
-        bytes memory payload = BytesUtils.stripSelector(message);
+        bytes4 selector = bytes4(BytesUtils.substring(message, 0, 4));
+        bytes memory payload = BytesUtils.substring(message, 4, message.length - 4);
 
         if (selector == receiveRootSelector) {
             (uint256 root, uint128 timestamp) = abi.decode(payload, (uint256, uint128));
