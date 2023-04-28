@@ -92,7 +92,7 @@ library BytesUtils {
 
     /// @custom:fnauthor ENS
     /// @custom:source https://github.com/ensdomains/ens-contracts/blob/09f44a985c901bf86a1c6d00f78c51086d7b9afd/contracts/dnssec-oracle/BytesUtils.sol#L294-L318
-    /// @dev Copies a substring into a new byte string.
+    /// @dev Copies a substring into a new byte string. Used in PolygonWorldID.sol
     /// @param self The byte string to copy from.
     /// @param offset The offset to start copying at.
     /// @param len The number of bytes to copy.
