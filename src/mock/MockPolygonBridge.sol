@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-import { IWorldIDIdentityManager } from "../interfaces/IWorldIDIdentityManager.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { BytesUtils } from "src/utils/BytesUtils.sol";
+import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {BytesUtils} from "src/utils/BytesUtils.sol";
 
 /// @title Polygon WorldID Bridge Mock
 /// @author Worldcoin
