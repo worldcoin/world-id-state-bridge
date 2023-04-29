@@ -22,13 +22,13 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     ///////////////////////////////////////////////////////////////////
 
     /// @notice The address of the OPWorldID contract on Optimism
-    address public opWorldIDAddress;
+    address public immutable opWorldIDAddress;
 
     /// @notice address for Optimism's Ethereum mainnet L1CrossDomainMessenger contract
-    address internal crossDomainMessengerAddress;
+    address internal immutable crossDomainMessengerAddress;
 
     /// @notice worldID Address
-    address public worldIDAddress;
+    address public immutable worldIDAddress;
 
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
