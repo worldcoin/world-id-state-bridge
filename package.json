@@ -35,7 +35,7 @@
     "dotenv": "^16.0.3",
     "ethers": "^6.2.3",
     "ora": "^6.3.0",
-    "@eth-optimism/contracts-bedrock": "^0.13.1",
+    "@eth-optimism/contracts-bedrock": "^0.13.2",
     "@eth-optimism/sdk": "^1.10.4",
     "prettier": "^2.8.7",
     "solhint": "^3.4.0"
