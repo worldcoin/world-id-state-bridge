@@ -59,9 +59,6 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     /// @notice Thrown when the caller of `sendRootMultichain` is not the WorldID Identity Manager contract.
     error NotWorldIDIdentityManager();
 
-    /// @notice Thrown when setWorldIDAddress is called with a zero address
-    error CantSetWorldIDAddressToZero();
-
     ///////////////////////////////////////////////////////////////////
     ///                          MODIFIERS                          ///
     ///////////////////////////////////////////////////////////////////
@@ -224,17 +221,5 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function setFxChildTunnel(address _fxChildTunnel) public virtual override onlyOwner {
         require(fxChildTunnel == address(0x0), "FxBaseRootTunnel: CHILD_TUNNEL_ALREADY_SET");
         fxChildTunnel = _fxChildTunnel;
-    }
-
-    /// @notice Sets the WorldIDManagerRouter address
-    /// @param _worldIDIdentityManagerAddress The new WorldID Identity Manager Router address
-    function setWorldIDIdentityManagerAddress(address _worldIDIdentityManagerAddress)
-        public
-        onlyOwner
-    {
-        if (worldIDAddress == address(0x0)) {
-            revert CantSetWorldIDAddressToZero();
-        }
-        worldIDAddress = _worldIDIdentityManagerAddress;
     }
 }
