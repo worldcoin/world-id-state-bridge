@@ -23,13 +23,13 @@ snapshot:; FOUNDRY_PROFILE=bench forge snapshot
 # ===== Deployment Rules ==============================================================================================
 
 # Deploy contracts 
-deploy: install build; node --no-warnings src/scriptdeploy.js deploy
+deploy: install build; node --no-warnings src/script/deploy.js deploy
 
-deploy-testnet: install build; node --no-warnings src/scriptdeploy.js deploy-testnet
+deploy-testnet: install build; node --no-warnings src/script/deploy.js deploy-testnet
 
-mock: install build; node --no-warnings src/scriptdeploy.js mock
+mock: install build; node --no-warnings src/script/deploy.js mock
 
-local-mock: install build; node --no-warnings src/scriptdeploy.js local-mock
+local-mock: install build; node --no-warnings src/script/deploy.js local-mock
 
 # Upgrade contracts
 # upgrade: install build; node --no-warnings scripts/deploy.js upgrade
