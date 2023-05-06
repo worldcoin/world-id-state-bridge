@@ -93,31 +93,33 @@ there is a different Etherscan API key for every single network that we are depl
 
 Deploy the WorldID state bridge and all its components to Ethereum mainnet using the CLI tool.
 
-```sh
-make deploy
-```
-
 Integration with full system:
 
-- Download [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
-- `make deploy`
-- follow the CLI interface for the deployment script and select Ethereum mainnet as the target deployment network, and
-  input the deployment address of `StateBridge` when prompted.
+1. Deploy [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
+2. Get deployment address for `WorldIDIdentityManager`
+3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy` (requires 2.)
+4. Get deployment address for `StateBridge`
+5. Call [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707) on `WorldIDIdentityManager` with the output from 4.
+6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
+7. Try and create a proof and call `verifyProof` on `OpWorldID`  or `PolygonWorldID` to check whether everything works.
+
+**Note:** Remember to call all functions that change state on these contracts via the owner address, which is the deployer address by default.
 
 #### Testnet
 
 Deploy the WorldID state bridge and all its components to the Goerli testnet.
 
-```sh
-make deploy-testnet
-```
-
 Integration with full system:
 
-- Download [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
-- `make deploy`
-- follow the CLI interface for the deployment script and select Goerli as the target deployment network, and input the
-  deployment address of `StateBridge` when prompted.
+1. Deploy [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
+2. Get deployment address for `WorldIDIdentityManager`
+3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy-testnet` (requires 2.)
+4. Get deployment address for `StateBridge`
+5. Call [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707) on `WorldIDIdentityManager` with the output from 4.
+6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
+7. Try and create a proof and call `verifyProof` on `OpWorldID`  or `PolygonWorldID` to check whether everything works.
+
+**Note:** Remember to call all functions that change state on these contracts via the owner address, which is the deployer address by default.
 
 #### Mock
 
