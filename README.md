@@ -48,7 +48,7 @@ make coverage
 
 ### Format
 
-Format the contracts with Prettier:
+Format the contracts with `forge fmt` and the rest of the files (.js, .md) with Prettier:
 
 ```sh
 make format
