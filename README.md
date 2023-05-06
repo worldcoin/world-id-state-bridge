@@ -129,14 +129,6 @@ Deploy the WorldID state bridge and a mock WorldID identity manager to the Goerl
 make mock
 ```
 
-### Integration test
-
-<!-- WIP -->
-
-```sh
-make integration
-```
-
 ## Credits
 
 This repo uses Paul Razvan Berg's [foundry template](https://github.com/paulrberg/foundry-template/): A Foundry-based
