@@ -208,7 +208,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    ///                             TUNNEL MANAGEMENT                           ///
+    ///                            ADDRESS MANAGEMENT                           ///
     ///////////////////////////////////////////////////////////////////////////////
 
     /// @notice Sets the `fxChildTunnel` address if not already set.
