@@ -97,13 +97,18 @@ Integration with full system:
 
 1. Deploy [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
 2. Get deployment address for `WorldIDIdentityManager`
-3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy` (requires 2.)
+3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy`
+   (requires 2.)
 4. Get deployment address for `StateBridge`
-5. Call [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707) on `WorldIDIdentityManager` with the output from 4.
-6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
-7. Try and create a proof and call `verifyProof` on `OpWorldID`  or `PolygonWorldID` to check whether everything works.
+5. Call
+   [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707)
+   on `WorldIDIdentityManager` with the output from 4.
+6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using
+   [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
+7. Try and create a proof and call `verifyProof` on `OpWorldID` or `PolygonWorldID` to check whether everything works.
 
-**Note:** Remember to call all functions that change state on these contracts via the owner address, which is the deployer address by default.
+**Note:** Remember to call all functions that change state on these contracts via the owner address, which is the
+deployer address by default.
 
 #### Testnet
 
@@ -113,13 +118,18 @@ Integration with full system:
 
 1. Deploy [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
 2. Get deployment address for `WorldIDIdentityManager`
-3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy-testnet` (requires 2.)
+3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy-testnet`
+   (requires 2.)
 4. Get deployment address for `StateBridge`
-5. Call [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707) on `WorldIDIdentityManager` with the output from 4.
-6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
-7. Try and create a proof and call `verifyProof` on `OpWorldID`  or `PolygonWorldID` to check whether everything works.
+5. Call
+   [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707)
+   on `WorldIDIdentityManager` with the output from 4.
+6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using
+   [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
+7. Try and create a proof and call `verifyProof` on `OpWorldID` or `PolygonWorldID` to check whether everything works.
 
-**Note:** Remember to call all functions that change state on these contracts via the owner address, which is the deployer address by default.
+**Note:** Remember to call all functions that change state on these contracts via the owner address, which is the
+deployer address by default.
 
 #### Mock
 

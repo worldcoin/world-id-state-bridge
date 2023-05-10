@@ -84,6 +84,8 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice Test that you can insert new root and check if it is valid
     /// @param newRoot The root of the merkle tree after the first update
     function test_receiveVerifyRoot_succeeds(uint256 newRoot) public {
+        vm.assume(newRoot != 0);
+
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
@@ -101,7 +103,7 @@ contract OpWorldIDTest is Messenger_Initializer {
             abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
         );
 
-        id.requireValidRoot(newRoot);
+        assert(id.latestRoot() == newRoot);
     }
 
     /// @notice Checks that it is possible to get the tree depth the contract was initialized with.
@@ -151,7 +153,9 @@ contract OpWorldIDTest is Messenger_Initializer {
 
     /// @notice Test that a root that hasn't been inserted is invalid
     /// @param newRoot The root of the merkle tree after the first update
-    function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot) public {
+    function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot, uint256[8] memory proof)
+        public
+    {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
@@ -172,13 +176,15 @@ contract OpWorldIDTest is Messenger_Initializer {
         );
 
         vm.expectRevert(WorldIDBridge.NonExistentRoot.selector);
-        id.requireValidRoot(randomRoot);
+        id.verifyProof(randomRoot, 0, 0, 0, proof);
     }
 
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
     /// @param newRoot The root of the merkle tree after the first update (forge fuzzing)
     /// @param secondRoot The root of the merkle tree after the second update (forge fuzzing)
-    function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot) public {
+    function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot, uint256[8] memory proof)
+        public
+    {
         vm.assume(newRoot != secondRoot && newRoot != 0 && secondRoot != 0);
 
         _switchToCrossDomainOwnership(id);
@@ -213,6 +219,6 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         vm.warp(block.timestamp + 8 days);
-        id.requireValidRoot(newRoot);
+        id.verifyProof(newRoot, 0, 0, 0, proof);
     }
 }
