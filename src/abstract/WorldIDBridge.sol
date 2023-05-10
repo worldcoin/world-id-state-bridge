@@ -128,7 +128,7 @@ abstract contract WorldIDBridge is IWorldID {
     ///
     /// @custom:reverts ExpiredRoot If the provided `root` has expired.
     /// @custom:reverts NonExistentRoot If the provided `root` does not exist in the history.
-    function requireValidRoot(uint256 root) public view {
+    function requireValidRoot(uint256 root) internal view {
         // The latest root is always valid.
         if (root == _latestRoot) {
             return;
