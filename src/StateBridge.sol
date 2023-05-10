@@ -7,7 +7,7 @@ import {ICrossDomainMessenger} from
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {IPolygonWorldID} from "./interfaces/IPolygonWorldID.sol";
 import {IRootHistory} from "./interfaces/IRootHistory.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
 
@@ -16,7 +16,7 @@ import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol"
 /// @notice Distributes new World ID Identity Manager roots to World ID supported networks
 /// @dev This contract lives on Ethereum mainnet and is called by the World ID Identity Manager contract
 /// in the registerIdentities method
-contract StateBridge is FxBaseRootTunnel, Ownable {
+contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     ///////////////////////////////////////////////////////////////////
     ///                           STORAGE                           ///
     ///////////////////////////////////////////////////////////////////
@@ -58,6 +58,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
 
     /// @notice Thrown when the caller of `sendRootMultichain` is not the WorldID Identity Manager contract.
     error NotWorldIDIdentityManager();
+
+    /// @notice Thrown when an attempt is made to renounce ownership.
+    error CannotRenounceOwnership();
 
     ///////////////////////////////////////////////////////////////////
     ///                          MODIFIERS                          ///
@@ -221,5 +224,17 @@ contract StateBridge is FxBaseRootTunnel, Ownable {
     function setFxChildTunnel(address _fxChildTunnel) public virtual override onlyOwner {
         require(fxChildTunnel == address(0x0), "FxBaseRootTunnel: CHILD_TUNNEL_ALREADY_SET");
         fxChildTunnel = _fxChildTunnel;
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                          OWNERSHIP                          ///
+    ///////////////////////////////////////////////////////////////////
+    /// @notice Ensures that ownership of WorldID implementations cannot be renounced.
+    /// @dev This function is intentionally not `virtual` as we do not want it to be possible to
+    ///      renounce ownership for any WorldID implementation.
+    /// @dev This function is marked as `onlyOwner` to maintain the access restriction from the base
+    ///      contract.
+    function renounceOwnership() public view override onlyOwner {
+        revert CannotRenounceOwnership();
     }
 }
