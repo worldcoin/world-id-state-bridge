@@ -75,6 +75,11 @@ abstract contract WorldIDBridge is IWorldID {
     ///        latest root became a member of the root history.
     event RootAdded(uint256 root, uint128 supersedeTimestamp);
 
+    /// @notice Emitted when the expiry time for the root history is updated.
+    ///
+    /// @param newExpiry The new expiry time.
+    event RootHistoryExpirySet(uint256 newExpiry);
+
     ///////////////////////////////////////////////////////////////////////////////
     ///                               CONSTRUCTION                              ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -128,7 +133,7 @@ abstract contract WorldIDBridge is IWorldID {
     ///
     /// @custom:reverts ExpiredRoot If the provided `root` has expired.
     /// @custom:reverts NonExistentRoot If the provided `root` does not exist in the history.
-    function requireValidRoot(uint256 root) public view {
+    function requireValidRoot(uint256 root) internal view {
         // The latest root is always valid.
         if (root == _latestRoot) {
             return;
@@ -185,10 +190,8 @@ abstract contract WorldIDBridge is IWorldID {
 
     /// @notice Gets the value of the latest root.
     ///
-    /// @return rootValue The value of the latest root.
-    ///
     /// @custom:reverts NoRootsSeen If there is no latest root.
-    function latestRoot() public view virtual returns (uint256 rootValue) {
+    function latestRoot() public view virtual returns (uint256) {
         if (_latestRoot == 0) {
             revert NoRootsSeen();
         }
@@ -197,9 +200,7 @@ abstract contract WorldIDBridge is IWorldID {
     }
 
     /// @notice Gets the amount of time it takes for a root in the root history to expire.
-    ///
-    /// @return expiryTime The amount of time it takes for a root to expire.
-    function rootHistoryExpiry() public view virtual returns (uint256 expiryTime) {
+    function rootHistoryExpiry() public view virtual returns (uint256) {
         return ROOT_HISTORY_EXPIRY;
     }
 
@@ -215,12 +216,12 @@ abstract contract WorldIDBridge is IWorldID {
     /// @param expiryTime The new amount of time it takes for a root to expire.
     function _setRootHistoryExpiry(uint256 expiryTime) internal virtual {
         ROOT_HISTORY_EXPIRY = expiryTime;
+
+        emit RootHistoryExpirySet(expiryTime);
     }
 
     /// @notice Gets the Semaphore tree depth the contract was initialized with.
-    ///
-    /// @return initializedTreeDepth Tree depth.
-    function getTreeDepth() public view virtual returns (uint8 initializedTreeDepth) {
+    function getTreeDepth() public view virtual returns (uint8) {
         return treeDepth;
     }
 }

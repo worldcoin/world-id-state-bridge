@@ -446,22 +446,6 @@ async function sendStateRootToStateBridge(config) {
   spinner.succeed("SendStateRootToStateBridge.s.sol ran successfully!");
 }
 
-async function checkLocalValidRoot(config) {
-  const spinner = ora("Checking whether the test root was inserted correctly in MockOpPolygonWorldID...").start();
-
-  try {
-    const data = execSync(
-      `forge script src/script/test/CheckLocalValidRoot.s.sol:CheckLocalValidRoot --fork-url ${config.ethereumRpcUrl} \
-      --broadcast -vvvv`,
-    );
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("CheckLocalValidRoot.s.sol ran successfully!");
-}
-
 async function deploymentMainnet(config) {
   dotenv.config();
 
@@ -567,7 +551,6 @@ async function mockLocalDeployment(config) {
   await getNewRoot(config);
   await saveConfiguration(config);
   await sendStateRootToStateBridge(config);
-  await checkLocalValidRoot(config);
 }
 
 async function main() {
