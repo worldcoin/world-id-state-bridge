@@ -99,4 +99,12 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         vm.prank(randomAddress);
         id.acceptOwnership();
     }
+
+    /// @notice Tests that ownership can't be renounced
+    function test_owner_renounceOwnership_reverts() public {
+        vm.expectRevert(PolygonWorldID.CannotRenounceOwnership.selector);
+
+        vm.prank(owner);
+        id.renounceOwnership();
+    }
 }

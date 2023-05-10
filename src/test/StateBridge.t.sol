@@ -239,4 +239,12 @@ contract StateBridgeTest is PRBTest, StdCheats {
         vm.prank(randomAddress);
         stateBridge.acceptOwnership();
     }
+
+    /// @notice Tests that ownership can't be renounced
+    function test_owner_renounceOwnership_reverts() public {
+        vm.expectRevert(StateBridge.CannotRenounceOwnership.selector);
+
+        vm.prank(owner);
+        stateBridge.renounceOwnership();
+    }
 }
