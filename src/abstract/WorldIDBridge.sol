@@ -75,6 +75,11 @@ abstract contract WorldIDBridge is IWorldID {
     ///        latest root became a member of the root history.
     event RootAdded(uint256 root, uint128 supersedeTimestamp);
 
+    /// @notice Emitted when the expiry time for the root history is updated.
+    ///
+    /// @param newExpiry The new expiry time.
+    event RootHistoryExpirySet(uint256 newExpiry);
+
     ///////////////////////////////////////////////////////////////////////////////
     ///                               CONSTRUCTION                              ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -211,6 +216,8 @@ abstract contract WorldIDBridge is IWorldID {
     /// @param expiryTime The new amount of time it takes for a root to expire.
     function _setRootHistoryExpiry(uint256 expiryTime) internal virtual {
         ROOT_HISTORY_EXPIRY = expiryTime;
+
+        emit RootHistoryExpirySet(expiryTime);
     }
 
     /// @notice Gets the Semaphore tree depth the contract was initialized with.
