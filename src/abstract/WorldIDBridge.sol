@@ -185,10 +185,8 @@ abstract contract WorldIDBridge is IWorldID {
 
     /// @notice Gets the value of the latest root.
     ///
-    /// @return rootValue The value of the latest root.
-    ///
     /// @custom:reverts NoRootsSeen If there is no latest root.
-    function latestRoot() public view virtual returns (uint256 rootValue) {
+    function latestRoot() public view virtual {
         if (_latestRoot == 0) {
             revert NoRootsSeen();
         }
@@ -197,9 +195,7 @@ abstract contract WorldIDBridge is IWorldID {
     }
 
     /// @notice Gets the amount of time it takes for a root in the root history to expire.
-    ///
-    /// @return expiryTime The amount of time it takes for a root to expire.
-    function rootHistoryExpiry() public view virtual returns (uint256 expiryTime) {
+    function rootHistoryExpiry() public view virtual {
         return ROOT_HISTORY_EXPIRY;
     }
 
@@ -218,9 +214,7 @@ abstract contract WorldIDBridge is IWorldID {
     }
 
     /// @notice Gets the Semaphore tree depth the contract was initialized with.
-    ///
-    /// @return initializedTreeDepth Tree depth.
-    function getTreeDepth() public view virtual returns (uint8 initializedTreeDepth) {
+    function getTreeDepth() public view virtual {
         return treeDepth;
     }
 }
