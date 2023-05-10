@@ -3,7 +3,7 @@ pragma solidity ^0.8.15;
 
 import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
 import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 import {BytesUtils} from "./utils/BytesUtils.sol";
@@ -13,7 +13,7 @@ import {BytesUtils} from "./utils/BytesUtils.sol";
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.
-contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
+contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     ///////////////////////////////////////////////////////////////////
     ///                           STORAGE                           ///
     ///////////////////////////////////////////////////////////////////
@@ -34,6 +34,9 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
 
     /// @notice Thrown when the message selector passed from FxRoot is invalid.
     error InvalidMessageSelector(bytes4 selector);
+
+    /// @notice Thrown when an attempt is made to renounce ownership.
+    error CannotRenounceOwnership();
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
@@ -113,5 +116,17 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable {
     function setFxRootTunnel(address _fxRootTunnel) external virtual override onlyOwner {
         require(fxRootTunnel == address(0x0), "FxBaseChildTunnel: ROOT_TUNNEL_ALREADY_SET");
         fxRootTunnel = _fxRootTunnel;
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                          OWNERSHIP                          ///
+    ///////////////////////////////////////////////////////////////////
+    /// @notice Ensures that ownership of WorldID implementations cannot be renounced.
+    /// @dev This function is intentionally not `virtual` as we do not want it to be possible to
+    ///      renounce ownership for any WorldID implementation.
+    /// @dev This function is marked as `onlyOwner` to maintain the access restriction from the base
+    ///      contract.
+    function renounceOwnership() public view override onlyOwner {
+        revert CannotRenounceOwnership();
     }
 }
