@@ -120,8 +120,9 @@ contract StateBridgeTest is PRBTest, StdCheats {
         assertEq(mockWorldID.checkValidRoot(newRoot), true);
     }
 
-    /// @notice tests whether the owner of the StateBridge contract can transfer ownership of StateBridge
-    /// @param newOwner The new owner of the StateBridge contract (foundry fuzz)
+    /// @notice Tests that the owner of the StateBridge contract can transfer ownership
+    /// using Ownable2Step transferOwnership
+    /// @param newOwner the new owner of the contract
     function test_owner_transferOwnership_succeeds(address newOwner) public {
         vm.assume(newOwner != address(0));
 
@@ -132,6 +133,9 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         stateBridge.transferOwnership(newOwner);
+
+        vm.prank(newOwner);
+        stateBridge.acceptOwnership();
 
         assertEq(stateBridge.owner(), newOwner);
     }
@@ -218,5 +222,21 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         vm.prank(nonWorldID);
         stateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
+    }
+
+    /// @notice Tests that a nonPendingOwner can't accept ownership of StateBridge
+    /// @param newOwner the new owner of the contract
+    function test_notOwner_acceptOwnership_reverts(address newOwner, address randomAddress)
+        public
+    {
+        vm.assume(newOwner != address(0) && randomAddress != address(0));
+
+        vm.prank(owner);
+        stateBridge.transferOwnership(newOwner);
+
+        vm.expectRevert("Ownable2Step: caller is not the new owner");
+
+        vm.prank(randomAddress);
+        stateBridge.acceptOwnership();
     }
 }
