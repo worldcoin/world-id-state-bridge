@@ -101,9 +101,13 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
-    function sendRootMultichain(uint256 root) external onlyWorldIDIdentityManager {
+    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
+    function sendRootMultichain(uint256 root, uint32 opGasLimit)
+        external
+        onlyWorldIDIdentityManager
+    {
         uint128 timestamp = uint128(block.timestamp);
-        _sendRootToOptimism(root, timestamp);
+        _sendRootToOptimism(root, timestamp, opGasLimit);
         _sendRootToPolygon(root, timestamp);
         // add other chains here
 
@@ -112,8 +116,12 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Sets the root history expiry for OpWorldID (on Optimism) and PolygonWorldID (on Polygon)
     /// @param expiryTime The new root history expiry for OpWorldID and PolygonWorldID
-    function setRootHistoryExpiry(uint256 expiryTime) public onlyWorldIDIdentityManager {
-        setRootHistoryExpiryOptimism(expiryTime);
+    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
+    function setRootHistoryExpiry(uint256 expiryTime, uint32 opGasLimit)
+        public
+        onlyWorldIDIdentityManager
+    {
+        setRootHistoryExpiryOptimism(expiryTime, opGasLimit);
         setRootHistoryExpiryPolygon(expiryTime);
 
         emit SetRootHistoryExpiry(expiryTime);
@@ -127,7 +135,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
-    function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
+    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
+    function _sendRootToOptimism(uint256 root, uint128 timestamp, uint32 opGasLimit) internal {
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the optimism bridge.
         bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
@@ -136,7 +145,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            200000
+            opGasLimit
         );
     }
 
@@ -144,7 +153,11 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// of OpWorldID to another contract on L1 or to a local Optimism EOA
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
-    function transferOwnershipOptimism(address _owner, bool _isLocal) public onlyOwner {
+    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
+    function transferOwnershipOptimism(address _owner, bool _isLocal, uint32 opGasLimit)
+        public
+        onlyOwner
+    {
         bytes memory message;
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
@@ -155,7 +168,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            200000
+            opGasLimit
         );
 
         emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
@@ -163,7 +176,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Adds functionality to the StateBridge to set the root history expiry on OpWorldID
     /// @param _rootHistoryExpiry new root history expiry
-    function setRootHistoryExpiryOptimism(uint256 _rootHistoryExpiry) internal {
+    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
+    function setRootHistoryExpiryOptimism(uint256 _rootHistoryExpiry, uint32 opGasLimit) internal {
         bytes memory message;
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
@@ -174,7 +188,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            200000
+            opGasLimit
         );
     }
 
