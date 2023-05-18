@@ -23,6 +23,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
     StateBridge public stateBridge;
     WorldIDIdentityManagerMock public mockWorldID;
 
+    uint32 public opGasLimit;
+
     address public mockWorldIDAddress;
     address public crossDomainMessengerAddress;
     address public fxRoot;
@@ -91,6 +93,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
             crossDomainMessengerAddress
         );
 
+        opGasLimit = 1000000;
+
         owner = stateBridge.owner();
         mockWorldID.initialize(address(stateBridge));
     }
@@ -115,7 +119,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         emit RootSentMultichain(newRoot, timestamp);
 
         vm.prank(mockWorldIDAddress);
-        mockWorldID.sendRootToStateBridge(newRoot);
+        mockWorldID.sendRootToStateBridge(newRoot, opGasLimit);
 
         assertEq(mockWorldID.checkValidRoot(newRoot), true);
     }
@@ -152,7 +156,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         emit OwnershipTransferredOptimism(owner, newOwner, isLocal);
 
         vm.prank(owner);
-        stateBridge.transferOwnershipOptimism(newOwner, isLocal);
+        stateBridge.transferOwnershipOptimism(newOwner, isLocal, opGasLimit);
     }
 
     /// @notice tests whether the StateBridge contract can set root history expiry on Optimism and Polygon
@@ -165,7 +169,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         emit SetRootHistoryExpiry(_rootHistoryExpiry);
 
         vm.prank(mockWorldIDAddress);
-        stateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
+        stateBridge.setRootHistoryExpiry(_rootHistoryExpiry, opGasLimit);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -177,11 +181,11 @@ contract StateBridgeTest is PRBTest, StdCheats {
     function test_sendRootMultichain_reverts(uint256 newRoot, address notWorldID) public {
         vm.assume(notWorldID != mockWorldIDAddress);
 
-        mockWorldID.sendRootToStateBridge(newRoot);
+        mockWorldID.sendRootToStateBridge(newRoot, opGasLimit);
 
         vm.expectRevert(StateBridge.NotWorldIDIdentityManager.selector);
         vm.prank(notWorldID);
-        stateBridge.sendRootMultichain(newRoot);
+        stateBridge.sendRootMultichain(newRoot, opGasLimit);
     }
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
@@ -207,7 +211,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         vm.expectRevert("Ownable: caller is not the owner");
 
         vm.prank(nonOwner);
-        stateBridge.transferOwnershipOptimism(newOwner, isLocal);
+        stateBridge.transferOwnershipOptimism(newOwner, isLocal, opGasLimit);
     }
 
     /// @notice tests whether the StateBridge contract can set root history expiry on Optimism and Polygon
@@ -221,7 +225,7 @@ contract StateBridgeTest is PRBTest, StdCheats {
         vm.expectRevert(NotWorldIDIdentityManager.selector);
 
         vm.prank(nonWorldID);
-        stateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
+        stateBridge.setRootHistoryExpiry(_rootHistoryExpiry, opGasLimit);
     }
 
     /// @notice Tests that a nonPendingOwner can't accept ownership of StateBridge
