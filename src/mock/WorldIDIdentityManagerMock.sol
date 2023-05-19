@@ -16,13 +16,13 @@ contract WorldIDIdentityManagerMock is Initializable {
         stateBridge = _stateBridge;
     }
 
-    function sendRootToStateBridge(uint256 root, uint256 opGasLimit) public {
+    function sendRootToStateBridge(uint256 root, uint32 opGasLimit) public {
         rootHistory[root] = true;
 
         IBridge(stateBridge).sendRootMultichain(root, opGasLimit);
     }
 
-    function checkValidRoot(uint256) public pure returns (bool) {
-        return true;
+    function checkValidRoot(uint256 root) public view returns (bool) {
+        return rootHistory[root];
     }
 }
