@@ -118,7 +118,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         emit RootSentMultichain(newRoot, timestamp);
 
-        vm.prank(mockWorldIDAddress);
         mockWorldID.sendRootToStateBridge(newRoot, opGasLimit);
 
         assertEq(mockWorldID.checkValidRoot(newRoot), true);
@@ -180,8 +179,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// can't be sent to the StateBridge
     function test_sendRootMultichain_reverts(uint256 newRoot, address notWorldID) public {
         vm.assume(notWorldID != mockWorldIDAddress);
-
-        mockWorldID.sendRootToStateBridge(newRoot, opGasLimit);
 
         vm.expectRevert(StateBridge.NotWorldIDIdentityManager.selector);
         vm.prank(notWorldID);
