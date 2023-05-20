@@ -40,6 +40,11 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param newOwner The new owner of the StateBridge contract
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
+    /// @notice OpenZeppelin Ownable2Step transferOwnership event
+    /// @param previousOwner The previous owner of the StateBridge contract
+    /// @param newOwner The new owner of the StateBridge contract
+    event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
+
     /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
     /// @param previousOwner The previous owner of the OPWorldID contract
@@ -131,11 +136,16 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         vm.expectEmit(true, true, true, true);
 
-        // OpenZeppelin Ownable.sol transferOwnership event
-        emit OwnershipTransferred(owner, newOwner);
+        // OpenZeppelin Ownable2Step transferOwnershipStarted event
+        emit OwnershipTransferStarted(owner, newOwner);
 
         vm.prank(owner);
         stateBridge.transferOwnership(newOwner);
+
+        vm.expectEmit(true, true, true, true);
+
+        // OpenZeppelin Ownable2Step transferOwnership event
+        emit OwnershipTransferred(owner, newOwner);
 
         vm.prank(newOwner);
         stateBridge.acceptOwnership();
