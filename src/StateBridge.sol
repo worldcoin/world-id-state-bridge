@@ -113,9 +113,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
         crossDomainMessengerAddress = _crossDomainMessenger;
-        opGasLimitSendRootOptimism = 150000;
-        opGasLimitSetRootHistoryExpiryOptimism = 30000;
-        opGasLimitTransferOwnershipOptimism = 30000;
+        opGasLimitSendRootOptimism = 100000;
+        opGasLimitSetRootHistoryExpiryOptimism = 100000;
+        opGasLimitTransferOwnershipOptimism = 100000;
     }
 
     ///////////////////////////////////////////////////////////////////
