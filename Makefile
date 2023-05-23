@@ -31,7 +31,7 @@ mock: install build; node --no-warnings src/script/deploy.js mock
 
 local-mock: install build; node --no-warnings src/script/deploy.js local-mock
 
-local-mock: install build; node --no-warnings src/script/deploy.js set-op-gas-limit
+set-op-gas-limit: install build; node --no-warnings src/script/deploy.js set-op-gas-limit
 
 # Upgrade contracts
 # upgrade: install build; node --no-warnings scripts/deploy.js upgrade
