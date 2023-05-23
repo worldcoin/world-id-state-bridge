@@ -6,6 +6,7 @@ import {OpWorldID} from "src/OpWorldID.sol";
 import {ICrossDomainMessenger} from
     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
+import {StateBridge} from "src/StateBridge.sol";
 
 /// @title Ownership Transfer of OpWorldID script for testnet
 /// @notice forge script for transferring ownership of OpWorldID to a local (Optimism Goerli)
@@ -20,9 +21,13 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
     OpWorldID public opWorldID;
 
+    StateBridge stateBridge;
+
     /// @notice in CrossDomainOwnable3.sol, isLocal is used to set ownership to a new address with a toggle
     /// for local or cross domain (using the CrossDomainMessenger to pass messages)
     bool public isLocal;
+
+    uint32 public opGasLimit;
 
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
@@ -42,6 +47,7 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
         ///                            GOERLI                           ///
         ///////////////////////////////////////////////////////////////////
         crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+        stateBridge = StateBridge(stateBridgeAddress);
     }
 
     function run() public {
@@ -52,12 +58,8 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
         vm.startBroadcast(privateKey);
 
-        transferOwnershipToStateBridge(stateBridgeAddress, isLocal);
+        stateBridge.transferOwnershipOptimism(stateBridgeAddress, isLocal);
 
         vm.stopBroadcast();
-    }
-
-    function transferOwnershipToStateBridge(address newOwner, bool _isLocal) internal {
-        ICrossDomainOwnable3(opWorldIDAddress).transferOwnership(newOwner, _isLocal);
     }
 }

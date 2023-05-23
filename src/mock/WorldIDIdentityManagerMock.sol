@@ -22,7 +22,7 @@ contract WorldIDIdentityManagerMock is Initializable {
         IBridge(stateBridge).sendRootMultichain(root);
     }
 
-    function checkValidRoot(uint256) public pure returns (bool) {
-        return true;
+    function checkValidRoot(uint256 root) public view returns (bool) {
+        return rootHistory[root];
     }
 }

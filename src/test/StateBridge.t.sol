@@ -23,6 +23,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
     StateBridge public stateBridge;
     WorldIDIdentityManagerMock public mockWorldID;
 
+    uint32 public opGasLimit;
+
     address public mockWorldIDAddress;
     address public crossDomainMessengerAddress;
     address public fxRoot;
@@ -37,6 +39,11 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param previousOwner The previous owner of the StateBridge contract
     /// @param newOwner The new owner of the StateBridge contract
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /// @notice OpenZeppelin Ownable2Step transferOwnership event
+    /// @param previousOwner The previous owner of the StateBridge contract
+    /// @param newOwner The new owner of the StateBridge contract
+    event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
 
     /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
@@ -55,6 +62,18 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentMultichain(uint256 root, uint128 timestamp);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for sendRootOptimism
+    /// @param _opGasLimit The new opGasLimit for sendRootOptimism
+    event SetOpGasLimitSendRootOptimism(uint32 _opGasLimit);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for setRootHistoryExpiryOptimism
+    /// @param _opGasLimit The new opGasLimit for setRootHistoryExpiryOptimism
+    event SetOpGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for transferOwnershipOptimism
+    /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
+    event SetOpGasLimitTransferOwnershipOptimism(uint32 _opGasLimit);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -114,7 +133,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         emit RootSentMultichain(newRoot, timestamp);
 
-        vm.prank(mockWorldIDAddress);
         mockWorldID.sendRootToStateBridge(newRoot);
 
         assertEq(mockWorldID.checkValidRoot(newRoot), true);
@@ -128,11 +146,16 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
         vm.expectEmit(true, true, true, true);
 
-        // OpenZeppelin Ownable.sol transferOwnership event
-        emit OwnershipTransferred(owner, newOwner);
+        // OpenZeppelin Ownable2Step transferOwnershipStarted event
+        emit OwnershipTransferStarted(owner, newOwner);
 
         vm.prank(owner);
         stateBridge.transferOwnership(newOwner);
+
+        vm.expectEmit(true, true, true, true);
+
+        // OpenZeppelin Ownable2Step transferOwnership event
+        emit OwnershipTransferred(owner, newOwner);
 
         vm.prank(newOwner);
         stateBridge.acceptOwnership();
@@ -168,6 +191,49 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
     }
 
+    /// @notice tests whether the StateBridge contract can set the opGasLimit for sendRootOptimism
+    /// @param _opGasLimit The new opGasLimit for sendRootOptimism
+    function test_owner_setOpGasLimitSendRootOptimism_succeeds(uint32 _opGasLimit) public {
+        vm.assume(_opGasLimit != 0);
+
+        vm.expectEmit(true, true, true, true);
+
+        emit SetOpGasLimitSendRootOptimism(_opGasLimit);
+
+        vm.prank(owner);
+        stateBridge.setOpGasLimitSendRootOptimism(_opGasLimit);
+    }
+
+    /// @notice tests whether the StateBridge contract can set the opGasLimit for setRootHistoryExpiryOptimism
+    /// @param _opGasLimit The new opGasLimit for setRootHistoryExpiryOptimism
+    function test_owner_setOpGasLimitSetRootHistoryExpiryOptimism_succeeds(uint32 _opGasLimit)
+        public
+    {
+        vm.assume(_opGasLimit != 0);
+
+        vm.expectEmit(true, true, true, true);
+
+        emit SetOpGasLimitSetRootHistoryExpiryOptimism(_opGasLimit);
+
+        vm.prank(owner);
+        stateBridge.setOpGasLimitSetRootHistoryExpiryOptimism(_opGasLimit);
+    }
+
+    /// @notice tests whether the StateBridge contract can set the opGasLimit for transferOwnershipOptimism
+    /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
+    function test_owner_setOpGasLimitTransferOwnershipOptimism_succeeds(uint32 _opGasLimit)
+        public
+    {
+        vm.assume(_opGasLimit != 0);
+
+        vm.expectEmit(true, true, true, true);
+
+        emit SetOpGasLimitTransferOwnershipOptimism(_opGasLimit);
+
+        vm.prank(owner);
+        stateBridge.setOpGasLimitTransferOwnershipOptimism(_opGasLimit);
+    }
+
     ///////////////////////////////////////////////////////////////////
     ///                           REVERTS                           ///
     ///////////////////////////////////////////////////////////////////
@@ -176,8 +242,6 @@ contract StateBridgeTest is PRBTest, StdCheats {
     /// can't be sent to the StateBridge
     function test_sendRootMultichain_reverts(uint256 newRoot, address notWorldID) public {
         vm.assume(notWorldID != mockWorldIDAddress);
-
-        mockWorldID.sendRootToStateBridge(newRoot);
 
         vm.expectRevert(StateBridge.NotWorldIDIdentityManager.selector);
         vm.prank(notWorldID);

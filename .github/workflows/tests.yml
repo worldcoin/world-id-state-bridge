@@ -35,10 +35,3 @@ jobs:
         env:
           MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
         run: make test
-
-      - name: Run Benchmarks
-        env:
-          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
-        run: |
-          make bench
-          make snapshot
