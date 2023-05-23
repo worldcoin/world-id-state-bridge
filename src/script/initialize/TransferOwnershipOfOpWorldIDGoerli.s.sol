@@ -48,7 +48,6 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
         ///////////////////////////////////////////////////////////////////
         crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
         stateBridge = StateBridge(stateBridgeAddress);
-        opGasLimit = 100000;
     }
 
     function run() public {
@@ -59,7 +58,7 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
         vm.startBroadcast(privateKey);
 
-        stateBridge.transferOwnershipOptimism(stateBridgeAddress, isLocal, opGasLimit);
+        stateBridge.transferOwnershipOptimism(stateBridgeAddress, isLocal);
 
         vm.stopBroadcast();
     }

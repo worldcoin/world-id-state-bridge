@@ -30,6 +30,15 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice worldID Address
     address public immutable worldIDAddress;
 
+    /// @notice Amount of gas purchased on Optimism for _sendRootToOptimism
+    uint32 internal opGasLimitSendRootOptimism;
+
+    /// @notice Amount of gas purchased on Optimism for setRootHistoryExpiryOptimism
+    uint32 internal opGasLimitSetRootHistoryExpiryOptimism;
+
+    /// @notice Amount of gas purchased on Optimism for transferOwnershipOptimism
+    uint32 internal opGasLimitTransferOwnershipOptimism;
+
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
@@ -51,6 +60,18 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentMultichain(uint256 root, uint128 timestamp);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for sendRootOptimism
+    /// @param _opGasLimit The new opGasLimit for sendRootOptimism
+    event SetOpGasLimitSendRootOptimism(uint32 _opGasLimit);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for setRootHistoryExpiryOptimism
+    /// @param _opGasLimit The new opGasLimit for setRootHistoryExpiryOptimism
+    event SetOpGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for transferOwnershipOptimism
+    /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
+    event SetOpGasLimitTransferOwnershipOptimism(uint32 _opGasLimit);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -101,13 +122,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Sends the latest WorldID Identity Manager root to all chains.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
-    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
-    function sendRootMultichain(uint256 root, uint32 opGasLimit)
-        external
-        onlyWorldIDIdentityManager
-    {
+    function sendRootMultichain(uint256 root) external onlyWorldIDIdentityManager {
         uint128 timestamp = uint128(block.timestamp);
-        _sendRootToOptimism(root, timestamp, opGasLimit);
+        _sendRootToOptimism(root, timestamp);
         _sendRootToPolygon(root, timestamp);
         // add other chains here
 
@@ -116,12 +133,8 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Sets the root history expiry for OpWorldID (on Optimism) and PolygonWorldID (on Polygon)
     /// @param expiryTime The new root history expiry for OpWorldID and PolygonWorldID
-    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
-    function setRootHistoryExpiry(uint256 expiryTime, uint32 opGasLimit)
-        public
-        onlyWorldIDIdentityManager
-    {
-        setRootHistoryExpiryOptimism(expiryTime, opGasLimit);
+    function setRootHistoryExpiry(uint256 expiryTime) public onlyWorldIDIdentityManager {
+        setRootHistoryExpiryOptimism(expiryTime);
         setRootHistoryExpiryPolygon(expiryTime);
 
         emit SetRootHistoryExpiry(expiryTime);
@@ -135,8 +148,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
-    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
-    function _sendRootToOptimism(uint256 root, uint128 timestamp, uint32 opGasLimit) internal {
+    function _sendRootToOptimism(uint256 root, uint128 timestamp) internal {
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the optimism bridge.
         bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
@@ -145,7 +157,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            opGasLimit
+            opGasLimitSendRootOptimism
         );
     }
 
@@ -153,11 +165,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// of OpWorldID to another contract on L1 or to a local Optimism EOA
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
-    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
-    function transferOwnershipOptimism(address _owner, bool _isLocal, uint32 opGasLimit)
-        public
-        onlyOwner
-    {
+    function transferOwnershipOptimism(address _owner, bool _isLocal) public onlyOwner {
         bytes memory message;
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
@@ -168,7 +176,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            opGasLimit
+            opGasLimitTransferOwnershipOptimism
         );
 
         emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
@@ -176,8 +184,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Adds functionality to the StateBridge to set the root history expiry on OpWorldID
     /// @param _rootHistoryExpiry new root history expiry
-    /// @param opGasLimit The gas limit for the Optimism transaction (how much gas to buy on Optimism with the message)
-    function setRootHistoryExpiryOptimism(uint256 _rootHistoryExpiry, uint32 opGasLimit) internal {
+    function setRootHistoryExpiryOptimism(uint256 _rootHistoryExpiry) internal {
         bytes memory message;
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
@@ -188,8 +195,36 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            opGasLimit
+            opGasLimitSetRootHistoryExpiryOptimism
         );
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                         OP GAS LIMIT                        ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice Sets the gas limit for the Optimism sendRootMultichain method
+    /// @param _opGasLimit The new gas limit for the sendRootMultichain method
+    function setOpGasLimitSendRootOptimism(uint32 _opGasLimit) external onlyOwner {
+        opGasLimitSendRootOptimism = _opGasLimit;
+
+        emit SetOpGasLimitSendRootOptimism(_opGasLimit);
+    }
+
+    /// @notice Sets the gas limit for the Optimism setRootHistoryExpiry method
+    /// @param _opGasLimit The new gas limit for the setRootHistoryExpiry method
+    function setOpGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit) external onlyOwner {
+        opGasLimitSetRootHistoryExpiryOptimism = _opGasLimit;
+
+        emit SetOpGasLimitSetRootHistoryExpiryOptimism(_opGasLimit);
+    }
+
+    /// @notice Sets the gas limit for the transferOwnershipOptimism method
+    /// @param _opGasLimit The new gas limit for the transferOwnershipOptimism method
+    function setOpGasLimitTransferOwnershipOptimism(uint32 _opGasLimit) external onlyOwner {
+        opGasLimitTransferOwnershipOptimism = _opGasLimit;
+
+        emit SetOpGasLimitTransferOwnershipOptimism(_opGasLimit);
     }
 
     ///////////////////////////////////////////////////////////////////
