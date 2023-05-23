@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@eth-optimism/contracts": "^0.5.39",
-    "commander": "^10.0.0",
+    "commander": "^10.0.1",
     "dotenv": "^16.0.3",
     "ethers": "^6.2.3",
     "ora": "^6.3.0",
