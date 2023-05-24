@@ -6,6 +6,7 @@ import ora from "ora";
 import { Command } from "commander";
 import { execSync } from "child_process";
 import { Network, Alchemy, Utils } from "alchemy-sdk";
+import { ethers } from "ethers";
 
 // === Constants ==================================================================================
 
@@ -205,6 +206,26 @@ async function getNewRoot(config) {
 }
 
 async function getOpGasLimitEstimates(config) {
+  const OPWorldIDInterface = new ethers.Interface([
+    "function receiveRoot(uint256 newRoot, uint128 supersedeTimestamp)",
+    "function setRootHistoryExpiry(uint256 newExpiry) external",
+    "function transferOwnership(address _owner, bool _isLocal)",
+  ]);
+
+  const sendRootOptimismData = OPWorldIDInterface.encodeFunctionData("receiveRoot(uint256,uint128)", [
+    "0xe4cfd7299e69372fdb7a7c4195bb621f805e49a35eca36d47678f629bda1870",
+    "0xe4cfd7299e69372fdb7a7c",
+  ]);
+
+  const setRootHistoryExpiryData = OPWorldIDInterface.encodeFunctionData("setRootHistoryExpiry(uint256)", [
+    "0xe4cfd7299e69372fdb7a7c4195bb621f805e49a35eca36d47678f629bda1870",
+  ]);
+
+  const transferOwnershipData = OPWorldIDInterface.encodeFunctionData("transferOwnership(address,bool)", [
+    "0xe17e87a4e22a156544ce87837a5be070bbe52078",
+    "0x0",
+  ]);
+
   const settings = {
     apiKey: config.optimismAlchemyApiKey,
     network: Network.OPT_GOERLI,
@@ -213,27 +234,27 @@ async function getOpGasLimitEstimates(config) {
   const alchemy = new Alchemy(settings);
 
   const opGasLimitSendRootOptimismObj = await alchemy.core.estimateGas({
-    from: config.stateBridgeAddress,
+    from: "0x4200000000000000000000000000000000000007",
     to: config.optimismWorldIDAddress,
     // cast sig "receiveRoot(uint256,uint128)"
-    data: "0xb52a6a7e",
-    value: Utils.parseEther("1.0"),
+    data: sendRootOptimismData,
+    value: Utils.parseEther("0.0"),
   });
 
   const opGasLimitSetRootHistoryExpiryOptimismObj = await alchemy.core.estimateGas({
-    from: config.stateBridgeAddress,
+    from: "0x4200000000000000000000000000000000000007",
     to: config.optimismWorldIDAddress,
     // cast sig "setRootHistoryExpiry(uint256)"
-    data: "0xc70aa727",
-    value: Utils.parseEther("1.0"),
+    data: setRootHistoryExpiryData,
+    value: Utils.parseEther("0.0"),
   });
 
   const opGasLimitTransferOwnershipOptimismObj = await alchemy.core.estimateGas({
-    from: config.stateBridgeAddress,
+    from: "0x4200000000000000000000000000000000000007",
     to: config.optimismWorldIDAddress,
     // cast sig "receiveRoot(uint256,uint128)"
-    data: "0xb52a6a7e",
-    value: Utils.parseEther("1.0"),
+    data: transferOwnershipData,
+    value: Utils.parseEther("0.0"),
   });
 
   config.opGasLimitSendRootOptimism = parseInt(opGasLimitSendRootOptimismObj.result);
