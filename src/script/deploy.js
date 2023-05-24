@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import ora from "ora";
 import { Command } from "commander";
 import { execSync } from "child_process";
-import { Network, Alchemy, parseEther } from "alchemy-sdk";
+import { Network, Alchemy, Utils } from "alchemy-sdk";
 
 // === Constants ==================================================================================
 
@@ -103,7 +103,7 @@ async function getOptimismAlchemyApiKey(config) {
     config.optimismAlchemyApiKey = process.env.OP_ALCHEMY_API_KEY;
   }
   if (!config.optimismAlchemyApiKey) {
-    config.optimismAlchemyApiKey = await ask(`Enter Optimism RPC URL: `);
+    config.optimismAlchemyApiKey = await ask(`Enter Optimism Alchemy API key: `);
   }
 }
 
@@ -213,50 +213,32 @@ async function getOpGasLimitEstimates(config) {
   const alchemy = new Alchemy(settings);
 
   const opGasLimitSendRootOptimismObj = await alchemy.core.estimateGas({
+    from: config.stateBridgeAddress,
     to: config.optimismWorldIDAddress,
     // cast sig "receiveRoot(uint256,uint128)"
     data: "0xb52a6a7e",
-    value: parseEther("0.0"),
+    value: Utils.parseEther("1.0"),
   });
 
   const opGasLimitSetRootHistoryExpiryOptimismObj = await alchemy.core.estimateGas({
+    from: config.stateBridgeAddress,
     to: config.optimismWorldIDAddress,
     // cast sig "setRootHistoryExpiry(uint256)"
     data: "0xc70aa727",
-    value: parseEther("0.0"),
+    value: Utils.parseEther("1.0"),
   });
 
   const opGasLimitTransferOwnershipOptimismObj = await alchemy.core.estimateGas({
+    from: config.stateBridgeAddress,
     to: config.optimismWorldIDAddress,
     // cast sig "receiveRoot(uint256,uint128)"
     data: "0xb52a6a7e",
-    value: parseEther("0.0"),
+    value: Utils.parseEther("1.0"),
   });
 
   config.opGasLimitSendRootOptimism = parseInt(opGasLimitSendRootOptimismObj.result);
   config.opGasLimitSetRootHistoryExpiryOptimism = parseInt(opGasLimitSetRootHistoryExpiryOptimismObj.result);
   config.opGasLimitTransferOwnershipOptimism = parseInt(opGasLimitTransferOwnershipOptimismObj.result);
-}
-
-async function setOpGasLimit(config) {
-  getEthereumRpcUrl(config);
-  getOptimismWorldIDAddress(config);
-  saveConfiguration(config);
-  getOpGasLimitEstimates(config);
-  saveConfiguration(config);
-
-  const spinner = ora("Setting Optimism gas limits for the StateBridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/initialize/SetOpGasLimit.s.sol:SetOpGasLimit --fork-url ${config.ethereumRpcUrl} \
-      --broadcast -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("SetOpGasLimit.s.sol ran successfully!");
 }
 
 async function loadConfiguration(useConfig) {
@@ -616,6 +598,30 @@ async function mockLocalDeployment(config) {
   await getNewRoot(config);
   await saveConfiguration(config);
   await sendStateRootToStateBridge(config);
+}
+
+async function setOpGasLimit(config) {
+  dotenv.config();
+
+  await getEthereumRpcUrl(config);
+  await getOptimismWorldIDAddress(config);
+  await getOptimismAlchemyApiKey(config);
+  await saveConfiguration(config);
+  await getOpGasLimitEstimates(config);
+  await saveConfiguration(config);
+
+  const spinner = ora("Setting Optimism gas limits for the StateBridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/initialize/SetOpGasLimit.s.sol:SetOpGasLimit --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("SetOpGasLimit.s.sol ran successfully!");
 }
 
 async function main() {
