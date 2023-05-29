@@ -205,61 +205,44 @@ async function getNewRoot(config) {
   }
 }
 
-async function getOpGasLimitEstimates(config) {
-  const OPWorldIDInterface = new ethers.Interface([
-    "function receiveRoot(uint256 newRoot, uint128 supersedeTimestamp)",
-    "function setRootHistoryExpiry(uint256 newExpiry) external",
-    "function transferOwnership(address _owner, bool _isLocal)",
-  ]);
+async function getDeployerAddress(config) {
+  if (!config.deployerAddress) {
+    config.deployerAddress = process.env.DEPLOYER_ADDRESS;
+  }
+  if (!config.deployerAddress) {
+    config.deployerAddress = await ask("Enter deployer address: ");
+  }
+}
 
-  const sendRootOptimismData = OPWorldIDInterface.encodeFunctionData("receiveRoot(uint256,uint128)", [
-    "0xe4cfd7299e69372fdb7a7c4195bb621f805e49a35eca36d47678f629bda1870",
-    "0xe4cfd7299e69372fdb7a7c",
-  ]);
+async function getOpGasLimitSendRootOptimism(config) {
+  if (!config.opGasLimitSendRootOptimism) {
+    config.opGasLimitSendRootOptimism = process.env.OP_GAS_LIMIT_SEND_ROOT_OPTIMISM;
+  }
+  if (!config.opGasLimitSendRootOptimism) {
+    config.opGasLimitSendRootOptimism = await ask("Enter the Optimism gas limit for sendRootOptimism: ");
+  }
+}
 
-  const setRootHistoryExpiryData = OPWorldIDInterface.encodeFunctionData("setRootHistoryExpiry(uint256)", [
-    "0xe4cfd7299e69372fdb7a7c4195bb621f805e49a35eca36d47678f629bda1870",
-  ]);
+async function getOpGasLimitSetRootHistoryExpiryOptimism(config) {
+  if (!config.opGasLimitSetRootHistoryExpiryOptimism) {
+    config.opGasLimitSetRootHistoryExpiryOptimism = process.env.OP_GAS_LIMIT_SET_ROOT_HISTORY_EXPIRY_OPTIMISM;
+  }
+  if (!config.opGasLimitSetRootHistoryExpiryOptimism) {
+    config.opGasLimitSetRootHistoryExpiryOptimism = await ask(
+      "Enter the Optimism gas limit for setRootHistoryExpiryOptimism: ",
+    );
+  }
+}
 
-  const transferOwnershipData = OPWorldIDInterface.encodeFunctionData("transferOwnership(address,bool)", [
-    "0xe17e87a4e22a156544ce87837a5be070bbe52078",
-    "0x0",
-  ]);
-
-  const settings = {
-    apiKey: config.optimismAlchemyApiKey,
-    network: Network.OPT_GOERLI,
-  };
-
-  const alchemy = new Alchemy(settings);
-
-  const opGasLimitSendRootOptimismObj = await alchemy.core.estimateGas({
-    from: "0x4200000000000000000000000000000000000007",
-    to: config.optimismWorldIDAddress,
-    // cast sig "receiveRoot(uint256,uint128)"
-    data: sendRootOptimismData,
-    value: Utils.parseEther("0.0"),
-  });
-
-  const opGasLimitSetRootHistoryExpiryOptimismObj = await alchemy.core.estimateGas({
-    from: "0x4200000000000000000000000000000000000007",
-    to: config.optimismWorldIDAddress,
-    // cast sig "setRootHistoryExpiry(uint256)"
-    data: setRootHistoryExpiryData,
-    value: Utils.parseEther("0.0"),
-  });
-
-  const opGasLimitTransferOwnershipOptimismObj = await alchemy.core.estimateGas({
-    from: "0x4200000000000000000000000000000000000007",
-    to: config.optimismWorldIDAddress,
-    // cast sig "receiveRoot(uint256,uint128)"
-    data: transferOwnershipData,
-    value: Utils.parseEther("0.0"),
-  });
-
-  config.opGasLimitSendRootOptimism = parseInt(opGasLimitSendRootOptimismObj.result);
-  config.opGasLimitSetRootHistoryExpiryOptimism = parseInt(opGasLimitSetRootHistoryExpiryOptimismObj.result);
-  config.opGasLimitTransferOwnershipOptimism = parseInt(opGasLimitTransferOwnershipOptimismObj.result);
+async function getOpGasLimitTransferOwnershipOptimism(config) {
+  if (!config.opGasLimitTransferOwnershipOptimism) {
+    config.opGasLimitTransferOwnershipOptimism = process.env.OP_GAS_LIMIT_TRANSFER_OWNERSHIP_OPTIMISM;
+  }
+  if (!config.opGasLimitTransferOwnershipOptimism) {
+    config.opGasLimitTransferOwnershipOptimism = await ask(
+      "Enter the Optimism gas limit for transferOwnershipOptimism: ",
+    );
+  }
 }
 
 async function loadConfiguration(useConfig) {
@@ -627,8 +610,12 @@ async function setOpGasLimit(config) {
   await getEthereumRpcUrl(config);
   await getOptimismWorldIDAddress(config);
   await getOptimismAlchemyApiKey(config);
+  await getDeployerAddress(config);
   await saveConfiguration(config);
-  await getOpGasLimitEstimates(config);
+  await getOpGasLimitSendRootOptimism(config);
+  await getOpGasLimitSetRootHistoryExpiryOptimism(config);
+  await getOpGasLimitTransferOwnershipOptimism(config);
+  // await getOpGasLimitEstimates(config);
   await saveConfiguration(config);
 
   const spinner = ora("Setting Optimism gas limits for the StateBridge...").start();
