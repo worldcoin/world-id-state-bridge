@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import ora from "ora";
 import { Command } from "commander";
 import { execSync } from "child_process";
+import { Network, Alchemy, Utils } from "alchemy-sdk";
+import { ethers } from "ethers";
 
 // === Constants ==================================================================================
 
@@ -94,6 +96,15 @@ async function getOptimismRpcUrl(config) {
   }
   if (!config.optimismRpcUrl) {
     config.optimismRpcUrl = DEFAULT_RPC_URL;
+  }
+}
+
+async function getOptimismAlchemyApiKey(config) {
+  if (!config.optimismAlchemyApiKey) {
+    config.optimismAlchemyApiKey = process.env.OP_ALCHEMY_API_KEY;
+  }
+  if (!config.optimismAlchemyApiKey) {
+    config.optimismAlchemyApiKey = await ask(`Enter Optimism Alchemy API key: `);
   }
 }
 
@@ -191,6 +202,46 @@ async function getNewRoot(config) {
   }
   if (!config.newRoot) {
     config.newRoot = await ask("Enter WorldID root to be inserted into MockWorldID: ");
+  }
+}
+
+async function getDeployerAddress(config) {
+  if (!config.deployerAddress) {
+    config.deployerAddress = process.env.DEPLOYER_ADDRESS;
+  }
+  if (!config.deployerAddress) {
+    config.deployerAddress = await ask("Enter deployer address: ");
+  }
+}
+
+async function getOpGasLimitSendRootOptimism(config) {
+  if (!config.opGasLimitSendRootOptimism) {
+    config.opGasLimitSendRootOptimism = process.env.OP_GAS_LIMIT_SEND_ROOT_OPTIMISM;
+  }
+  if (!config.opGasLimitSendRootOptimism) {
+    config.opGasLimitSendRootOptimism = await ask("Enter the Optimism gas limit for sendRootOptimism: ");
+  }
+}
+
+async function getOpGasLimitSetRootHistoryExpiryOptimism(config) {
+  if (!config.opGasLimitSetRootHistoryExpiryOptimism) {
+    config.opGasLimitSetRootHistoryExpiryOptimism = process.env.OP_GAS_LIMIT_SET_ROOT_HISTORY_EXPIRY_OPTIMISM;
+  }
+  if (!config.opGasLimitSetRootHistoryExpiryOptimism) {
+    config.opGasLimitSetRootHistoryExpiryOptimism = await ask(
+      "Enter the Optimism gas limit for setRootHistoryExpiryOptimism: ",
+    );
+  }
+}
+
+async function getOpGasLimitTransferOwnershipOptimism(config) {
+  if (!config.opGasLimitTransferOwnershipOptimism) {
+    config.opGasLimitTransferOwnershipOptimism = process.env.OP_GAS_LIMIT_TRANSFER_OWNERSHIP_OPTIMISM;
+  }
+  if (!config.opGasLimitTransferOwnershipOptimism) {
+    config.opGasLimitTransferOwnershipOptimism = await ask(
+      "Enter the Optimism gas limit for transferOwnershipOptimism: ",
+    );
   }
 }
 
@@ -553,6 +604,34 @@ async function mockLocalDeployment(config) {
   await sendStateRootToStateBridge(config);
 }
 
+async function setOpGasLimit(config) {
+  dotenv.config();
+
+  await getEthereumRpcUrl(config);
+  await getOptimismWorldIDAddress(config);
+  await getOptimismAlchemyApiKey(config);
+  await getDeployerAddress(config);
+  await saveConfiguration(config);
+  await getOpGasLimitSendRootOptimism(config);
+  await getOpGasLimitSetRootHistoryExpiryOptimism(config);
+  await getOpGasLimitTransferOwnershipOptimism(config);
+  // await getOpGasLimitEstimates(config);
+  await saveConfiguration(config);
+
+  const spinner = ora("Setting Optimism gas limits for the StateBridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/initialize/SetOpGasLimit.s.sol:SetOpGasLimit --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("SetOpGasLimit.s.sol ran successfully!");
+}
+
 async function main() {
   const program = new Command();
 
@@ -605,6 +684,19 @@ async function main() {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
       await mockLocalDeployment(config);
+      await saveConfiguration(config);
+    });
+
+  program
+    .name("set-op-gas-limit")
+    .command("set-op-gas-limit")
+    .description(
+      "A CLI interface to set the gas limit for each function from the State Bridge that targets Optimism's crossDomainMessenger.",
+    )
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await setOpGasLimit(config);
       await saveConfiguration(config);
     });
 
