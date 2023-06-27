@@ -30,7 +30,7 @@
     "url": "https://github.com/worldcoin/world-id-state-bridge/issues"
   },
   "dependencies": {
-    "@eth-optimism/contracts": "^0.5.39",
+    "@eth-optimism/contracts": "^0.6.0",
     "@eth-optimism/contracts-bedrock": "^0.13.2",
     "@eth-optimism/sdk": "^1.10.4",
     "alchemy-sdk": "^2.8.3",
