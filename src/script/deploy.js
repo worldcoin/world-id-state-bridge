@@ -434,7 +434,7 @@ async function initializePolygonWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script src/script/initialize/InitializePolygonWorldID.s.sol:InitializePolygonWorldID --fork-url ${config.polygonRpcUrl} --broadcast -vvvv`,
+      `forge script src/script/initialize/InitializePolygonWorldID.s.sol:InitializePolygonWorldID --fork-url ${config.polygonRpcUrl} --broadcast -vvvv --legacy`,
     );
     console.log(data.toString());
   } catch (err) {
