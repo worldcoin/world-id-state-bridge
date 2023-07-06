@@ -151,9 +151,6 @@ async function getPolygonscanApiKey(config) {
 
 async function getTreeDepth(config) {
   if (!config.treeDepth) {
-    config.treeDepth = process.env.TREE_DEPTH;
-  }
-  if (!config.treeDepth) {
     config.treeDepth = await ask("Enter WorldID tree depth: ");
   }
 }
