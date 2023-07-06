@@ -31,7 +31,7 @@ contract DeployPolygonWorldIDMumbai is Script {
 
     function setUp() public {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
+        treeDepth = uint8(30);
     }
 
     function run() external {
