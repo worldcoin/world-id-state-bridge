@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@eth-optimism/contracts": "^0.5.39",
-    "@eth-optimism/contracts-bedrock": "^0.13.2",
+    "@eth-optimism/contracts-bedrock": "^0.15.0",
     "@eth-optimism/sdk": "^1.10.4",
     "alchemy-sdk": "^2.8.3",
     "commander": "^10.0.1",

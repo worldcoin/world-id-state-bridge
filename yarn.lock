@@ -39,16 +39,15 @@
     ethers "^5.7.0"
     hardhat "^2.9.6"
 
-"@eth-optimism/contracts-bedrock@^0.13.2":
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.13.2.tgz#4cdd4bfe7d905fa237719efdadab6bc228f49b0f"
-  integrity sha512-LMJzK0psPYEGDvvb+Qix8e1cK4+9J8tD9yXFqCt+On87warrTj8DZmLNh3G56DTLBrpz5/U6g62peEEsYha/4w==
+"@eth-optimism/contracts-bedrock@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.15.0.tgz#e4cf596c416de5efb4ca7339be889708868c9d17"
+  integrity sha512-p6whbEsxENrsJ7OkxtPa39BdgmQVeRRquEjt7Qj4oNCooBSeXcWPbx+AtKO/UkODXekuT3inpeWk7QZqmaH0IQ==
   dependencies:
-    "@eth-optimism/core-utils" "^0.12.0"
+    "@eth-optimism/core-utils" "^0.12.1"
     "@openzeppelin/contracts" "4.7.3"
     "@openzeppelin/contracts-upgradeable" "4.7.3"
     ethers "^5.7.0"
-    hardhat "^2.9.6"
 
 "@eth-optimism/contracts@0.5.40", "@eth-optimism/contracts@^0.5.39":
   version "0.5.40"
@@ -79,6 +78,24 @@
     "@ethersproject/transactions" "^5.7.0"
     "@ethersproject/web" "^5.7.0"
     bufio "^1.0.7"
+    chai "^4.3.4"
+
+"@eth-optimism/core-utils@^0.12.1":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/core-utils/-/core-utils-0.12.1.tgz#2d65601e220d1b697eb9b9fe9c1d2df06c1f559a"
+  integrity sha512-H2NnH9HTVDJmr9Yzb5R7GrAaYimcyIY4bF5Oud0xM1/DP4pSoNMtWm1kG3ZBpdqHFFYWH9GiSZZC5/cjFdKBEA==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/abstract-provider" "^5.7.0"
+    "@ethersproject/address" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/bytes" "^5.7.0"
+    "@ethersproject/constants" "^5.7.0"
+    "@ethersproject/contracts" "^5.7.0"
+    "@ethersproject/keccak256" "^5.7.0"
+    "@ethersproject/properties" "^5.7.0"
+    "@ethersproject/rlp" "^5.7.0"
+    "@ethersproject/web" "^5.7.0"
     chai "^4.3.4"
 
 "@eth-optimism/sdk@^1.10.4":
