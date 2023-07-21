@@ -39,16 +39,15 @@
     ethers "^5.7.0"
     hardhat "^2.9.6"
 
-"@eth-optimism/contracts-bedrock@^0.13.2":
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.13.2.tgz#4cdd4bfe7d905fa237719efdadab6bc228f49b0f"
-  integrity sha512-LMJzK0psPYEGDvvb+Qix8e1cK4+9J8tD9yXFqCt+On87warrTj8DZmLNh3G56DTLBrpz5/U6g62peEEsYha/4w==
+"@eth-optimism/contracts-bedrock@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.15.0.tgz#e4cf596c416de5efb4ca7339be889708868c9d17"
+  integrity sha512-p6whbEsxENrsJ7OkxtPa39BdgmQVeRRquEjt7Qj4oNCooBSeXcWPbx+AtKO/UkODXekuT3inpeWk7QZqmaH0IQ==
   dependencies:
-    "@eth-optimism/core-utils" "^0.12.0"
+    "@eth-optimism/core-utils" "^0.12.1"
     "@openzeppelin/contracts" "4.7.3"
     "@openzeppelin/contracts-upgradeable" "4.7.3"
     ethers "^5.7.0"
-    hardhat "^2.9.6"
 
 "@eth-optimism/contracts@0.5.40", "@eth-optimism/contracts@^0.5.39":
   version "0.5.40"
@@ -80,6 +79,26 @@
     "@ethersproject/web" "^5.7.0"
     bufio "^1.0.7"
     chai "^4.3.4"
+
+"@eth-optimism/core-utils@^0.12.1":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@eth-optimism/core-utils/-/core-utils-0.12.2.tgz#cacf8c488e8c9bf75b193a08763043294a4882fa"
+  integrity sha512-rJjsRF//hegpfeWzcWRVO+SJ7XK+uwpidUGECQ5/aGfO+o0/J0kaiRhvGtUvJHsY5D2+gThqQkkx+ZwlGuBeuQ==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/abstract-provider" "^5.7.0"
+    "@ethersproject/address" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/bytes" "^5.7.0"
+    "@ethersproject/constants" "^5.7.0"
+    "@ethersproject/contracts" "^5.7.0"
+    "@ethersproject/keccak256" "^5.7.0"
+    "@ethersproject/properties" "^5.7.0"
+    "@ethersproject/rlp" "^5.7.0"
+    "@ethersproject/web" "^5.7.0"
+    chai "^4.3.4"
+    ethers "^5.7.0"
+    node-fetch "^2.6.7"
 
 "@eth-optimism/sdk@^1.10.4":
   version "1.10.4"
@@ -2419,6 +2438,13 @@ node-addon-api@^2.0.0:
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-2.0.2.tgz#432cfa82962ce494b132e9d72a15b29f71ff5d32"
   integrity sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==
 
+node-fetch@^2.6.7:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.12.tgz#02eb8e22074018e3d5a83016649d04df0e348fba"
+  integrity sha512-C/fGU2E8ToujUivIO0H+tpQ6HWo4eEmchoPIoXtxCrVghxdKq+QOHqEZW7tuP3KlV3bC8FRMO5nMCC7Zm1VP6g==
+  dependencies:
+    whatwg-url "^5.0.0"
+
 node-gyp-build@^4.2.0, node-gyp-build@^4.3.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.6.0.tgz#0c52e4cbf54bbd28b709820ef7b6a3c2d6209055"
@@ -2975,6 +3001,11 @@ toidentifier@1.0.1:
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.1.tgz#3be34321a88a820ed1bd80dfaa33e479fbb8dd35"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
 
+tr46@~0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
+  integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
+
 treeify@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/treeify/-/treeify-1.1.0.tgz#4e31c6a463accd0943879f30667c4fdaff411bb8"
@@ -3103,6 +3134,11 @@ web3-utils@^1.3.4:
     randombytes "^2.1.0"
     utf8 "3.0.0"
 
+webidl-conversions@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
+  integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
+
 websocket@^1.0.34:
   version "1.0.34"
   resolved "https://registry.yarnpkg.com/websocket/-/websocket-1.0.34.tgz#2bdc2602c08bf2c82253b730655c0ef7dcab3111"
@@ -3114,6 +3150,14 @@ websocket@^1.0.34:
     typedarray-to-buffer "^3.1.5"
     utf-8-validate "^5.0.2"
     yaeti "^0.0.6"
+
+whatwg-url@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-5.0.0.tgz#966454e8765462e37644d3626f6742ce8b70965d"
+  integrity sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==
+  dependencies:
+    tr46 "~0.0.3"
+    webidl-conversions "^3.0.0"
 
 workerpool@6.2.1:
   version "6.2.1"
