@@ -90,8 +90,10 @@ contract StateBridgeTest is PRBTest, StdCheats {
         mainnetFork = vm.createFork(MAINNET_RPC_URL);
 
         vm.selectFork(mainnetFork);
-        /// @notice Roll the fork to the block where both Optimim's and Base's crossDomainMessenger contract is deployed
-        vm.rollFork(17482143);
+        /// @notice Roll the fork to a block where both Optimim's and Base's crossDomainMessenger contract is deployed
+        /// @notice and the Base crossDomainMessenger ResolvedDelegateProxy target address is initialized
+        vm.rollFork(17711915);
+
 
         if (block.chainid == 1) {
             opCrossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
