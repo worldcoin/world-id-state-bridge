@@ -99,6 +99,18 @@ async function getOptimismRpcUrl(config) {
   }
 }
 
+async function getBaseRpcUrl(config) {
+  if (!config.baseRpcUrl) {
+    config.baseRpcUrl = process.env.OP_RPC_URL;
+  }
+  if (!config.baseRpcUrl) {
+    config.baseRpcUrl = await ask(`Enter Optimism RPC URL: (${DEFAULT_RPC_URL}) `);
+  }
+  if (!config.baseRpcUrl) {
+    config.baseRpcUrl = DEFAULT_RPC_URL;
+  }
+}
+
 async function getOptimismAlchemyApiKey(config) {
   if (!config.optimismAlchemyApiKey) {
     config.optimismAlchemyApiKey = process.env.OP_ALCHEMY_API_KEY;
@@ -128,6 +140,15 @@ async function getOptimismEtherscanApiKey(config) {
     config.optimismEtherscanApiKey = await ask(
       `Enter Optimism Etherscan API KEY: (https://optimistic.etherscan.io/myaccount) `,
     );
+  }
+}
+
+async function getBaseEtherscanApiKey(config) {
+  if (!config.baseEtherscanApiKey) {
+    config.baseEtherscanApiKey = process.env.BASE_ETHERSCAN_API_KEY;
+  }
+  if (!config.baseEtherscanApiKey) {
+    config.baseEtherscanApiKey = await ask(`Enter BaseScan  API KEY: (https://basescan.org/register) `);
   }
 }
 
@@ -170,6 +191,15 @@ async function getOptimismWorldIDAddress(config) {
   }
   if (!config.optimismWorldIDAddress) {
     config.optimismWorldIDAddress = await ask("Enter Optimism World ID Address: ");
+  }
+}
+
+async function getBaseWorldIDAddress(config) {
+  if (!config.baseWorldIDAddress) {
+    config.baseWorldIDAddress = process.env.BASE_WORLD_ID_ADDRESS;
+  }
+  if (!config.baseWorldIDAddress) {
+    config.baseWorldIDAddress = await ask("Enter Base World ID Address: ");
   }
 }
 
@@ -382,6 +412,22 @@ async function deployOptimismWorldID(config) {
   spinner.succeed("DeployOpWorldID.s.sol ran successfully!");
 }
 
+async function deployBaseWorldID(config) {
+  const spinner = ora("Deploying BaseWorldID...").start();
+
+  try {
+    const data = execSync(
+      `forge script src/script/deploy/DeployOpWorldID.s.sol:DeployOpWorldID --fork-url ${config.baseRpcUrl} \
+      --etherscan-api-key ${config.baseEtherscanApiKey} --broadcast --verify -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployOpWorldID.s.sol ran successfully!");
+}
+
 async function deployMockOpPolygonWorldID(config) {
   const spinner = ora("Deploying MockOpPolygonWorldID...").start();
 
@@ -525,16 +571,20 @@ async function deploymentTestnet(config) {
   await getPrivateKey(config);
   await getEthereumRpcUrl(config);
   await getOptimismRpcUrl(config);
+  await getBaseRpcUrl(config);
   await getPolygonRpcUrl(config);
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
+  await getBaseEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await getTreeDepth(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
+  await deployBaseWorldID(config);
   await deployPolygonWorldIDMumbai(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
+  await getBaseWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
   await deployStateBridgeGoerli(config);
