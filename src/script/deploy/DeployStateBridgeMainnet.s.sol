@@ -15,7 +15,8 @@ contract DeployStateBridge is Script {
     address public polygonWorldIDAddress;
     address public baseWorldIDAddress;
     address public worldIDIdentityManagerAddress;
-    address public crossDomainMessengerAddress;
+    address public opCrossDomainMessengerAddress;
+    address public baseCrossDomainMessengerAddress;
     address public stateBridgeAddress;
 
     address public checkpointManagerAddress;

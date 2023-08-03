@@ -27,6 +27,9 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice address for Optimism's Ethereum mainnet L1CrossDomainMessenger contract
     address internal immutable opCrossDomainMessengerAddress;
 
+    /// @notice The address of the BaseWorldID contract on Base
+    address public immutable baseWorldIDAddress;
+
     /// @notice address for Base's Ethereum mainnet L1CrossDomainMessenger contract
     address internal immutable baseCrossDomainMessengerAddress;
 
@@ -335,7 +338,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     ///////////////////////////////////////////////////////////////////
 
     /// @notice Sets the gas limit for the Base sendRootMultichain method
-    /// @param _opGasLimit The new gas limit for the sendRootMultichain method
+    /// @param _baseGasLimit The new gas limit for the sendRootMultichain method
     function setOpGasLimitSendRootBase(uint32 _baseGasLimit) external onlyOwner {
         baseGasLimitSendRootBase = _baseGasLimit;
 
@@ -343,7 +346,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     }
 
     /// @notice Sets the gas limit for the Base setRootHistoryExpiry method
-    /// @param _opGasLimit The new gas limit for the setRootHistoryExpiry method
+    /// @param _baseGasLimit The new gas limit for the setRootHistoryExpiry method
     function setOpGasLimitSetRootHistoryExpiryBase(uint32 _baseGasLimit) external onlyOwner {
         baseGasLimitSetRootHistoryExpiryBase = _baseGasLimit;
 
@@ -351,7 +354,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     }
 
     /// @notice Sets the gas limit for the transferOwnershipBase method
-    /// @param _opGasLimit The new gas limit for the transferOwnershipBase method
+    /// @param _baseGasLimit The new gas limit for the transferOwnershipBase method
     function setOpGasLimitTransferOwnershipBase(uint32 _baseGasLimit) external onlyOwner {
         baseGasLimitTransferOwnershipBase = _baseGasLimit;
 

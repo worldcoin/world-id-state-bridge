@@ -27,6 +27,9 @@ contract StateBridgeTest is PRBTest, StdCheats {
 
     address public mockWorldIDAddress;
     address public crossDomainMessengerAddress;
+    address public opCrossDomainMessengerAddress;
+    address public baseCrossDomainMessengerAddress;
+
     address public fxRoot;
     address public checkpointManager;
     address public owner;
@@ -91,7 +94,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
         vm.rollFork(16883118);
 
         if (block.chainid == 1) {
-            crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
+            opCrossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
+            baseCrossDomainMessengerAddress = address(0x866E82a600A1414e583f7F13623F1aC5d58b0Afa);
         } else {
             revert invalidCrossDomainMessengerFork();
         }
@@ -102,12 +106,17 @@ contract StateBridgeTest is PRBTest, StdCheats {
         checkpointManager = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);
         fxRoot = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
 
+        address opWorldIDAddress = address(0x1);
+        address baseWorldIDAddress = address(0x2);
+
         stateBridge = new StateBridge(
             checkpointManager,
             fxRoot,
             mockWorldIDAddress,
-            address(0x1),
-            crossDomainMessengerAddress
+            opWorldIDAddress,
+            opCrossDomainMessengerAddress,
+            baseWorldIDAddress,
+            baseCrossDomainMessengerAddress
         );
 
         owner = stateBridge.owner();
