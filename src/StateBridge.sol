@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
@@ -25,7 +25,10 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     address public immutable opWorldIDAddress;
 
     /// @notice address for Optimism's Ethereum mainnet L1CrossDomainMessenger contract
-    address internal immutable crossDomainMessengerAddress;
+    address internal immutable opCrossDomainMessengerAddress;
+
+    /// @notice address for Base's Ethereum mainnet L1CrossDomainMessenger contract
+    address internal immutable baseCrossDomainMessengerAddress;
 
     /// @notice worldID Address
     address public immutable worldIDAddress;
@@ -39,6 +42,15 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Amount of gas purchased on Optimism for transferOwnershipOptimism
     uint32 internal opGasLimitTransferOwnershipOptimism;
 
+    /// @notice Amount of gas purchased on Base for _sendRootToBase
+    uint32 internal baseGasLimitSendRootBase;
+
+    /// @notice Amount of gas purchased on Base for setRootHistoryExpiryBase
+    uint32 internal baseGasLimitSetRootHistoryExpiryBase;
+
+    /// @notice Amount of gas purchased on Base for transferOwnershipBase
+    uint32 internal baseGasLimitTransferOwnershipBase;
+
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
@@ -49,6 +61,15 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @param newOwner The new owner of the OPWorldID contract
     /// @param isLocal Whether the ownership transfer is local (Optimism EOA/contract) or an Ethereum EOA or contract
     event OwnershipTransferredOptimism(
+        address indexed previousOwner, address indexed newOwner, bool isLocal
+    );
+
+    /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
+    /// to the WorldID Identity Manager contract away
+    /// @param previousOwner The previous owner of the OPWorldID contract
+    /// @param newOwner The new owner of the OPWorldID contract
+    /// @param isLocal Whether the ownership transfer is local (Base EOA/contract) or an Ethereum EOA or contract
+    event OwnershipTransferredBase(
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
@@ -72,6 +93,18 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Emmitted when the the StateBridge sets the opGasLimit for transferOwnershipOptimism
     /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
     event SetOpGasLimitTransferOwnershipOptimism(uint32 _opGasLimit);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for sendRootBase
+    /// @param _baseGasLimit The new opGasLimit for sendRootBase
+    event SetOpGasLimitSendRootBase(uint32 _baseGasLimit);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for setRootHistoryExpiryBase
+    /// @param _baseGasLimit The new opGasLimit for setRootHistoryExpiryBase
+    event SetOpGasLimitSetRootHistoryExpiryBase(uint32 _baseGasLimit);
+
+    /// @notice Emmitted when the the StateBridge sets the opGasLimit for transferOwnershipBase
+    /// @param _baseGasLimit The new opGasLimit for transferOwnershipBase
+    event SetOpGasLimitTransferOwnershipBase(uint32 _baseGasLimit);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -102,17 +135,23 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @param _fxRoot address of Polygon's fxRoot contract, part of the FxPortal bridge (Goerli or Mainnet)
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
-    /// @param _crossDomainMessenger L1CrossDomainMessenger contract used to communicate with the Optimism network
+    /// @param _opCrossDomainMessenger L1CrossDomainMessenger contract used to communicate with the Optimism network
+    /// @param _baseWorldIDAddress Address of the Base contract that will receive the new root and timestamp
+    /// @param _baseCrossDomainMessenger L1CrossDomainMessenger contract used to communicate with the Base OP-Stack network
     constructor(
         address _checkpointManager,
         address _fxRoot,
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
-        address _crossDomainMessenger
+        address _opCrossDomainMessenger,
+        address _baseWorldIDAddress,
+        address _baseCrossDomainMessenger
     ) FxBaseRootTunnel(_checkpointManager, _fxRoot) {
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
-        crossDomainMessengerAddress = _crossDomainMessenger;
+        baseWorldIDAddress = _baseWorldIDAddress;
+        opCrossDomainMessengerAddress = _opCrossDomainMessenger;
+        baseCrossDomainMessengerAddress = _baseCrossDomainMessenger;
         opGasLimitSendRootOptimism = 100000;
         opGasLimitSetRootHistoryExpiryOptimism = 100000;
         opGasLimitTransferOwnershipOptimism = 100000;
@@ -129,6 +168,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
         uint128 timestamp = uint128(block.timestamp);
         _sendRootToOptimism(root, timestamp);
         _sendRootToPolygon(root, timestamp);
+        _sendRootToBase(root, timestamp);
         // add other chains here
 
         emit RootSentMultichain(root, timestamp);
@@ -139,6 +179,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     function setRootHistoryExpiry(uint256 expiryTime) public onlyWorldIDIdentityManager {
         setRootHistoryExpiryOptimism(expiryTime);
         setRootHistoryExpiryPolygon(expiryTime);
+        setRootHistoryExpiryBase(expiryTime);
 
         emit SetRootHistoryExpiry(expiryTime);
     }
@@ -156,7 +197,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
         // correct data to the optimism bridge.
         bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+        ICrossDomainMessenger(opCrossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
             opWorldIDAddress,
             message,
@@ -175,7 +216,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
         // correct data to the optimism bridge.
         message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+        ICrossDomainMessenger(opCrossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
             opWorldIDAddress,
             message,
@@ -194,7 +235,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
         // correct data to the optimism bridge.
         message = abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+        ICrossDomainMessenger(opCrossDomainMessengerAddress).sendMessage(
             // Contract address on Optimism
             opWorldIDAddress,
             message,
@@ -228,6 +269,93 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
         opGasLimitTransferOwnershipOptimism = _opGasLimit;
 
         emit SetOpGasLimitTransferOwnershipOptimism(_opGasLimit);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                             BASE                            ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice Sends the latest WorldID Identity Manager root to all chains.
+    /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
+    /// @param root The latest WorldID Identity Manager root.
+    /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
+    function _sendRootToBase(uint256 root, uint128 timestamp) internal {
+        // The `encodeCall` function is strongly typed, so this checks that we are passing the
+        // correct data to the optimism bridge.
+        bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (root, timestamp));
+
+        ICrossDomainMessenger(baseCrossDomainMessengerAddress).sendMessage(
+            // Contract address on Base
+            baseWorldIDAddress,
+            message,
+            baseGasLimitSendRootBase
+        );
+    }
+
+    /// @notice Adds functionality to the StateBridge to transfer ownership
+    /// of OpWorldID to another contract on L1 or to a local Base EOA
+    /// @param _owner new owner (EOA or contract)
+    /// @param _isLocal true if new owner is on Base, false if it is a cross-domain owner
+    function transferOwnershipBase(address _owner, bool _isLocal) public onlyOwner {
+        bytes memory message;
+
+        // The `encodeCall` function is strongly typed, so this checks that we are passing the
+        // correct data to the optimism bridge.
+        message = abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
+
+        ICrossDomainMessenger(baseCrossDomainMessengerAddress).sendMessage(
+            // Contract address on Base
+            baseWorldIDAddress,
+            message,
+            baseGasLimitTransferOwnershipBase
+        );
+
+        emit OwnershipTransferredBase(owner(), _owner, _isLocal);
+    }
+
+    /// @notice Adds functionality to the StateBridge to set the root history expiry on OpWorldID
+    /// @param _rootHistoryExpiry new root history expiry
+    function setRootHistoryExpiryBase(uint256 _rootHistoryExpiry) internal {
+        bytes memory message;
+
+        // The `encodeCall` function is strongly typed, so this checks that we are passing the
+        // correct data to the optimism bridge.
+        message = abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
+
+        ICrossDomainMessenger(baseCrossDomainMessengerAddress).sendMessage(
+            // Contract address on Base
+            baseWorldIDAddress,
+            message,
+            baseGasLimitSetRootHistoryExpiryBase
+        );
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                        BASE GAS LIMIT                       ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice Sets the gas limit for the Base sendRootMultichain method
+    /// @param _opGasLimit The new gas limit for the sendRootMultichain method
+    function setOpGasLimitSendRootBase(uint32 _baseGasLimit) external onlyOwner {
+        baseGasLimitSendRootBase = _baseGasLimit;
+
+        emit SetOpGasLimitSendRootBase(_baseGasLimit);
+    }
+
+    /// @notice Sets the gas limit for the Base setRootHistoryExpiry method
+    /// @param _opGasLimit The new gas limit for the setRootHistoryExpiry method
+    function setOpGasLimitSetRootHistoryExpiryBase(uint32 _baseGasLimit) external onlyOwner {
+        baseGasLimitSetRootHistoryExpiryBase = _baseGasLimit;
+
+        emit SetOpGasLimitSetRootHistoryExpiryBase(_baseGasLimit);
+    }
+
+    /// @notice Sets the gas limit for the transferOwnershipBase method
+    /// @param _opGasLimit The new gas limit for the transferOwnershipBase method
+    function setOpGasLimitTransferOwnershipBase(uint32 _baseGasLimit) external onlyOwner {
+        baseGasLimitTransferOwnershipBase = _baseGasLimit;
+
+        emit SetOpGasLimitTransferOwnershipBase(_baseGasLimit);
     }
 
     ///////////////////////////////////////////////////////////////////

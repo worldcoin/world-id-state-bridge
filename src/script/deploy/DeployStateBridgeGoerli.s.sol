@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
 /// @dev Demo deployments
@@ -16,6 +16,7 @@ contract DeployStateBridge is Script {
 
     address public opWorldIDAddress;
     address public polygonWorldIDAddress;
+    address public baseWorldIDAddress;
     address public worldIDIdentityManagerAddress;
     address public crossDomainMessengerAddress;
     address public stateBridgeAddress;
@@ -47,7 +48,13 @@ contract DeployStateBridge is Script {
         ///////////////////////////////////////////////////////////////////
         ///                           OPTIMISM                          ///
         ///////////////////////////////////////////////////////////////////
-        crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+        opCrossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+
+        ///////////////////////////////////////////////////////////////////
+        ///                             BASE                            ///
+        ///////////////////////////////////////////////////////////////////
+        // Taken from https://docs.base.org/base-contracts
+        baseCrossDomainMessengerAddress = address(0x8e5693140eA606bcEB98761d9beB1BC87383706D);
 
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
@@ -55,6 +62,7 @@ contract DeployStateBridge is Script {
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
+        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
         polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
     }
 
@@ -66,7 +74,9 @@ contract DeployStateBridge is Script {
             fxRootAddress,
             worldIDIdentityManagerAddress,
             opWorldIDAddress,
-            crossDomainMessengerAddress
+            opCrossDomainMessengerAddress,
+            baseWorldIDAddress,
+            baseCrossDomainMessengerAddress
         );
 
         bridge.setFxChildTunnel(polygonWorldIDAddress);
