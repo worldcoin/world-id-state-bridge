@@ -340,7 +340,7 @@ async function deployPolygonWorldIDMainnet(config) {
 
   try {
     const data =
-      execSync(`forge script src/script/deploy/DeployPolygonWorldIDMainnet.s.sol:DeployPolygonWorldIDMainnet --fork-url ${config.polygonRpcUrl} \
+      execSync(`forge script src/script/deploy/DeployPolygonWorldIDMainnet.s.sol:DeployPolygonWorldID --fork-url ${config.polygonRpcUrl} \
       --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
