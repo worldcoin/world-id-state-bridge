@@ -58,7 +58,7 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
         vm.startBroadcast(privateKey);
 
-        stateBridge.transferOwnershipOptimism(stateBridgeAddress, isLocal);
+        //        stateBridge.transferOwnershipOptimism(stateBridgeAddress, isLocal);
 
         vm.stopBroadcast();
     }

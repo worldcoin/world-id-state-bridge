@@ -1,0 +1,22 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "ignorePaths": [
+        "yarn-error.log",
+        ".gitignore",
+        "cspell.json",
+        "dictionaries/**/*",
+        "cache/**/*",
+        "artifacts/**/*",
+        "typechain/**/*",
+        "coverage/**/*"        
+    ],
+    "dictionaries": ["domain-terms", "libraries", "names", "skale-terms", "solidity"],
+    "dictionaryDefinitions": [
+        { "name": "skale-terms", "path": "./dictionaries/skale-terms.txt"},
+        { "name": "libraries", "path": "./dictionaries/libraries.txt"},
+        { "name": "domain-terms", "path": "./dictionaries/domain-terms.txt"},
+        { "name": "names", "path": "./dictionaries/names.txt"},
+        { "name": "solidity", "path": "./dictionaries/solidity.txt"}
+    ]
+}

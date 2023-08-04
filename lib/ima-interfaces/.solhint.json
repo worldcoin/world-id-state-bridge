@@ -1,0 +1,20 @@
+{
+  "extends": "solhint:all",
+  "rules": {
+    "compiler-version": ["error","^0.6.10"],
+    "state-visibility": "error",
+    "no-empty-blocks": "error",
+    "check-send-result": "error",
+    "private-vars-leading-underscore": "error",
+    "code-complexity": "error",
+    "visibility-modifier-order": "error",
+    "func-name-mixedcase": "error",
+    "function-max-lines": "error",
+    "no-unused-vars": "error",
+    "no-inline-assembly": "error",
+    "contract-name-camelcase": "error",
+    "ordering": "error",
+    "avoid-tx-origin": "error",
+    "max-states-count": "error"
+  }
+}

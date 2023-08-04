@@ -99,6 +99,18 @@ async function getOptimismRpcUrl(config) {
   }
 }
 
+async function getSkaleRpcUrl(config) {
+  if (!config.skaleRpcUrl) {
+    config.skaleRpcUrl = process.env.SKALE_RPC_URL;
+  }
+  if (!config.skaleRpcUrl) {
+    config.skaleRpcUrl = await ask(`Enter SKALE RPC URL: (${DEFAULT_RPC_URL}) `);
+  }
+  if (!config.skaleRpcUrl) {
+    config.skaleRpcUrl = DEFAULT_RPC_URL;
+  }
+}
+
 async function getOptimismAlchemyApiKey(config) {
   if (!config.optimismAlchemyApiKey) {
     config.optimismAlchemyApiKey = process.env.OP_ALCHEMY_API_KEY;
@@ -149,6 +161,15 @@ async function getPolygonscanApiKey(config) {
   }
 }
 
+async function getSkalecanApiKey(config) {
+  if (!config.skalecanApiKey) {
+    config.skalecanApiKey = process.env.SKALE_API_KEY;
+  }
+  if (!config.skalecanApiKey) {
+    config.skalecanApiKey = await ask(`Enter Chaos API KEY: (https://localhost:38935/api) `);
+  }
+}
+
 async function getTreeDepth(config) {
   if (!config.treeDepth) {
     config.treeDepth = process.env.TREE_DEPTH;
@@ -182,6 +203,15 @@ async function getPolygonWorldIDAddress(config) {
   }
   if (!config.polygonWorldIDAddress) {
     config.polygonWorldIDAddress = await ask("Enter Polygon World ID Address: ");
+  }
+}
+
+async function getSkaleWorldIDAddress(config) {
+  if (!config.skaleWorldIDAddress) {
+    config.skaleWorldIDAddress = process.env.SKALE_WORLD_ID_ADDRESS;
+  }
+  if (!config.skaleWorldIDAddress) {
+    config.skaleWorldIDAddress = await ask("Enter SKALE World ID Address: ");
   }
 }
 
@@ -299,7 +329,7 @@ async function deployStateBridgeGoerli(config) {
   try {
     const data =
       execSync(`forge script src/script/deploy/DeployStateBridgeGoerli.s.sol:DeployStateBridge --fork-url ${config.ethereumRpcUrl} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+      --etherscan-api-key d3fc3c62fac246f885f4f6af21497f2e --legacy --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
     console.error(err);
@@ -385,6 +415,22 @@ async function deployOptimismWorldID(config) {
   spinner.succeed("DeployOpWorldID.s.sol ran successfully!");
 }
 
+async function deploySkaleWorldID(rpc, sriptName) {
+  const spinner = ora("Deploying SKALEWorldID...").start();
+
+  try {
+    const data = execSync(
+      `forge script src/script/deploy/${sriptName}.s.sol:DeploySKALEWorldID_2 --fork-url ${rpc} \
+      --broadcast --verify -vvvv --legacy`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeploySKALEWorldID.s.sol ran successfully!");
+}
+
 async function deployMockOpPolygonWorldID(config) {
   const spinner = ora("Deploying MockOpPolygonWorldID...").start();
 
@@ -447,6 +493,22 @@ async function initializePolygonWorldID(config) {
   spinner.succeed("InitializePolygonWorldID.s.sol ran successfully!");
 }
 
+// async function initializeSkaleWorldID(config) {
+//   const spinner = ora("Initializing PolygonWorldID...").start();
+
+//   try {
+//     const data = execSync(
+//       `forge script src/script/initialize/InitializeSKALEWorldID.s.s.sol:InitializeSKALEWorldID.s --fork-url ${config.chaosRpcUrl} --broadcast -vvvv`,
+//     );
+//     console.log(data.toString());
+//   } catch (err) {
+//     console.error(err);
+//   }
+
+//   spinner.succeed("InitializeSKALEWorldID.s.sol ran successfully!");
+// }
+
+
 async function transferOwnershipOfOpWorldIDGoerli(config) {
   const spinner = ora("Transfering ownership of OpWorldID to StateBridge...").start();
 
@@ -477,6 +539,20 @@ async function transferOwnershipOfOpWorldIDMainnet(config) {
   }
 
   spinner.succeed("TransferOwnershipOfOpWorldIDMainnet.s.sol ran successfully!");
+}
+
+async function callSKALEWorldId(config) {
+  try {
+    const data = execSync(
+      `forge script src/script/initialize/CallsSKALEWorldId.s.sol:CallsSKALEWorldId --fork-url ${config.skaleRpcUrl} \
+      --broadcast -vvvv --legacy`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("CallsSKALEWorldId.s.sol ran successfully!");
 }
 
 // Simple integration test for Mock WorldID
@@ -527,24 +603,28 @@ async function deploymentTestnet(config) {
 
   await getPrivateKey(config);
   await getEthereumRpcUrl(config);
-  await getOptimismRpcUrl(config);
-  await getPolygonRpcUrl(config);
+//  await getOptimismRpcUrl(config);
+ // await getPolygonRpcUrl(config);
+  await getSkaleRpcUrl(config);
   await getEthereumEtherscanApiKey(config);
-  await getOptimismEtherscanApiKey(config);
-  await getPolygonscanApiKey(config);
+ // await getOptimismEtherscanApiKey(config);
+ // await getPolygonscanApiKey(config);
+ // await getSkalecanApiKey(config);
   await getTreeDepth(config);
   await saveConfiguration(config);
-  await deployOptimismWorldID(config);
-  await deployPolygonWorldIDMumbai(config);
+  //await deployOptimismWorldID(config);
+  //await deployPolygonWorldIDMumbai(config);
+  await deploySkaleWorldID(config);
   await getWorldIDIdentityManagerAddress(config);
-  await getOptimismWorldIDAddress(config);
-  await getPolygonWorldIDAddress(config);
+  //await getOptimismWorldIDAddress(config);
+  //await getPolygonWorldIDAddress(config);
+  await getSkaleWorldIDAddress(config);
   await saveConfiguration(config);
   await deployStateBridgeGoerli(config);
   await getStateBridgeAddress(config);
   await saveConfiguration(config);
-  await initializePolygonWorldID(config);
-  await transferOwnershipOfOpWorldIDGoerli(config);
+  //await initializePolygonWorldID(config);
+ // await transferOwnershipOfOpWorldIDGoerli(config);
 }
 
 async function mockDeployment(config) {
@@ -664,6 +744,29 @@ async function main() {
       await deploymentTestnet(config);
       await saveConfiguration(config);
     });
+  
+    program
+    .command("deploy-skale")
+    .action(async () => {
+      //await deploySkaleWorldID("https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix","DeploySKALEWorldID");
+      //Europa
+      //await deploySkaleWorldID("https://staging-v3.skalenodes.com/v1/staging-legal-crazy-castor","DeploySKALEWorldID_NotMultichainEntry");
+      //Calipso
+      //await deploySkaleWorldID("https://staging-v3.skalenodes.com/v1/staging-utter-unripe-menkar","DeploySKALEWorldID_NotMultichainEntry");
+      //Titan
+     //await deploySkaleWorldID("https://staging-v3.skalenodes.com/v1/staging-aware-chief-gianfar","DeploySKALEWorldID_NotMultichainEntry");
+      //Nebula
+      await deploySkaleWorldID("https://staging-v3.skalenodes.com/v1/staging-faint-slimy-achird","DeploySKALEWorldID_NotMultichainEntry");
+    });
+
+    program
+    .command("call-skale")
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await callSKALEWorldId(config);
+    });
+
 
   program
     .name("mock")

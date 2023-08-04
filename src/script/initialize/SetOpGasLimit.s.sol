@@ -43,11 +43,11 @@ contract SetOpGasLimit is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        stateBridge.setOpGasLimitSendRootOptimism(opGasLimitSendRootOptimism);
-        stateBridge.setOpGasLimitSetRootHistoryExpiryOptimism(
-            opGasLimitSetRootHistoryExpiryOptimism
-        );
-        stateBridge.setOpGasLimitTransferOwnershipOptimism(opGasLimitTransferOwnershipOptimism);
+        // stateBridge.setOpGasLimitSendRootOptimism(opGasLimitSendRootOptimism);
+        // stateBridge.setOpGasLimitSetRootHistoryExpiryOptimism(
+        //     opGasLimitSetRootHistoryExpiryOptimism
+        // );
+        // stateBridge.setOpGasLimitTransferOwnershipOptimism(opGasLimitTransferOwnershipOptimism);
 
         vm.stopBroadcast();
     }

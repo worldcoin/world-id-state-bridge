@@ -20,6 +20,8 @@ gas_reports = ["*"]
 auto_detect_solc = false
 bytecode_hash = "none"
 
+libraries= ['./lib/semaphore-v3/packages/contracts/contracts/base/Pairing.sol:Pairing:0x248844b01EE5eE67AFFCeD6a29b5B34EbA6A16D5']
+
 remappings = [
   "@prb/test/=lib/prb-test/src/",
   "forge-std/=lib/forge-std/src/",

@@ -27,6 +27,10 @@ deploy: install build; node --no-warnings src/script/deploy.js deploy
 
 deploy-testnet: install build; node --no-warnings src/script/deploy.js deploy-testnet
 
+deploy-skale: install build; node --no-warnings src/script/deploy.js deploy-skale
+
+call-skale: install build; node --no-warnings src/script/deploy.js call-skale
+
 mock: install build; node --no-warnings src/script/deploy.js mock
 
 local-mock: install build; node --no-warnings src/script/deploy.js local-mock
