@@ -16,8 +16,9 @@
 ### Orb (group id: 1)
 
 - WorldID State Bridge (Ethereum Goerli):
-  [0xCD60dA00e20bE3d23e2E135283423FD86867C98D](https://goerli.etherscan.io/address/0xcd60da00e20be3d23e2e135283423fd86867c98d#code)
+  [0x316eb4c12edb9bb9e8721663444bb9818e6fab67](https://goerli.etherscan.io/address/0x316eb4c12edb9bb9e8721663444bb9818e6fab67#code)
 - OpWorldID (Optimism Goerli):
-  [0x2a0c0DBEcC7E4D658f48E01e3fA353F44050c208](https://goerli.optimistic.etherscan.io/address/0x2a0c0DBEcC7E4D658f48E01e3fA353F44050c208#code)
+  [0x047ee5313f98e26cc8177fa38877cb36292d2364](https://goerli-optimism.etherscan.io/address/0x047ee5313f98e26cc8177fa38877cb36292d2364#code)
 - PolygonWorldID (Polygon Mumbai):
-  [0x8d6308aC8d34088587Ef345736389Ee915e2A9dA](https://mumbai.polygonscan.com/address/0x8d6308aC8d34088587Ef345736389Ee915e2A9dA#code)
+  [0x047eE5313F98E26Cc8177fA38877cB36292D2364](https://mumbai.polygonscan.com/address/0x047eE5313F98E26Cc8177fA38877cB36292D2364#code)
+- BaseWorldID (Base Goerli): [0x047ee5313f98e26cc8177fa38877cb36292d2364](https://goerli.basescan.org/address/0x047ee5313f98e26cc8177fa38877cb36292d2364#code)
