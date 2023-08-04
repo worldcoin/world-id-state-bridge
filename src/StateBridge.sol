@@ -255,7 +255,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Sets the gas limit for the Optimism sendRootMultichain method
     /// @param _opGasLimit The new gas limit for the sendRootMultichain method
-    function setOpGasLimitSendRootOptimism(uint32 _opGasLimit) external onlyOwner {
+    function setGasLimitSendRootOptimism(uint32 _opGasLimit) external onlyOwner {
         gasLimitSendRootOptimism = _opGasLimit;
 
         emit SetGasLimitSendRootOptimism(_opGasLimit);
@@ -263,7 +263,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Sets the gas limit for the Optimism setRootHistoryExpiry method
     /// @param _opGasLimit The new gas limit for the setRootHistoryExpiry method
-    function setOpGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit) external onlyOwner {
+    function setGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit) external onlyOwner {
         gasLimitSetRootHistoryExpiryOptimism = _opGasLimit;
 
         emit SetGasLimitSetRootHistoryExpiryOptimism(_opGasLimit);
@@ -271,7 +271,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Sets the gas limit for the transferOwnershipOptimism method
     /// @param _opGasLimit The new gas limit for the transferOwnershipOptimism method
-    function setOpGasLimitTransferOwnershipOptimism(uint32 _opGasLimit) external onlyOwner {
+    function setGasLimitTransferOwnershipOptimism(uint32 _opGasLimit) external onlyOwner {
         gasLimitTransferOwnershipOptimism = _opGasLimit;
 
         emit SetGasLimitTransferOwnershipOptimism(_opGasLimit);

@@ -253,8 +253,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.setGasLimitTransferOwnershipOptimism(_opGasLimit);
     }
 
-    /// @notice tests whether the StateBridge contract can set the opGasLimit for sendRootOptimism
-    /// @param _baseGasLimit The new opGasLimit for sendRootOptimism
+    /// @notice tests whether the StateBridge contract can set the opGasLimit for sendRootBase
+    /// @param _baseGasLimit The new opGasLimit for sendRootBase
     function test_owner_setGasLimitSendRootBase_succeeds(uint32 _baseGasLimit) public {
         vm.assume(_baseGasLimit != 0);
 
@@ -266,8 +266,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.setGasLimitSendRootBase(_baseGasLimit);
     }
 
-    /// @notice tests whether the StateBridge contract can set the opGasLimit for setRootHistoryExpiryOptimism
-    /// @param _baseGasLimit The new opGasLimit for setRootHistoryExpiryOptimism
+    /// @notice tests whether the StateBridge contract can set the opGasLimit for setRootHistoryExpiryBase
+    /// @param _baseGasLimit The new opGasLimit for setRootHistoryExpiryBase
     function test_owner_setGasLimitSetRootHistoryExpiryBase_succeeds(uint32 _baseGasLimit) public {
         vm.assume(_baseGasLimit != 0);
 
@@ -279,8 +279,8 @@ contract StateBridgeTest is PRBTest, StdCheats {
         stateBridge.setGasLimitSetRootHistoryExpiryBase(_baseGasLimit);
     }
 
-    /// @notice tests whether the StateBridge contract can set the opGasLimit for transferOwnershipOptimism
-    /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
+    /// @notice tests whether the StateBridge contract can set the opGasLimit for transferOwnershipBase
+    /// @param _baseGasLimit The new opGasLimit for transferOwnershipBase
     function test_owner_setGasLimitTransferOwnershipBase_succeeds(uint32 _baseGasLimit) public {
         vm.assume(_baseGasLimit != 0);
 
