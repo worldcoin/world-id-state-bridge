@@ -37,22 +37,22 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     address public immutable worldIDAddress;
 
     /// @notice Amount of gas purchased on Optimism for _sendRootToOptimism
-    uint32 internal opGasLimitSendRootOptimism;
+    uint32 internal gasLimitSendRootOptimism;
 
     /// @notice Amount of gas purchased on Optimism for setRootHistoryExpiryOptimism
-    uint32 internal opGasLimitSetRootHistoryExpiryOptimism;
+    uint32 internal gasLimitSetRootHistoryExpiryOptimism;
 
     /// @notice Amount of gas purchased on Optimism for transferOwnershipOptimism
-    uint32 internal opGasLimitTransferOwnershipOptimism;
+    uint32 internal gasLimitTransferOwnershipOptimism;
 
     /// @notice Amount of gas purchased on Base for _sendRootToBase
-    uint32 internal baseGasLimitSendRootBase;
+    uint32 internal gasLimitSendRootBase;
 
     /// @notice Amount of gas purchased on Base for setRootHistoryExpiryBase
-    uint32 internal baseGasLimitSetRootHistoryExpiryBase;
+    uint32 internal gasLimitSetRootHistoryExpiryBase;
 
     /// @notice Amount of gas purchased on Base for transferOwnershipBase
-    uint32 internal baseGasLimitTransferOwnershipBase;
+    uint32 internal gasLimitTransferOwnershipBase;
 
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
@@ -85,29 +85,29 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @param timestamp The Ethereum block timestamp of the latest WorldID Identity Manager root.
     event RootSentMultichain(uint256 root, uint128 timestamp);
 
-    /// @notice Emmitted when the the StateBridge sets the opGasLimit for sendRootOptimism
+    /// @notice Emmitted when the the StateBridge sets the gas limit for sendRootOptimism
     /// @param _opGasLimit The new opGasLimit for sendRootOptimism
-    event SetOpGasLimitSendRootOptimism(uint32 _opGasLimit);
+    event SetGasLimitSendRootOptimism(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the opGasLimit for setRootHistoryExpiryOptimism
+    /// @notice Emmitted when the the StateBridge sets the gas limit for setRootHistoryExpiryOptimism
     /// @param _opGasLimit The new opGasLimit for setRootHistoryExpiryOptimism
-    event SetOpGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit);
+    event SetGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the opGasLimit for transferOwnershipOptimism
+    /// @notice Emmitted when the the StateBridge sets the gas limit for transferOwnershipOptimism
     /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
-    event SetOpGasLimitTransferOwnershipOptimism(uint32 _opGasLimit);
+    event SetGasLimitTransferOwnershipOptimism(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the opGasLimit for sendRootBase
-    /// @param _baseGasLimit The new opGasLimit for sendRootBase
-    event SetOpGasLimitSendRootBase(uint32 _baseGasLimit);
+    /// @notice Emmitted when the the StateBridge sets the gas limit for sendRootBase
+    /// @param _baseGasLimit The new baseGasLimit for sendRootBase
+    event SetGasLimitSendRootBase(uint32 _baseGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the opGasLimit for setRootHistoryExpiryBase
-    /// @param _baseGasLimit The new opGasLimit for setRootHistoryExpiryBase
-    event SetOpGasLimitSetRootHistoryExpiryBase(uint32 _baseGasLimit);
+    /// @notice Emmitted when the the StateBridge sets the gas limit for setRootHistoryExpiryBase
+    /// @param _baseGasLimit The new baseGasLimit for setRootHistoryExpiryBase
+    event SetGasLimitSetRootHistoryExpiryBase(uint32 _baseGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the opGasLimit for transferOwnershipBase
-    /// @param _baseGasLimit The new opGasLimit for transferOwnershipBase
-    event SetOpGasLimitTransferOwnershipBase(uint32 _baseGasLimit);
+    /// @notice Emmitted when the the StateBridge sets the gas limit for transferOwnershipBase
+    /// @param _baseGasLimit The new baseGasLimit for transferOwnershipBase
+    event SetGasLimitTransferOwnershipBase(uint32 _baseGasLimit);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -155,9 +155,12 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
         baseWorldIDAddress = _baseWorldIDAddress;
         opCrossDomainMessengerAddress = _opCrossDomainMessenger;
         baseCrossDomainMessengerAddress = _baseCrossDomainMessenger;
-        opGasLimitSendRootOptimism = 100000;
-        opGasLimitSetRootHistoryExpiryOptimism = 100000;
-        opGasLimitTransferOwnershipOptimism = 100000;
+        gasLimitSendRootOptimism = 100000;
+        gasLimitSetRootHistoryExpiryOptimism = 100000;
+        gasLimitTransferOwnershipOptimism = 100000;
+        gasLimitSendRootBase = 100000;
+        gasLimitSetRootHistoryExpiryBase = 100000;
+        gasLimitTransferOwnershipBase = 100000;
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -204,7 +207,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            opGasLimitSendRootOptimism
+            gasLimitSendRootOptimism
         );
     }
 
@@ -223,7 +226,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            opGasLimitTransferOwnershipOptimism
+            gasLimitTransferOwnershipOptimism
         );
 
         emit OwnershipTransferredOptimism(owner(), _owner, _isLocal);
@@ -242,7 +245,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Optimism
             opWorldIDAddress,
             message,
-            opGasLimitSetRootHistoryExpiryOptimism
+            gasLimitSetRootHistoryExpiryOptimism
         );
     }
 
@@ -253,25 +256,25 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Sets the gas limit for the Optimism sendRootMultichain method
     /// @param _opGasLimit The new gas limit for the sendRootMultichain method
     function setOpGasLimitSendRootOptimism(uint32 _opGasLimit) external onlyOwner {
-        opGasLimitSendRootOptimism = _opGasLimit;
+        gasLimitSendRootOptimism = _opGasLimit;
 
-        emit SetOpGasLimitSendRootOptimism(_opGasLimit);
+        emit SetGasLimitSendRootOptimism(_opGasLimit);
     }
 
     /// @notice Sets the gas limit for the Optimism setRootHistoryExpiry method
     /// @param _opGasLimit The new gas limit for the setRootHistoryExpiry method
     function setOpGasLimitSetRootHistoryExpiryOptimism(uint32 _opGasLimit) external onlyOwner {
-        opGasLimitSetRootHistoryExpiryOptimism = _opGasLimit;
+        gasLimitSetRootHistoryExpiryOptimism = _opGasLimit;
 
-        emit SetOpGasLimitSetRootHistoryExpiryOptimism(_opGasLimit);
+        emit SetGasLimitSetRootHistoryExpiryOptimism(_opGasLimit);
     }
 
     /// @notice Sets the gas limit for the transferOwnershipOptimism method
     /// @param _opGasLimit The new gas limit for the transferOwnershipOptimism method
     function setOpGasLimitTransferOwnershipOptimism(uint32 _opGasLimit) external onlyOwner {
-        opGasLimitTransferOwnershipOptimism = _opGasLimit;
+        gasLimitTransferOwnershipOptimism = _opGasLimit;
 
-        emit SetOpGasLimitTransferOwnershipOptimism(_opGasLimit);
+        emit SetGasLimitTransferOwnershipOptimism(_opGasLimit);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -291,7 +294,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Base
             baseWorldIDAddress,
             message,
-            baseGasLimitSendRootBase
+            gasLimitSendRootBase
         );
     }
 
@@ -310,7 +313,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Base
             baseWorldIDAddress,
             message,
-            baseGasLimitTransferOwnershipBase
+            gasLimitTransferOwnershipBase
         );
 
         emit OwnershipTransferredBase(owner(), _owner, _isLocal);
@@ -329,7 +332,7 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
             // Contract address on Base
             baseWorldIDAddress,
             message,
-            baseGasLimitSetRootHistoryExpiryBase
+            gasLimitSetRootHistoryExpiryBase
         );
     }
 
@@ -339,26 +342,26 @@ contract StateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Sets the gas limit for the Base sendRootMultichain method
     /// @param _baseGasLimit The new gas limit for the sendRootMultichain method
-    function setOpGasLimitSendRootBase(uint32 _baseGasLimit) external onlyOwner {
-        baseGasLimitSendRootBase = _baseGasLimit;
+    function setGasLimitSendRootBase(uint32 _baseGasLimit) external onlyOwner {
+        gasLimitSendRootBase = _baseGasLimit;
 
-        emit SetOpGasLimitSendRootBase(_baseGasLimit);
+        emit SetGasLimitSendRootBase(_baseGasLimit);
     }
 
     /// @notice Sets the gas limit for the Base setRootHistoryExpiry method
     /// @param _baseGasLimit The new gas limit for the setRootHistoryExpiry method
-    function setOpGasLimitSetRootHistoryExpiryBase(uint32 _baseGasLimit) external onlyOwner {
-        baseGasLimitSetRootHistoryExpiryBase = _baseGasLimit;
+    function setGasLimitSetRootHistoryExpiryBase(uint32 _baseGasLimit) external onlyOwner {
+        gasLimitSetRootHistoryExpiryBase = _baseGasLimit;
 
-        emit SetOpGasLimitSetRootHistoryExpiryBase(_baseGasLimit);
+        emit SetGasLimitSetRootHistoryExpiryBase(_baseGasLimit);
     }
 
     /// @notice Sets the gas limit for the transferOwnershipBase method
     /// @param _baseGasLimit The new gas limit for the transferOwnershipBase method
-    function setOpGasLimitTransferOwnershipBase(uint32 _baseGasLimit) external onlyOwner {
-        baseGasLimitTransferOwnershipBase = _baseGasLimit;
+    function setGasLimitTransferOwnershipBase(uint32 _baseGasLimit) external onlyOwner {
+        gasLimitTransferOwnershipBase = _baseGasLimit;
 
-        emit SetOpGasLimitTransferOwnershipBase(_baseGasLimit);
+        emit SetGasLimitTransferOwnershipBase(_baseGasLimit);
     }
 
     ///////////////////////////////////////////////////////////////////
