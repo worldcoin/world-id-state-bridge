@@ -12,7 +12,6 @@ contract DeployMockStateBridge is Script {
     MockStateBridge public bridge;
 
     address public opWorldIDAddress;
-    address public polygonWorldIDAddress;
     address public worldIDIdentityManagerAddress;
     address public stateBridgeAddress;
 
@@ -32,7 +31,6 @@ contract DeployMockStateBridge is Script {
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
-        polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
     }
 
     function run() public {
