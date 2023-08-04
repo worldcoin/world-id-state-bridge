@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
 /// @dev Demo deployments
@@ -31,7 +31,7 @@ contract DeployPolygonWorldIDMumbai is Script {
 
     function setUp() public {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
+        treeDepth = uint8(30);
     }
 
     function run() external {

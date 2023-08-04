@@ -1,11 +1,16 @@
 # world-id-state-bridge
 
-![spec](https://raw.githubusercontent.com/worldcoin/world-id-state-bridge/2cba98da38cfc5173ad773824126ce4285d240b1/docs/state-bridge.svg)
+![spec](docs/state-bridge2.svg)
 
 ## Description
 
 State bridge between the WorldID Ethereum mainnet deployment and WorldID supported networks. The [spec](./docs/spec.md)
 can be found in `docs/spec.md`.
+
+## Deployments
+
+The addresses of the contract deployments for production and staging can be found in
+[`docs/deployments.md`](./docs/deployments.md).
 
 ## Supported networks
 

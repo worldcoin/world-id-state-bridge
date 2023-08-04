@@ -99,6 +99,18 @@ async function getOptimismRpcUrl(config) {
   }
 }
 
+async function getBaseRpcUrl(config) {
+  if (!config.baseRpcUrl) {
+    config.baseRpcUrl = process.env.OP_RPC_URL;
+  }
+  if (!config.baseRpcUrl) {
+    config.baseRpcUrl = await ask(`Enter Base RPC URL: (${DEFAULT_RPC_URL}) `);
+  }
+  if (!config.baseRpcUrl) {
+    config.baseRpcUrl = DEFAULT_RPC_URL;
+  }
+}
+
 async function getOptimismAlchemyApiKey(config) {
   if (!config.optimismAlchemyApiKey) {
     config.optimismAlchemyApiKey = process.env.OP_ALCHEMY_API_KEY;
@@ -131,6 +143,15 @@ async function getOptimismEtherscanApiKey(config) {
   }
 }
 
+async function getBaseEtherscanApiKey(config) {
+  if (!config.baseEtherscanApiKey) {
+    config.baseEtherscanApiKey = process.env.BASE_ETHERSCAN_API_KEY;
+  }
+  if (!config.baseEtherscanApiKey) {
+    config.baseEtherscanApiKey = await ask(`Enter BaseScan  API KEY: (https://basescan.org/register) `);
+  }
+}
+
 async function getEthereumEtherscanApiKey(config) {
   if (!config.ethereumEtherscanApiKey) {
     config.ethereumEtherscanApiKey = process.env.ETHERSCAN_API_KEY;
@@ -151,9 +172,6 @@ async function getPolygonscanApiKey(config) {
 
 async function getTreeDepth(config) {
   if (!config.treeDepth) {
-    config.treeDepth = process.env.TREE_DEPTH;
-  }
-  if (!config.treeDepth) {
     config.treeDepth = await ask("Enter WorldID tree depth: ");
   }
 }
@@ -173,6 +191,15 @@ async function getOptimismWorldIDAddress(config) {
   }
   if (!config.optimismWorldIDAddress) {
     config.optimismWorldIDAddress = await ask("Enter Optimism World ID Address: ");
+  }
+}
+
+async function getBaseWorldIDAddress(config) {
+  if (!config.baseWorldIDAddress) {
+    config.baseWorldIDAddress = process.env.BASE_WORLD_ID_ADDRESS;
+  }
+  if (!config.baseWorldIDAddress) {
+    config.baseWorldIDAddress = await ask("Enter Base World ID Address: ");
   }
 }
 
@@ -214,34 +241,61 @@ async function getDeployerAddress(config) {
   }
 }
 
-async function getOpGasLimitSendRootOptimism(config) {
-  if (!config.opGasLimitSendRootOptimism) {
-    config.opGasLimitSendRootOptimism = process.env.OP_GAS_LIMIT_SEND_ROOT_OPTIMISM;
+async function getGasLimitSendRootOptimism(config) {
+  if (!config.gasLimitSendRootOptimism) {
+    config.gasLimitSendRootOptimism = process.env.GAS_LIMIT_SEND_ROOT_OPTIMISM;
   }
-  if (!config.opGasLimitSendRootOptimism) {
-    config.opGasLimitSendRootOptimism = await ask("Enter the Optimism gas limit for sendRootOptimism: ");
+  if (!config.gasLimitSendRootOptimism) {
+    config.gasLimitSendRootOptimism = await ask("Enter the Optimism gas limit for sendRootOptimism: ");
   }
 }
 
-async function getOpGasLimitSetRootHistoryExpiryOptimism(config) {
-  if (!config.opGasLimitSetRootHistoryExpiryOptimism) {
-    config.opGasLimitSetRootHistoryExpiryOptimism = process.env.OP_GAS_LIMIT_SET_ROOT_HISTORY_EXPIRY_OPTIMISM;
+async function getGasLimitSetRootHistoryExpiryOptimism(config) {
+  if (!config.gasLimitSetRootHistoryExpiryOptimism) {
+    config.gasLimitSetRootHistoryExpiryOptimism = process.env.GAS_LIMIT_SET_ROOT_HISTORY_EXPIRY_OPTIMISM;
   }
-  if (!config.opGasLimitSetRootHistoryExpiryOptimism) {
-    config.opGasLimitSetRootHistoryExpiryOptimism = await ask(
+  if (!config.gasLimitSetRootHistoryExpiryOptimism) {
+    config.gasLimitSetRootHistoryExpiryOptimism = await ask(
       "Enter the Optimism gas limit for setRootHistoryExpiryOptimism: ",
     );
   }
 }
 
-async function getOpGasLimitTransferOwnershipOptimism(config) {
-  if (!config.opGasLimitTransferOwnershipOptimism) {
-    config.opGasLimitTransferOwnershipOptimism = process.env.OP_GAS_LIMIT_TRANSFER_OWNERSHIP_OPTIMISM;
+async function getGasLimitTransferOwnershipOptimism(config) {
+  if (!config.gasLimitTransferOwnershipOptimism) {
+    config.gasLimitTransferOwnershipOptimism = process.env.GAS_LIMIT_TRANSFER_OWNERSHIP_OPTIMISM;
   }
-  if (!config.opGasLimitTransferOwnershipOptimism) {
-    config.opGasLimitTransferOwnershipOptimism = await ask(
+  if (!config.gasLimitTransferOwnershipOptimism) {
+    config.gasLimitTransferOwnershipOptimism = await ask(
       "Enter the Optimism gas limit for transferOwnershipOptimism: ",
     );
+  }
+}
+
+async function getGasLimitSendRootBase(config) {
+  if (!config.gasLimitSendRootBase) {
+    config.gasLimitSendRootBase = process.env.GAS_LIMIT_SEND_ROOT_BASE;
+  }
+  if (!config.gasLimitSendRootBase) {
+    config.gasLimitSendRootBase = await ask("Enter the Base gas limit for sendRootBase: ");
+  }
+}
+
+async function getGasLimitSetRootHistoryExpiryBase(config) {
+  if (!config.gasLimitSetRootHistoryExpiryBase) {
+    config.gasLimitSetRootHistoryExpiryBase = process.env.GAS_LIMIT_SET_ROOT_HISTORY_EXPIRY_BASE;
+  }
+  if (!config.gasLimitSetRootHistoryExpiryBase) {
+    config.gasLimitSetRootHistoryExpiryBase = await ask("Enter the Base gas limit for setRootHistoryExpiryBase: ");
+  }
+}
+
+async function getGasLimitTransferOwnershipBase(config) {
+  if (!config.gasLimitTransferOwnershipBase) {
+    config.gasLimitTransferOwnershipBase = process.env.GAS_LIMIT_TRANSFER_OWNERSHIP_BASE;
+  }
+  if (!config.gasLimitTransferOwnershipBase) {
+    config.gasLimitTransferOwnershipBase = await ask("Enter the Base gas limit for transferOwnershipBase: ");
   }
 }
 
@@ -343,7 +397,7 @@ async function deployPolygonWorldIDMainnet(config) {
 
   try {
     const data =
-      execSync(`forge script src/script/deploy/DeployPolygonWorldIDMainnet.s.sol:DeployPolygonWorldIDMainnet --fork-url ${config.polygonRpcUrl} \
+      execSync(`forge script src/script/deploy/DeployPolygonWorldIDMainnet.s.sol:DeployPolygonWorldID --fork-url ${config.polygonRpcUrl} \
       --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
@@ -376,6 +430,22 @@ async function deployOptimismWorldID(config) {
     const data = execSync(
       `forge script src/script/deploy/DeployOpWorldID.s.sol:DeployOpWorldID --fork-url ${config.optimismRpcUrl} \
       --etherscan-api-key ${config.optimismEtherscanApiKey} --broadcast --verify -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployOpWorldID.s.sol ran successfully!");
+}
+
+async function deployBaseWorldID(config) {
+  const spinner = ora("Deploying BaseWorldID...").start();
+
+  try {
+    const data = execSync(
+      `forge script src/script/deploy/DeployOpWorldID.s.sol:DeployOpWorldID --fork-url ${config.baseRpcUrl} \
+      --etherscan-api-key ${config.baseEtherscanApiKey} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
   } catch (err) {
@@ -437,7 +507,7 @@ async function initializePolygonWorldID(config) {
 
   try {
     const data = execSync(
-      `forge script src/script/initialize/InitializePolygonWorldID.s.sol:InitializePolygonWorldID --fork-url ${config.polygonRpcUrl} --broadcast -vvvv`,
+      `forge script src/script/initialize/InitializePolygonWorldID.s.sol:InitializePolygonWorldID --fork-url ${config.polygonRpcUrl} --broadcast -vvvv --legacy`,
     );
     console.log(data.toString());
   } catch (err) {
@@ -503,23 +573,27 @@ async function deploymentMainnet(config) {
   await getPrivateKey(config);
   await getEthereumRpcUrl(config);
   await getOptimismRpcUrl(config);
+  await getBaseRpcUrl(config);
   await getPolygonRpcUrl(config);
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
+  await getBaseEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await getTreeDepth(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
+  await deployBaseWorldID(config);
   await deployPolygonWorldIDMainnet(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
+  await getBaseWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
   await deployStateBridgeMainnet(config);
   await getStateBridgeAddress(config);
   await saveConfiguration(config);
   await initializePolygonWorldID(config);
-  await transferOwnershipOfOpWorldIDMainnet(config);
+  // await transferOwnershipOfOpWorldIDMainnet(config);
 }
 
 async function deploymentTestnet(config) {
@@ -528,23 +602,27 @@ async function deploymentTestnet(config) {
   await getPrivateKey(config);
   await getEthereumRpcUrl(config);
   await getOptimismRpcUrl(config);
+  await getBaseRpcUrl(config);
   await getPolygonRpcUrl(config);
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
+  await getBaseEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await getTreeDepth(config);
   await saveConfiguration(config);
   await deployOptimismWorldID(config);
+  await deployBaseWorldID(config);
   await deployPolygonWorldIDMumbai(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
+  await getBaseWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
   await deployStateBridgeGoerli(config);
   await getStateBridgeAddress(config);
   await saveConfiguration(config);
   await initializePolygonWorldID(config);
-  await transferOwnershipOfOpWorldIDGoerli(config);
+  // await transferOwnershipOfOpWorldIDGoerli(config);
 }
 
 async function mockDeployment(config) {
@@ -553,9 +631,11 @@ async function mockDeployment(config) {
   await getPrivateKey(config);
   await getEthereumRpcUrl(config);
   await getOptimismRpcUrl(config);
+  await getBaseRpcUrl(config);
   await getPolygonRpcUrl(config);
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
+  await getBaseEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await getTreeDepth(config);
   await saveConfiguration(config);
@@ -564,6 +644,7 @@ async function mockDeployment(config) {
   await deployPolygonWorldIDMumbai(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
+  await getBaseWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
   await deployStateBridgeGoerli(config);
@@ -584,8 +665,10 @@ async function mockLocalDeployment(config) {
   await getEthereumRpcUrl(config);
   await getOptimismRpcUrl(config);
   await getPolygonRpcUrl(config);
+  await getBaseRpcUrl(config);
   await getEthereumEtherscanApiKey(config);
   await getOptimismEtherscanApiKey(config);
+  await getBaseEtherscanApiKey(config);
   await getPolygonscanApiKey(config);
   await getTreeDepth(config);
   await saveConfiguration(config);
@@ -593,6 +676,7 @@ async function mockLocalDeployment(config) {
   await deployMockOpPolygonWorldID(config);
   await getWorldIDIdentityManagerAddress(config);
   await getOptimismWorldIDAddress(config);
+  await getBaseWorldIDAddress(config);
   await getPolygonWorldIDAddress(config);
   await saveConfiguration(config);
   await deployMockStateBridge(config);
@@ -609,12 +693,18 @@ async function setOpGasLimit(config) {
 
   await getEthereumRpcUrl(config);
   await getOptimismWorldIDAddress(config);
-  await getOptimismAlchemyApiKey(config);
+  await getOptimismRpcUrl(config);
+  await getBaseWorldIDAddress(config);
+  await getBaseRpcUrl(config);
   await getDeployerAddress(config);
   await saveConfiguration(config);
-  await getOpGasLimitSendRootOptimism(config);
-  await getOpGasLimitSetRootHistoryExpiryOptimism(config);
-  await getOpGasLimitTransferOwnershipOptimism(config);
+  await getGasLimitSendRootOptimism(config);
+  await getGasLimitSetRootHistoryExpiryOptimism(config);
+  await getGasLimitTransferOwnershipOptimism(config);
+  await getGasLimitSendRootBase(config);
+  await getGasLimitSetRootHistoryExpiryBase(config);
+  await getGasLimitTransferOwnershipBase(config);
+
   // await getOpGasLimitEstimates(config);
   await saveConfiguration(config);
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
@@ -27,12 +27,18 @@ contract SetOpGasLimit is Script {
     ///////////////////////////////////////////////////////////////////
     ///                        OP GAS LIMITS                        ///
     ///////////////////////////////////////////////////////////////////
-    uint32 public opGasLimitSendRootOptimism =
-        abi.decode(vm.parseJson(json, ".opGasLimitSendRootOptimism"), (uint32));
-    uint32 public opGasLimitSetRootHistoryExpiryOptimism =
-        abi.decode(vm.parseJson(json, ".opGasLimitSetRootHistoryExpiryOptimism"), (uint32));
-    uint32 public opGasLimitTransferOwnershipOptimism =
-        abi.decode(vm.parseJson(json, ".opGasLimitTransferOwnershipOptimism"), (uint32));
+    uint32 public gasLimitSendRootOptimism =
+        abi.decode(vm.parseJson(json, ".gasLimitSendRootOptimism"), (uint32));
+    uint32 public gasLimitSetRootHistoryExpiryOptimism =
+        abi.decode(vm.parseJson(json, ".gasLimitSetRootHistoryExpiryOptimism"), (uint32));
+    uint32 public gasLimitTransferOwnershipOptimism =
+        abi.decode(vm.parseJson(json, ".gasLimitTransferOwnershipOptimism"), (uint32));
+    uint32 public gasLimitSendRootBase =
+        abi.decode(vm.parseJson(json, ".gasLimitSendRootBase"), (uint32));
+    uint32 public gasLimitSetRootHistoryExpiryBase =
+        abi.decode(vm.parseJson(json, ".gasLimitSetRootHistoryExpiryBase"), (uint32));
+    uint32 public gasLimitTransferOwnershipBase =
+        abi.decode(vm.parseJson(json, ".gasLimitTransferOwnershipBase"), (uint32));
 
     function setUp() public {
         stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
@@ -43,12 +49,13 @@ contract SetOpGasLimit is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        stateBridge.setOpGasLimitSendRootOptimism(opGasLimitSendRootOptimism);
-        stateBridge.setOpGasLimitSetRootHistoryExpiryOptimism(
-            opGasLimitSetRootHistoryExpiryOptimism
-        );
-        stateBridge.setOpGasLimitTransferOwnershipOptimism(opGasLimitTransferOwnershipOptimism);
+        stateBridge.setGasLimitSendRootOptimism(gasLimitSendRootOptimism);
+        stateBridge.setGasLimitSetRootHistoryExpiryOptimism(gasLimitSetRootHistoryExpiryOptimism);
+        stateBridge.setGasLimitTransferOwnershipOptimism(gasLimitTransferOwnershipOptimism);
 
+        stateBridge.setGasLimitSendRootBase(gasLimitSendRootBase);
+        stateBridge.setGasLimitSetRootHistoryExpiryBase(gasLimitSetRootHistoryExpiryBase);
+        stateBridge.setGasLimitTransferOwnershipBase(gasLimitTransferOwnershipBase);
         vm.stopBroadcast();
     }
 }
