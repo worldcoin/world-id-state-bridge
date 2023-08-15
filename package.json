@@ -36,7 +36,7 @@
     "alchemy-sdk": "^2.8.3",
     "commander": "^10.0.1",
     "dotenv": "^16.0.3",
-    "ethers": "^6.2.3",
+    "ethers": "^6.6.5",
     "ora": "^6.3.0",
     "prettier": "^2.8.7",
     "solhint": "^3.4.0"
