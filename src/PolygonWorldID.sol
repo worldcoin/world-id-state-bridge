@@ -51,7 +51,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
     {
-        receiveRootSelector = bytes4(keccak256("receiveRoot(uint256,uint128)"));
+        receiveRootSelector = bytes4(keccak256("receiveRoot(uint256)"));
         receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
     }
 
@@ -82,8 +82,8 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
         bytes memory payload = BytesUtils.substring(message, 4, message.length - 4);
 
         if (selector == receiveRootSelector) {
-            (uint256 root, uint128 timestamp) = abi.decode(payload, (uint256, uint128));
-            _receiveRoot(root, timestamp);
+            uint256 root = abi.decode(payload, (uint256));
+            _receiveRoot(root);
         } else if (selector == receiveRootHistoryExpirySelector) {
             uint256 rootHistoryExpiry = abi.decode(payload, (uint256));
             _setRootHistoryExpiry(rootHistoryExpiry);

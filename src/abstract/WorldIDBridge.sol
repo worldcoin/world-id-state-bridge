@@ -26,7 +26,7 @@ abstract contract WorldIDBridge is IWorldID {
     uint8 internal treeDepth;
 
     /// @notice The amount of time a root is considered as valid on the bridged chain.
-    uint256 internal ROOT_HISTORY_EXPIRY = 1 hours;
+    uint256 internal ROOT_HISTORY_EXPIRY = 1 weeks;
 
     /// @notice The value of the latest merkle tree root.
     uint256 internal _latestRoot;
@@ -71,9 +71,7 @@ abstract contract WorldIDBridge is IWorldID {
     /// @notice Emitted when a new root is received by the contract.
     ///
     /// @param root The value of the root that was added.
-    /// @param supersedeTimestamp The L1 time at which `root` became the latest root, and the prior
-    ///        latest root became a member of the root history.
-    event RootAdded(uint256 root, uint128 supersedeTimestamp);
+    event RootAdded(uint256 root);
 
     /// @notice Emitted when the expiry time for the root history is updated.
     ///
@@ -105,13 +103,10 @@ abstract contract WorldIDBridge is IWorldID {
     ///      equivalent operation.
     ///
     /// @param newRoot The value of the new root.
-    /// @param supersedeTimestamp The value of the L1 timestamp at the time that `newRoot` became
-    ///        the current root. This timestamp is associated with the latest root at the time of
-    ///        the call being inserted into the root history.
     ///
     /// @custom:reverts CannotOverwriteRoot If the root already exists in the root history.
     /// @custom:reverts string If the caller is not the owner.
-    function _receiveRoot(uint256 newRoot, uint128 supersedeTimestamp) internal {
+    function _receiveRoot(uint256 newRoot) internal {
         uint256 existingTimestamp = rootHistory[newRoot];
 
         if (existingTimestamp != NULL_ROOT_TIME) {
@@ -120,9 +115,9 @@ abstract contract WorldIDBridge is IWorldID {
 
         uint256 rootBeingReplaced = _latestRoot;
         _latestRoot = newRoot;
-        rootHistory[rootBeingReplaced] = supersedeTimestamp;
+        rootHistory[rootBeingReplaced] = uint128(block.timestamp);
 
-        emit RootAdded(newRoot, supersedeTimestamp);
+        emit RootAdded(newRoot);
     }
 
     /// @notice Reverts if the provided root value is not valid.

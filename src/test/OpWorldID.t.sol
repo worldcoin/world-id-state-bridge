@@ -126,12 +126,10 @@ contract OpWorldIDTest is Messenger_Initializer {
     function test_onlyOwner_notMessenger_reverts(uint256 newRoot) external {
         _switchToCrossDomainOwnership(id);
 
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
-
         // calling locally (not as the messenger)
         vm.prank(bob);
         vm.expectRevert("CrossDomainOwnable3: caller is not the messenger");
-        id.receiveRoot(newRoot, newRootTimestamp);
+        id.receiveRoot(newRoot);
     }
 
     /// @notice Test that a non-owner can't insert a new root
@@ -144,11 +142,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         bytes32 value = Bytes32AddressLib.fillLast12Bytes(address(bob));
         vm.store(address(L2Messenger), key, value);
 
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
-
         vm.prank(address(L2Messenger));
         vm.expectRevert("CrossDomainOwnable3: caller is not the owner");
-        id.receiveRoot(newRoot, newRootTimestamp);
+        id.receiveRoot(newRoot);
     }
 
     /// @notice Test that a root that hasn't been inserted is invalid

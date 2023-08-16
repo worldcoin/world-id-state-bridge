@@ -2,18 +2,18 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {MockStateBridge} from "src/mock/MockStateBridge.sol";
+import {OpStateBridge} from "src/OpStateBridge.sol";
 
-/// @title Mock State Bridge deployment script
-/// @notice forge script to deploy MockStateBridge.sol
+/// @title Deploy State Bridge Optimism
+/// @notice forge script to deploy OpStateBridge.sol on Ethereum mainnet
 /// @author Worldcoin
-/// @dev Can be executed by running `make mock` or `make local-mock`.
-contract DeployMockStateBridge is Script {
-    MockStateBridge public bridge;
+/// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
+contract DeployOpStateBridge is Script {
+    OpStateBridge public bridge;
 
     address public opWorldIDAddress;
     address public worldIDIdentityManagerAddress;
-    address public stateBridgeAddress;
+    address public opCrossDomainMessengerAddress;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -26,6 +26,11 @@ contract DeployMockStateBridge is Script {
 
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
+        ///                           OPTIMISM                          ///
+        ///////////////////////////////////////////////////////////////////
+        opCrossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
+
+        ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
         ///////////////////////////////////////////////////////////////////
         worldIDIdentityManagerAddress =
@@ -36,7 +41,11 @@ contract DeployMockStateBridge is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new MockStateBridge(worldIDIdentityManagerAddress, opWorldIDAddress);
+        bridge = new OpStateBridge (
+            worldIDIdentityManagerAddress,
+            opWorldIDAddress,
+            opCrossDomainMessengerAddress
+        );
 
         vm.stopBroadcast();
     }

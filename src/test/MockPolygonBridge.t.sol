@@ -17,7 +17,7 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
     event RootHistoryExpirySet(uint256 rootHistoryExpiry);
 
     /// @notice Thrown when new root is inserted
-    event ReceivedRoot(uint256 root, uint128 supersedeTimestamp);
+    event RootAdded(uint256 newRoot);
 
     /// @notice Thrown when the message selector passed from FxRoot is invalid.
     error InvalidMessageSelector(bytes4 selector);
@@ -32,13 +32,12 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
     }
 
     /// @notice tests that receiveRoot succeeds if encoded properly
-    function testReceiveRootSucceeds(uint256 newRoot, uint128 supersedeTimestamp) public {
-        bytes memory message =
-            abi.encodeWithSignature("receiveRoot(uint256,uint128)", newRoot, supersedeTimestamp);
+    function testReceiveRootSucceeds(uint256 newRoot) public {
+        bytes memory message = abi.encodeWithSignature("receiveRoot(uint256)", newRoot);
 
         vm.expectEmit(true, true, true, true);
 
-        emit ReceivedRoot(newRoot, supersedeTimestamp);
+        emit RootAdded(newRoot);
 
         vm.prank(owner);
         polygonWorldID.processMessageFromRoot(message);
@@ -60,7 +59,7 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
     /// @notice tests that an invalid function signature reverts
     function testProcessMessageFromRootReverts(bytes4 invalidSelector, bytes32 param) public {
         vm.assume(
-            invalidSelector != bytes4(keccak256("receiveRoot(uint256,uint128)"))
+            invalidSelector != bytes4(keccak256("receiveRoot(uint256)"))
                 && invalidSelector != bytes4(keccak256("setRootHistoryExpiry(uint256)"))
         );
 
