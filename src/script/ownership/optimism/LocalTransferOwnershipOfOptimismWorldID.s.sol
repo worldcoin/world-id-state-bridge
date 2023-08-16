@@ -5,15 +5,15 @@ import {Script} from "forge-std/Script.sol";
 import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
 import {OpStateBridge} from "src/OpStateBridge.sol";
 
-/// @title Ownership Transfer of OpWorldID on Base
-/// @notice forge script for transferring ownership of OpWorldID to a local (Base / Base Goerli)
-/// or cross-chain (Ethereum / Ethereum goerli) EOA or contract
+/// @title Ownership Transfer of OpWorldID script for Optimism
+/// @notice forge script for transferring ownership of OpWorldID to a local (Optimism)
+/// or cross-chain (Ethereum Goerli) EOA or contract
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract LocalTransferOwnershipOfBaseWorldID is Script {
+contract LocalTransferOwnershipOfOptimismWorldID is Script {
     uint256 public privateKey;
 
-    address public baseWorldIDAddress;
+    address public optimismWorldIDAddress;
 
     address public newOwner;
 
@@ -32,8 +32,9 @@ contract LocalTransferOwnershipOfBaseWorldID is Script {
         string memory json = vm.readFile(path);
 
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
-        newOwner = abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
+        optimismWorldIDAddress =
+            abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
+        newOwner = abi.decode(vm.parseJson(json, ".newOptimismWorldIDOwner"), (address));
     }
 
     constructor() {}
@@ -49,7 +50,7 @@ contract LocalTransferOwnershipOfBaseWorldID is Script {
         bytes memory call =
             abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (newOwner, isLocal));
 
-        (bool ok,) = baseWorldIDAddress.call(call);
+        (bool ok,) = optimismWorldIDAddress.call(call);
 
         require(ok, "call failed");
 

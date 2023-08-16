@@ -23,18 +23,14 @@ contract DeployMockStateBridge is Script {
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
-    function setUp() public {
-        ///////////////////////////////////////////////////////////////////
-        ///                           WORLD ID                          ///
-        ///////////////////////////////////////////////////////////////////
-        worldIDIdentityManagerAddress =
-            abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-    }
+    function setUp() public {}
 
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new MockStateBridge(worldIDIdentityManagerAddress);
+        bridge = new MockStateBridge();
+
+        bridge.propagateRoot();
 
         vm.stopBroadcast();
     }

@@ -26,7 +26,7 @@ contract InitializePolygonWorldID is Script {
     function setUp() public {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
-        stateBridgeAddress = abi.decode(vm.parseJson(json, ".polygonStateBridgeAddress"), (address));
+        stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
         polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
     }
 

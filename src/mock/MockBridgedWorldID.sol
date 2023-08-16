@@ -37,7 +37,7 @@ contract MockBridgedWorldID is WorldIDBridge, Ownable {
     ///
     /// @custom:reverts CannotOverwriteRoot If the root already exists in the root history.
     /// @custom:reverts string If the caller is not the owner.
-    function receiveRoot(uint256 newRoot) public virtual {
+    function receiveRoot(uint256 newRoot) public virtual onlyOwner {
         _receiveRoot(newRoot);
     }
 

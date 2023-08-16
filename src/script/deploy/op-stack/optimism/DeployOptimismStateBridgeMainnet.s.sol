@@ -8,7 +8,7 @@ import {OpStateBridge} from "src/OpStateBridge.sol";
 /// @notice forge script to deploy OpStateBridge.sol on Ethereum mainnet
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
-contract DeployOpStateBridge is Script {
+contract DeployOpStateBridgeMainnet is Script {
     OpStateBridge public bridge;
 
     address public opWorldIDAddress;
