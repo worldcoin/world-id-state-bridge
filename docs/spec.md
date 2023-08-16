@@ -1,44 +1,10 @@
 # State Bridge spec
 
-## Design iteration
-
-1. Push-based approach (current - v0.1.0)
-
-- [`registerIdentities`](https://github.com/worldcoin/world-id-contracts/blob/98f4d6ae959a5a8a3c5ad5b57086e01d999d1b83/src/WorldIDIdentityManagerImplV1.sol#L288-L355)
-  in
-  [`WorldIDIdentityManagerImplV1.sol`](https://github.com/worldcoin/world-id-contracts/src/WorldIDIdentityManagerImplV1.sol)
-  calls a method in the [`StateBridge.sol`](../src/StateBridge.sol) contract that sends over each new state root and its
-  timestamp.
-
-- Downsides:
-  - Hard to scale, redeploying semaphore, separate impls for diff L2s
-
-2. Pull-based approach (CRON)
-
-- status: archived
-- idea: proxy contract you can send state roots, checks against semaphore if they are correct and proceeds to send them
-  to L2s. Service like Gelato periodically fetches latest state roots and checks agains semaphore before submitting to
-  proxy
-
-3. Pull-based approach (external service)
-
-- status: ideation, strong candidate the for next iteration of the state bridge functionality
-- idea: leverage storage proofs of `WorldIDIdentityManager` contract on L1 and run an external relayer service that
-  would update all of the supported target chain contracts by providing a new root, the block timestamp and a storage
-  proof from Ethereum mainnet. This approach is easily generalizable to any target chain that supports the cryptography
-  needed to deploy a Semaphore verifier and a storage proof verifier. For EVM-based chain it is a trivial change as
-  contracts for this are already implemented and would only require a \<targetChain\>WorldID contract deployment and
-  integration to the state relayer service.
-
-- Upsides:
-  - generalizeable
-  - proper solution (conceptually simpler, no ownability required)
-- Downsides:
-  - non-trivial implementation for storage proofs on non-EVM chains
-
-## Structure
-
 ![state-bridge.svg](state-bridge.svg)
+
+Propagates new World ID merkle tree roots from the `WorldIDIdentityManager` contract
+([`world-id-contracts`](https://github.com/worldcoin/world-id-contracts) repo) on Ethereum mainnet to Optimism and
+Polygon PoS.
 
 Currently the state bridge supports Optimism and Polygon PoS. The root and the timestamp get sent from
 [`StateBridge.sol`](../src/StateBridge.sol) to the [`OpWorldID.sol`](../src/OpWorldID.sol) contract on the Optimism L2
