@@ -21,4 +21,5 @@
   [0x047ee5313f98e26cc8177fa38877cb36292d2364](https://goerli-optimism.etherscan.io/address/0x047ee5313f98e26cc8177fa38877cb36292d2364#code)
 - PolygonWorldID (Polygon Mumbai):
   [0x047eE5313F98E26Cc8177fA38877cB36292D2364](https://mumbai.polygonscan.com/address/0x047eE5313F98E26Cc8177fA38877cB36292D2364#code)
-- BaseWorldID (Base Goerli): [0x047ee5313f98e26cc8177fa38877cb36292d2364](https://goerli.basescan.org/address/0x047ee5313f98e26cc8177fa38877cb36292d2364#code)
+- BaseWorldID (Base Goerli):
+  [0x047ee5313f98e26cc8177fa38877cb36292d2364](https://goerli.basescan.org/address/0x047ee5313f98e26cc8177fa38877cb36292d2364#code)

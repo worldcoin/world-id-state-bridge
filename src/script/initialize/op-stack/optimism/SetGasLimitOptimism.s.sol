@@ -2,18 +2,16 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {StateBridge} from "src/StateBridge.sol";
+import {OpStateBridge} from "src/OpStateBridge.sol";
 
-/// @title State Bridge Optimism Gas Limit setter
+/// @title Optimism State Bridge Gas Limit setter
 /// @notice forge script to set the correct gas limits for crossDomainMessenger calls to Optimism for the StateBridge
 /// @author Worldcoin
 /// @dev Can be executed by running `make set-op-gas-limit`
-contract SetOpGasLimit is Script {
-    StateBridge public bridge;
+contract SetOpGasLimitOptimism is Script {
+    address public optimismStateBridgeAddress;
 
-    address public stateBridgeAddress;
-
-    StateBridge stateBridge;
+    OpStateBridge public optimismStateBridge;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -33,29 +31,21 @@ contract SetOpGasLimit is Script {
         abi.decode(vm.parseJson(json, ".gasLimitSetRootHistoryExpiryOptimism"), (uint32));
     uint32 public gasLimitTransferOwnershipOptimism =
         abi.decode(vm.parseJson(json, ".gasLimitTransferOwnershipOptimism"), (uint32));
-    uint32 public gasLimitSendRootBase =
-        abi.decode(vm.parseJson(json, ".gasLimitSendRootBase"), (uint32));
-    uint32 public gasLimitSetRootHistoryExpiryBase =
-        abi.decode(vm.parseJson(json, ".gasLimitSetRootHistoryExpiryBase"), (uint32));
-    uint32 public gasLimitTransferOwnershipBase =
-        abi.decode(vm.parseJson(json, ".gasLimitTransferOwnershipBase"), (uint32));
 
     function setUp() public {
-        stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
+        optimismStateBridgeAddress =
+            abi.decode(vm.parseJson(json, ".optimismStateBridgeAddress"), (address));
 
-        stateBridge = StateBridge(stateBridgeAddress);
+        optimismStateBridge = OpStateBridge(optimismStateBridgeAddress);
     }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
-        stateBridge.setGasLimitSendRootOptimism(gasLimitSendRootOptimism);
-        stateBridge.setGasLimitSetRootHistoryExpiryOptimism(gasLimitSetRootHistoryExpiryOptimism);
-        stateBridge.setGasLimitTransferOwnershipOptimism(gasLimitTransferOwnershipOptimism);
+        optimismStateBridge.setGasLimitSendRootOp(gasLimitSendRootOptimism);
+        optimismStateBridge.setGasLimitSetRootHistoryExpiryOp(gasLimitSetRootHistoryExpiryOptimism);
+        optimismStateBridge.setGasLimitTransferOwnershipOp(gasLimitTransferOwnershipOptimism);
 
-        stateBridge.setGasLimitSendRootBase(gasLimitSendRootBase);
-        stateBridge.setGasLimitSetRootHistoryExpiryBase(gasLimitSetRootHistoryExpiryBase);
-        stateBridge.setGasLimitTransferOwnershipBase(gasLimitTransferOwnershipBase);
         vm.stopBroadcast();
     }
 }

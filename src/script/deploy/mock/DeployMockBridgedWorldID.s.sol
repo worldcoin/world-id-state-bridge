@@ -2,11 +2,14 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockBridgedWorldID} from "src/mock/MockBridgedWorldID.sol";
 
-/// @notice Initializes the StateBridge contract
-contract InitializeMockWorldID is Script {
-    WorldIDIdentityManagerMock public worldID;
+/// @title MockBridgedWorldID deployment script
+/// @notice forge script to deploy MockBridgedWorldID.sol
+/// @author Worldcoin
+/// @dev Can be executed by running `make local-mock`.
+contract DeployMockBridgedWorldID is Script {
+    MockBridgedWorldID public mockBridgedWorldID;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -16,18 +19,12 @@ contract InitializeMockWorldID is Script {
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint8 public treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
 
-    address public worldIDIdentityManagerAddress =
-        abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-    address public stateBridgeAddress =
-        abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
-
-    function run() public {
+    function run() external {
         vm.startBroadcast(privateKey);
 
-        worldID = WorldIDIdentityManagerMock(worldIDIdentityManagerAddress);
-
-        worldID.initialize(stateBridgeAddress);
+        mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
 
         vm.stopBroadcast();
     }
