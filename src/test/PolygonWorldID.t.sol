@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
 import {PolygonWorldID} from "src/PolygonWorldID.sol";
@@ -89,7 +89,9 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     function test_notOwner_acceptOwnership_reverts(address newOwner, address randomAddress)
         public
     {
-        vm.assume(newOwner != address(0) && randomAddress != address(0));
+        vm.assume(
+            newOwner != address(0) && randomAddress != address(0) && randomAddress != newOwner
+        );
 
         vm.prank(owner);
         id.transferOwnership(newOwner);
