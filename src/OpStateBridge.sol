@@ -28,7 +28,7 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Ethereum mainnet worldID Address
     address public immutable worldIDAddress;
 
-    /// @notice Amount of gas purchased on the OP Stack chain for _sendRootToOptimism
+    /// @notice Amount of gas purchased on the OP Stack chain for _propagateRoottimism
     uint32 internal _gasLimitSendRootOp;
 
     /// @notice Amount of gas purchased on the OP Stack chain for setRootHistoryExpiryOptimism
@@ -53,7 +53,7 @@ contract OpStateBridge is Ownable2Step {
 
     /// @notice Emmitted when the the StateBridge sends a root to the OPWorldID contract
     /// @param root The root sent to the OPWorldID contract on the OP Stack chain
-    event RootSentToOp(uint256 root);
+    event RootPropagated(uint256 root);
 
     /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
@@ -106,7 +106,7 @@ contract OpStateBridge is Ownable2Step {
 
     /// @notice Sends the latest WorldID Identity Manager root to the IOpStack.
     /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
-    function sendRootToOp() external {
+    function propagateRoot() external {
         uint256 latestRoot = IWorldIDIdentityManager(worldIDAddress).latestRoot();
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
@@ -120,7 +120,7 @@ contract OpStateBridge is Ownable2Step {
             _gasLimitSendRootOp
         );
 
-        emit RootSentToOp(latestRoot);
+        emit RootPropagated(latestRoot);
     }
 
     /// @notice Adds functionality to the StateBridge to transfer ownership
