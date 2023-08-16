@@ -8,7 +8,7 @@ import {PolygonStateBridge} from "src/PolygonStateBridge.sol";
 /// @notice forge script to deploy StateBridge.sol
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract DeployStateBridge is Script {
+contract DeployPolygonStateBridgeGoerli is Script {
     PolygonStateBridge public bridge;
 
     address public opWorldIDAddress;

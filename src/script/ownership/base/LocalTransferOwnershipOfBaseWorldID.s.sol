@@ -33,7 +33,7 @@ contract LocalTransferOwnershipOfBaseWorldID is Script {
 
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
         baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
-        newOwner = abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
+        newOwner = abi.decode(vm.parseJson(json, ".newBaseWorldIDOwner"), (address));
     }
 
     constructor() {}

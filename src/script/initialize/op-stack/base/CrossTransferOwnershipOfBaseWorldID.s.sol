@@ -3,20 +3,18 @@ pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
 import {OpWorldID} from "src/OpWorldID.sol";
-import {ICrossDomainMessenger} from
-    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
+import {IOpStateBridgeTransferOwnership} from "src/interfaces/IOpStateBridgeTransferOwnership.sol";
 import {OpStateBridge} from "src/OpStateBridge.sol";
 
-/// @title Ownership Transfer of OpWorldID on Base script for mainnet
-/// @notice forge script for transferring ownership of OpWorldID to a local (Base Mainnet)
-/// or cross-chain (Ethereum mainnet) EOA or contract
+/// @title Ownership Transfer of OpWorldID on Base script
+/// @notice forge script for transferring ownership of OpWorldID to a local (Base)
+/// or cross-chain (Ethereum) EOA or contract
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract CrossTransferOwnershipOfBaseWorldIDMainnet is Script {
+contract CrossTransferOwnershipOfBaseWorldID is Script {
     uint256 public privateKey;
 
-    OpStateBridge public baseStateBridge;
     address public baseStateBridgeAddress;
 
     address public newOwner;
@@ -36,25 +34,25 @@ contract CrossTransferOwnershipOfBaseWorldIDMainnet is Script {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
         baseStateBridgeAddress =
             abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
-        newOwner = abi.decode(vm.parseJson(json, ".newOwner"), (address));
+        newOwner = abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
     }
 
-    constructor() {
-        ///////////////////////////////////////////////////////////////////
-        ///                            GOERLI                           ///
-        ///////////////////////////////////////////////////////////////////
-        baseStateBridge = OpStateBridge(baseStateBridgeAddress);
-    }
+    constructor() {}
 
     function run() public {
         /// @notice cross domain ownership flag
         /// false = cross domain (address on Ethereum)
-        /// true = local (address on OpStack chain)
+        /// true = local (address on Optimism)
         isLocal = false;
 
         vm.startBroadcast(privateKey);
 
-        baseStateBridge.transferOwnershipOp(newOwner, isLocal);
+        bytes memory call =
+            abi.encodeCall(IOpStateBridgeTransferOwnership.transferOwnershipOp, (newOwner, isLocal));
+
+        (bool ok,) = baseStateBridgeAddress.call(call);
+
+        require(ok, "call failed");
 
         vm.stopBroadcast();
     }

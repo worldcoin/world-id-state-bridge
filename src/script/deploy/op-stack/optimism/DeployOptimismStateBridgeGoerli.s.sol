@@ -9,7 +9,7 @@ import {OpStateBridge} from "src/OpStateBridge.sol";
 /// @notice forge script to deploy StateBridge.sol on Optimism
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract DeployOpStateBridge is Script {
+contract DeployOpStateBridgeGoerli is Script {
     OpStateBridge public bridge;
 
     address public opWorldIDAddress;
