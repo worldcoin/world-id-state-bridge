@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
@@ -13,8 +13,10 @@ contract DeployStateBridge is Script {
 
     address public opWorldIDAddress;
     address public polygonWorldIDAddress;
+    address public baseWorldIDAddress;
     address public worldIDIdentityManagerAddress;
-    address public crossDomainMessengerAddress;
+    address public opCrossDomainMessengerAddress;
+    address public baseCrossDomainMessengerAddress;
     address public stateBridgeAddress;
 
     address public checkpointManagerAddress;
@@ -43,7 +45,13 @@ contract DeployStateBridge is Script {
         ///////////////////////////////////////////////////////////////////
         ///                           OPTIMISM                          ///
         ///////////////////////////////////////////////////////////////////
-        crossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
+        opCrossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
+
+        ///////////////////////////////////////////////////////////////////
+        ///                             BASE                            ///
+        ///////////////////////////////////////////////////////////////////
+        // Taken from https://docs.base.org/base-contracts
+        baseCrossDomainMessengerAddress = address(0x866E82a600A1414e583f7F13623F1aC5d58b0Afa);
 
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
@@ -52,6 +60,7 @@ contract DeployStateBridge is Script {
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
         opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
         polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
+        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
     }
 
     function run() public {
@@ -62,8 +71,12 @@ contract DeployStateBridge is Script {
             fxRootAddress,
             worldIDIdentityManagerAddress,
             opWorldIDAddress,
-            crossDomainMessengerAddress
+            opCrossDomainMessengerAddress,
+            baseWorldIDAddress,
+            baseCrossDomainMessengerAddress
         );
+
+        bridge.setFxChildTunnel(polygonWorldIDAddress);
 
         vm.stopBroadcast();
     }
