@@ -52,7 +52,7 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice Emmitted when a root is sent to PolygonWorldID
     /// @param root The latest WorldID Identity Manager root.
-    event RootSentPolygon(uint256 root);
+    event RootPropagated(uint256 root);
 
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
@@ -91,15 +91,15 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     }
 
     /// @notice tests that a root can be sent successfully to Polygon
-    function test_sendRootToPolygon_succeeds(address randomAddress) public {
+    function test_propagateRoot_succeeds(address randomAddress) public {
         vm.assume(randomAddress != address(0) && randomAddress != owner);
 
         vm.expectEmit(true, true, true, true);
 
-        emit RootSentPolygon(sampleRoot);
+        emit RootPropagated(sampleRoot);
 
         vm.prank(randomAddress);
-        polygonStateBridge.sendRootToPolygon();
+        polygonStateBridge.propagateRoot();
     }
 
     /// @notice Tests that the owner of the StateBridge contract can transfer ownership

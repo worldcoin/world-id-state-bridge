@@ -31,7 +31,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Emmitted when a root is sent to PolygonWorldID
     /// @param root The latest WorldID Identity Manager root.
-    event RootSentPolygon(uint256 root);
+    event RootPropagated(uint256 root);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -60,7 +60,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
 
     /// @notice Sends the latest WorldIDIdentityManager root and timestamp
     /// to Polygon's StateChild contract (PolygonWorldID)
-    function sendRootToPolygon() external {
+    function propagateRoot() external {
         uint256 latestRoot = worldID.latestRoot();
 
         bytes memory message;
@@ -70,7 +70,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
 
-        emit RootSentPolygon(latestRoot);
+        emit RootPropagated(latestRoot);
     }
 
     /// @notice Sets the root history expiry for PolygonWorldID

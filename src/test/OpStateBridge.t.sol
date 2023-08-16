@@ -50,7 +50,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     // @notice Emmitted when the the StateBridge sends a root to the OPWorldID contract
     /// @param root The root sent to the OPWorldID contract on the OP Stack chain
-    event RootSentToOp(uint256 root);
+    event RootPropagated(uint256 root);
 
     /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
@@ -128,9 +128,9 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     function test_canSendRootToOp() public {
         vm.expectEmit(true, true, true, true);
-        emit RootSentToOp(sampleRoot);
+        emit RootPropagated(sampleRoot);
 
-        opStateBridge.sendRootToOp();
+        opStateBridge.propagateRoot();
 
         // Bridging is not emulated
     }
