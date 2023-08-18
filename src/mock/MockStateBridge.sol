@@ -27,14 +27,14 @@ contract MockStateBridge is Ownable {
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to the Bridged WorldID contract.
-    /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
+    /// @dev Calls this method on the L1 Proxy contract to relay roots to WorldID supported chains.
     function propagateRoot() public {
         uint256 latestRoot = worldID.latestRoot();
         _sendRootToMockBridgedWorldID(latestRoot);
     }
 
     // @notice Sends the latest WorldID Identity Manager root to all chains.
-    /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
+    /// @dev Calls this method on the L1 Proxy contract to relay roots to WorldID supported chains.
     /// @param root The latest WorldID Identity Manager root.
     function _sendRootToMockBridgedWorldID(uint256 root) internal {
         mockBridgedWorldID.receiveRoot(root);
