@@ -1,6 +1,4 @@
-# Addresses of the production and staging deployments
-
-## Deployment Guide
+# Deployment Guide
 
 The deployment logic is implemented in [`src/script/deploy.js`](../src/script/deploy.js). The script is meant to be run
 via the `make deploy`, `make deploy-testnet`, `make-mock` and `make-local-mock` commands. Here is a description of what
@@ -135,9 +133,9 @@ each of the deployment commands do and which forge scripts are executed:
     using the `setGasLimitSendRootOp()`, `setGasLimitSetRootHistoryExpiryOp()`, and`setGasLimitTransferOwnershipOp()`
     methods.
 
-## Production
+## Addresses of the production and staging deployments
 
-### Orb - Mainnet (group id: 1)
+### Orb - production on Ethereum mainnet (group id: 1)
 
 Note: There is an upgrade to the production state bridge architecture currently running on staging which will be
 performed once an audit of the changes are complete.
@@ -149,19 +147,17 @@ performed once an audit of the changes are complete.
 - PolygonWorldID (Polygon PoS mainnet):
   [0x2Ad412A1dF96434Eed0779D2dB4A8694a06132f8](https://polygonscan.com/address/0x2Ad412A1dF96434Eed0779D2dB4A8694a06132f8#code)
 
-## Staging
+### Orb - staging on Ethereum Goerli (group id: 1)
 
-### Orb - Goerli (group id: 1)
-
-- Polygon State Bridge:
+- Polygon State Bridge (Ethereum Goerli):
   [0x42Af76FB754ea23769Ad337bBC4456FD0893552f](https://goerli.etherscan.io/address/0x42Af76FB754ea23769Ad337bBC4456FD0893552f#code)
-- Optimism State Bridge:
+- Optimism State Bridge (Ethereum Goerli):
   [0x7acdc12cbcba53e1ea2206844d0a8ccb6f3b08fb](https://goerli.etherscan.io/address/0x7acdc12cbcba53e1ea2206844d0a8ccb6f3b08fb#code)
-- Base State Bridge:
+- Base State Bridge (Ethereum Goerli):
   [0x39911b3242e952d86270857bc8efc3fce8d84abe](https://goerli.etherscan.io/address/0x39911b3242e952d86270857bc8efc3fce8d84abe#code)
-- PolygonWorldID:
+- PolygonWorldID (Polygon Mumbai):
   [0xB3E7771a6e2d7DD8C0666042B7a07C39b938eb7d](https://mumbai.polygonscan.com/address/0xB3E7771a6e2d7DD8C0666042B7a07C39b938eb7d#code)
-- OpWorldID (Optimism):
+- OpWorldID (Optimism Goerli):
   [0x316350d3ec608ffc30b01dcb7475de1c676ce910](https://goerli-optimism.etherscan.io/address/0x316350d3ec608ffc30b01dcb7475de1c676ce910#code)
-- OpWorldID (Base):
+- OpWorldID (Base Goerli):
   [0xa3cd15ebed6075e33a54483c59818bc43d57c556](https://goerli.basescan.org/address/0xa3cd15ebed6075e33a54483c59818bc43d57c556#code)
