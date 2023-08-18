@@ -7,7 +7,7 @@ import {Script} from "forge-std/Script.sol";
 import {PolygonWorldID} from "src/PolygonWorldID.sol";
 
 contract InitializePolygonWorldID is Script {
-    address public stateBridgeAddress;
+    address public polygonStateBridgeAddress;
     address public polygonWorldIDAddress;
 
     // Polygon PoS Mumbai Testnet Child Tunnel
@@ -26,7 +26,8 @@ contract InitializePolygonWorldID is Script {
     function setUp() public {
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
-        stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
+        polygonStateBridgeAddress =
+            abi.decode(vm.parseJson(json, ".polygonStateBridgeAddress"), (address));
         polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
     }
 
@@ -38,7 +39,7 @@ contract InitializePolygonWorldID is Script {
 
         polygonWorldID = PolygonWorldID(polygonWorldIDAddress);
 
-        polygonWorldID.setFxRootTunnel(stateBridgeAddress);
+        polygonWorldID.setFxRootTunnel(polygonStateBridgeAddress);
 
         vm.stopBroadcast();
     }
