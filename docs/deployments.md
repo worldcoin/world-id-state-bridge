@@ -45,10 +45,10 @@ each of the deployment commands do and which forge scripts are executed:
     Ethereum mainnet using the `transferOwnership()` method in
     [`CrossDomainOwnable3.sol`](https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/src/L2/CrossDomainOwnable3.sol)
     ([TransferOpWorldIDOwnership.s.sol](../src/script/initialize/op-stack/optimism/LocalTransferOwnershipofOptimismWorldID.s.sol))
-    - transfers ownership of `OpWorldID.sol` on Base mainnet to the `OpStateBridge.sol` (Base) contract on Ethereum
-      mainnet using the `transferOwnership()` method in
-      [`CrossDomainOwnable3.sol`](https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/src/L2/CrossDomainOwnable3.sol)
-      ([TransferOpWorldIDOwnership.s.sol](../src/script/initialize/op-stack/base/LocalTransferOwnershipofBaseWorldID.s.sol))
+  - transfers ownership of `OpWorldID.sol` on Base mainnet to the `OpStateBridge.sol` (Base) contract on Ethereum
+    mainnet using the `transferOwnership()` method in
+    [`CrossDomainOwnable3.sol`](https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/src/L2/CrossDomainOwnable3.sol)
+    ([TransferOpWorldIDOwnership.s.sol](../src/script/initialize/op-stack/base/LocalTransferOwnershipofBaseWorldID.s.sol))
 
 - `make deploy-testnet` (`deploymentTestnet()` in `deploy.js`): Deploys the contracts to the production networks
   (Ethereum Goerli, Optimism Goerli, Base Goerli and Polygon PoS Mumbai). The script executes the following:
@@ -89,10 +89,10 @@ each of the deployment commands do and which forge scripts are executed:
     Goerli using the `transferOwnership()` method in
     [`CrossDomainOwnable3.sol`](https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/src/L2/CrossDomainOwnable3.sol)
     ([TransferOpWorldIDOwnership.s.sol](../src/script/initialize/op-stack/optimism/LocalTransferOwnershipofOptimismWorldID.s.sol))
-    - transfers ownership of `OpWorldID.sol` on Base Goerli to the `OpStateBridge.sol` (Base) contract on Ethereum
-      Goerli using the `transferOwnership()` method in
-      [`CrossDomainOwnable3.sol`](https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/src/L2/CrossDomainOwnable3.sol)
-      ([TransferOpWorldIDOwnership.s.sol](../src/script/initialize/op-stack/base/LocalTransferOwnershipofBaseWorldID.s.sol))
+  - transfers ownership of `OpWorldID.sol` on Base Goerli to the `OpStateBridge.sol` (Base) contract on Ethereum Goerli
+    using the `transferOwnership()` method in
+    [`CrossDomainOwnable3.sol`](https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/src/L2/CrossDomainOwnable3.sol)
+    ([TransferOpWorldIDOwnership.s.sol](../src/script/initialize/op-stack/base/LocalTransferOwnershipofBaseWorldID.s.sol))
 
 - `make mock` (`mockDeploymenth()` in `deploy.js`): Deploys the contracts to Ethereum Goerli and simulates the
   `WorldIdIdentityManager` contract.
