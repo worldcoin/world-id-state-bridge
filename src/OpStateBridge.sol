@@ -105,7 +105,7 @@ contract OpStateBridge is Ownable2Step {
     ///////////////////////////////////////////////////////////////////
 
     /// @notice Sends the latest WorldID Identity Manager root to the IOpStack.
-    /// @dev Calls this method on the L1 Proxy contract to relay roots and timestamps to WorldID supported chains.
+    /// @dev Calls this method on the L1 Proxy contract to relay roots to the destination OP Stack chain
     function propagateRoot() external {
         uint256 latestRoot = IWorldIDIdentityManager(worldIDAddress).latestRoot();
 

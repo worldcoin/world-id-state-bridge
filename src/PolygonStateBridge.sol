@@ -58,7 +58,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     ///                          PUBLIC API                         ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Sends the latest WorldIDIdentityManager root and timestamp
+    /// @notice Sends the latest WorldIDIdentityManager root
     /// to Polygon's StateChild contract (PolygonWorldID)
     function propagateRoot() external {
         uint256 latestRoot = worldID.latestRoot();

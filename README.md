@@ -21,9 +21,9 @@ networks pending storage proof verifier and Semaphore verifier implementations a
 ### Future integrations
 
 If you want to support World ID on your network, please reach out to us by opening a GitHub issue. To support World ID
-the current requirements area:
+the current requirements are:
 
-- have a native L1<>L2 bridge with Ethereum mainnet and Ethereum Goerli (for testnet)
+- have a native L1<>L2 bridge with Ethereum mainnet and Ethereum Goerli/Sepolia (for testnet integration tests)
 - your network needs to have an EVM execution environment (like Optimism, Arbitrum, Scroll, Polygon zkEVM, zkSync Era,
   etc)
 
@@ -37,9 +37,10 @@ If your network is not EVM-compatible/equivalent, a new implementation of the Wo
 for your execution environment. Requirements are:
 
 - Have a way to implement the `SemaphoreVerifier` and `semaphore-mtb` circuits verifier contracts which verify `Groth16`
-  proofs over the `BN254` curve and all cryptographic scheme that will be implemented in future versions of World ID as
-  time goes on.
-- Support the cryptography needed to verify Axiom or Herodotus storage proofs.
+  proofs over the `BN254` curve.
+- Have the capabilities to support all cryptographic primitives that will be implemented in future versions of World ID
+  as time goes on.
+- Support the primitives needed to verify Axiom or Herodotus storage proofs.
 
 For L1 to L1 bridges, there are solutions like [Succinct](https://succinct.xyz/)'s
 [Telepathy](https://www.telepathy.xyz/) which have weaker security guarantees than storage proofs or native L1<>L2
@@ -120,8 +121,6 @@ Deploy the WorldID state bridge and all its components to Ethereum mainnet using
 description of the deployment process and production and staging (testnet) contract addresses, see
 [deployments.md](./docs/deployments.md) .
 
-````sh
-
 Integration with full system:
 
 1. Deploy [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
@@ -176,14 +175,26 @@ deployer address by default.
 
 Deploy the WorldID state bridge and a mock WorldID identity manager to the Goerli testnet for integration tests.
 
-```sh
-anvil --mnemonic 'your mnemonic here' --network goerli --deploy
-
-# use localhost:8545 as the RPC URL (or just hit enter to use it by default)
-# use any non-empty string as the Etherscan API key (or just hit enter to use a placeholder by default)
+```bash
+# to do a mock of WorlIDIdentityManager and test bridge contracts on Goerli
 make mock
+```
+
+#### Local Mock
+
+For local mock tests use localhost:8545 as the RPC URL (or just hit enter to use it by default) and use any non-empty
+string as the Etherscan API key (or just hit enter to use a placeholder by default).
+
+Run a local anvil instance to deploy the contracts locally:
+
+```bash
+anvil --mnemonic <MNEMONIC> --network goerli --deploy
+```
+
+```bash
+# meant for local testing, deploys mock contracts to localhost
 make local-mock
-````
+```
 
 ## Credits
 
