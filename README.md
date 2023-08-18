@@ -1,6 +1,6 @@
 # world-id-state-bridge
 
-![spec](docs/state-bridge2.svg)
+![spec](docs/state-bridge.svg)
 
 ## Description
 
@@ -10,13 +10,40 @@ can be found in `docs/spec.md`.
 ## Deployments
 
 The addresses of the contract deployments for production and staging can be found in
-[`docs/deployments.md`](./docs/deployments.md).
+[`docs/deployments.md`](./docs/deployments.md#production).
 
 ## Supported networks
 
-Currently, the supported networks are Polygon PoS (for backwards compatibility) and Optimism. The next iteration of the
-bridge will most-likely be based on storage proofs and will support most EVM networks off the get-go, with other
+Currently, the supported networks are Polygon PoS (for backwards compatibility), Optimism and Base. The next iteration
+of the bridge will most-likely be based on storage proofs and will support most EVM networks off the get-go, with other
 networks pending storage proof verifier and Semaphore verifier implementations and deployments.
+
+### Future integrations
+
+If you want to support World ID on your network, please reach out to us by opening a GitHub issue. To support World ID
+the current requirements area:
+
+- have a native L1<>L2 bridge with Ethereum mainnet and Ethereum Goerli (for testnet)
+- your network needs to have an EVM execution environment (like Optimism, Arbitrum, Scroll, Polygon zkEVM, zkSync Era,
+  etc)
+
+If your network meets these requirements, please reach out to us and we will work with you to integrate World ID. In the
+mid-term future we plan on supporting storage proof solutions like [Axiom](https://axiom.xyz/) and
+[Herodotus](https://herodotus.dev/) to bridge World ID state to other networks more seamlessly and with better UX and
+for cheaper costs. Currently each bridge incurs the cost of each cross-chain message sent by calling the
+`propagateRoot()` function. Subsidizing these costs on your end would make the integration process very simple.
+
+If your network is not EVM-compatible/equivalent, a new implementation of the World ID contracts will need to be done
+for your execution environment. Requirements are:
+
+- Have a way to implement the `SemaphoreVerifier` and `semaphore-mtb` circuits verifier contracts which verify `Groth16`
+  proofs over the `BN254` curve and all cryptographic scheme that will be implemented in future versions of World ID as
+  time goes on.
+- Support the cryptography needed to verify Axiom or Herodotus storage proofs.
+
+For L1 to L1 bridges, there are solutions like [Succinct](https://succinct.xyz/)'s
+[Telepathy](https://www.telepathy.xyz/) which have weaker security guarantees than storage proofs or native L1<>L2
+bridges, but possibly allow for a World ID integration, provided that the reqirements above are met.
 
 ## Documentation
 
@@ -87,30 +114,33 @@ Run the tests:
 make test
 ```
 
-### Environment
-
-Clone `.env.example` to `.env`, fill the environment variables and `source .env` before running any scripts. Beware that
-there is a different Etherscan API key for every single network that we are deploying a contract onto
-([Ethereum](https://etherscan.io/myaccount), [Polygon](https://polygonscan.com/myaccount) and
-[Optimism](https://optimistic.etherscan.io/login)- mainnet/testnet).
-
 ### Deploy
 
-Deploy the WorldID state bridge and all its components to Ethereum mainnet using the CLI tool.
+Deploy the WorldID state bridge and all its components to Ethereum mainnet using the CLI tool. For a more detailed
+description of the deployment process and production and staging (testnet) contract addresses, see
+[deployments.md](./docs/deployments.md) .
+
+````sh
 
 Integration with full system:
 
 1. Deploy [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
 2. Get deployment address for `WorldIDIdentityManager`
-3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy`
+3. (optional) you can also use the `WorldIDIdentityManager` address that can be found in
+   [`docs/deployments.md`](./docs/deployments.md) to bridge existing roots.
+4. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy-testnet`
    (requires 2.)
-4. Get deployment address for `StateBridge`
-5. Call
-   [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707)
-   on `WorldIDIdentityManager` with the output from 4.
-6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using
-   [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
-7. Try and create a proof and call `verifyProof` on `OpWorldID` or `PolygonWorldID` to check whether everything works.
+5. Start inserting identities into the
+   [`WorldIDIdentityManager`](https://github.com/worldcoin/world-id-contracts/blob/main/src/WorldIDIdentityManagerImplV1.sol)
+6. Propagate roots from each StateBridge contract (`OpStateBridge` on Optimism and Base and `PolygonStateBridge`) to
+   their bridged World ID counterparts (`OpWorldID` on Base and Optimism and `PolygonWorldID`) by individually calling
+   `propagateRoot()` on each bridge contract using
+   [`state-bridge-relay`](https://github.com/worldcoin/state-bridge-relay) or any other method of calling the public
+   `propagateRoot()` functions on the respective state bridges. You can monitor `PolygonWorldID` and `OpWorldID`
+   (Optimism/Base) for root updates either using a block explorer or some other monitoring service (Tenderly,
+   OpenZeppelin Sentinel, DataDog, ...).
+7. Try and create a proof and call `verifyProof` on `OpWorldID` (Optimism/Base) or `PolygonWorldID` to check whether
+   everything works.
 
 **Note:** Remember to call all functions that change state on these contracts via the owner address, which is the
 deployer address by default.
@@ -123,15 +153,21 @@ Integration with full system:
 
 1. Deploy [`world-id-contracts`](https://github.com/worldcoin/world-id-contracts)
 2. Get deployment address for `WorldIDIdentityManager`
-3. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy-testnet`
+3. (optional) you can also use the `WorldIDIdentityManager` address that can be found in
+   [`docs/deployments.md`](./docs/deployments.md) to bridge existing roots.
+4. Deploy [`world-id-state-bridge`](https://github.com/worldcoin/world-id-state-bridge) by running `make deploy-testnet`
    (requires 2.)
-4. Get deployment address for `StateBridge`
-5. Call
-   [`setStateBridge`](https://github.com/worldcoin/world-id-contracts/blob/5f0f56c22b916815eecc82eef877d141acd7e139/src/WorldIDIdentityManagerImplV1.sol#L682-L707)
-   on `WorldIDIdentityManager` with the output from 4.
-6. Start inserting identities and monitor `PolygonWorldID` and `OpWorldID` for root updates (using
-   [`signup-sequencer`](https://github.com/worldcoin/signup-sequencer))
-7. Try and create a proof and call `verifyProof` on `OpWorldID` or `PolygonWorldID` to check whether everything works.
+5. Start inserting identities into the
+   [`WorldIDIdentityManager`](https://github.com/worldcoin/world-id-contracts/blob/main/src/WorldIDIdentityManagerImplV1.sol)
+6. Propagate roots from each StateBridge contract (`OpStateBridge` on Optimism and Base and `PolygonStateBridge`) to
+   their bridged World ID counterparts (`OpWorldID` on Base and Optimism and `PolygonWorldID`) by individually calling
+   `propagateRoot()` on each bridge contract using
+   [`state-bridge-relay`](https://github.com/worldcoin/state-bridge-relay) or any other method of calling the public
+   `propagateRoot()` functions on the respective state bridges. You can monitor `PolygonWorldID` and `OpWorldID`
+   (Optimism/Base) for root updates either using a block explorer or some other monitoring service (Tenderly,
+   OpenZeppelin Sentinel, DataDog, ...).
+7. Try and create a proof and call `verifyProof` on `OpWorldID` (Optimism/Base) or `PolygonWorldID` to check whether
+   everything works.
 
 **Note:** Remember to call all functions that change state on these contracts via the owner address, which is the
 deployer address by default.
@@ -141,8 +177,13 @@ deployer address by default.
 Deploy the WorldID state bridge and a mock WorldID identity manager to the Goerli testnet for integration tests.
 
 ```sh
+anvil --mnemonic 'your mnemonic here' --network goerli --deploy
+
+# use localhost:8545 as the RPC URL (or just hit enter to use it by default)
+# use any non-empty string as the Etherscan API key (or just hit enter to use a placeholder by default)
 make mock
-```
+make local-mock
+````
 
 ## Credits
 

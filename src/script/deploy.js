@@ -11,6 +11,7 @@ import { ethers } from "ethers";
 // === Constants ==================================================================================
 
 const DEFAULT_RPC_URL = "http://localhost:8545";
+const PLACEHOLDER_ETHERSCAN_API_KEY = "AAAAAAAAAAAAAAAAAA";
 const CONFIG_FILENAME = "src/script/.deploy-config.json";
 
 // === Implementation =============================================================================
@@ -142,8 +143,11 @@ async function getOptimismEtherscanApiKey(config) {
   }
   if (!config.optimismEtherscanApiKey) {
     config.optimismEtherscanApiKey = await ask(
-      `Enter Optimism Etherscan API KEY: (https://optimistic.etherscan.io/myaccount) `,
+      `Enter Optimism Etherscan API KEY: (https://optimistic.etherscan.io/myaccount (Leave it empty for mocks) `,
     );
+  }
+  if (!config.optimismEtherscanApiKey) {
+    config.optimismEtherscanApiKey = PLACEHOLDER_ETHERSCAN_API_KEY;
   }
 }
 
@@ -152,7 +156,12 @@ async function getBaseEtherscanApiKey(config) {
     config.baseEtherscanApiKey = process.env.BASE_ETHERSCAN_API_KEY;
   }
   if (!config.baseEtherscanApiKey) {
-    config.baseEtherscanApiKey = await ask(`Enter BaseScan  API KEY: (https://basescan.org/register) `);
+    config.baseEtherscanApiKey = await ask(
+      `Enter BaseScan  API KEY: (https://basescan.org/register) (Leave it empty for mocks) `,
+    );
+  }
+  if (!config.baseEtherscanApiKey) {
+    config.baseEtherscanApiKey = PLACEHOLDER_ETHERSCAN_API_KEY;
   }
 }
 
@@ -161,7 +170,12 @@ async function getEthereumEtherscanApiKey(config) {
     config.ethereumEtherscanApiKey = process.env.ETHERSCAN_API_KEY;
   }
   if (!config.ethereumEtherscanApiKey) {
-    config.ethereumEtherscanApiKey = await ask(`Enter Ethereum Etherscan API KEY: (https://etherscan.io/myaccount) `);
+    config.ethereumEtherscanApiKey = await ask(
+      `Enter Ethereum Etherscan API KEY: (https://etherscan.io/myaccount) (Leave it empty for mocks) `,
+    );
+  }
+  if (!config.ethereumEtherscanApiKey) {
+    config.ethereumEtherscanApiKey = PLACEHOLDER_ETHERSCAN_API_KEY;
   }
 }
 
@@ -170,7 +184,12 @@ async function getPolygonscanApiKey(config) {
     config.polygonscanApiKey = process.env.POLYGONSCAN_API_KEY;
   }
   if (!config.polygonscanApiKey) {
-    config.polygonscanApiKey = await ask(`Enter Polygonscan API KEY: (https://polygonscan.com/myaccount) `);
+    config.polygonscanApiKey = await ask(
+      `Enter Polygonscan API KEY: (https://polygonscan.com/myaccount) (Leave it empty for mocks) `,
+    );
+  }
+  if (!config.polygonscanApiKey) {
+    config.polygonscanApiKey = PLACEHOLDER_ETHERSCAN_API_KEY;
   }
 }
 
@@ -204,6 +223,15 @@ async function getPolygonStateBridgeAddress(config) {
   }
   if (!config.polygonStateBridgeAddress) {
     config.polygonStateBridgeAddress = await ask("Enter Polygon State Bridge Address: ");
+  }
+}
+
+async function getMockStateBridgeAddress(config) {
+  if (!config.mockStateBridgeAddress) {
+    config.mockStateBridgeAddress = process.env.MOCK_STATE_BRIDGE_ADDRESS;
+  }
+  if (!config.mockStateBridgeAddress) {
+    config.mockStateBridgeAddress = await ask("Enter Mock State Bridge Address: ");
   }
 }
 
@@ -697,6 +725,59 @@ async function crossTransferOwnershipOfBaseWorldIDToStateBridge(config) {
 }
 
 ///////////////////////////////////////////////////////////////////
+///                             MOCK                            ///
+///////////////////////////////////////////////////////////////////
+
+async function propagateMockRoot(config) {
+  const spinner = ora("Propagating Mock Root...").start();
+
+  try {
+    const data = execSync(
+      `forge script src/script/test/PropagateMockRoot.s.sol:PropagateMockRoot --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("PropagateMockRoot.s.sol ran successfully!");
+}
+
+///////////////////////////////////////////////////////////////////
+///                          GAS LIMIT                          ///
+///////////////////////////////////////////////////////////////////
+
+async function setGasLimitOptimismStateBridge(config) {
+  const spinner = ora("Setting Optimism gas limits for the Optimism StateBridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/initialize/op-stack/optimism/SetGasLimitOptimism.s.sol:SetOpGasLimitOptimism --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("SetGasLimitOptimism.s.sol ran successfully!");
+}
+
+async function setGasLimitBaseStateBridge(config) {
+  spinner = ora("Setting Base gas limits for the Base StateBridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/initialize/op-stack/base/SetGasLimitBase.s.sol:SetOpGasLimitBase --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("SetGasLimitBase.s.sol ran successfully!");
+}
+///////////////////////////////////////////////////////////////////
 ///                     SCRIPT ORCHESTRATION                    ///
 ///////////////////////////////////////////////////////////////////
 
@@ -819,54 +900,27 @@ async function mockLocalDeployment(config) {
   await getPolygonscanApiKey(config);
   await saveConfiguration(config);
   await deployMockStateBridge(config);
-  await getStateBridgeAddress(config);
+  await getMockStateBridgeAddress(config);
   await saveConfiguration(config);
+  await propagateMockRoot(config);
 }
 
 async function setOpGasLimit(config) {
   dotenv.config();
 
+  await getPrivateKey(config);
   await getEthereumRpcUrl(config);
-  await getOptimismWorldIDAddress(config);
-  await getOptimismRpcUrl(config);
-  await getBaseWorldIDAddress(config);
-  await getBaseRpcUrl(config);
-  await getDeployerAddress(config);
-  await saveConfiguration(config);
+  await getOptimismStateBridgeAddress(config);
+  await getBaseStateBridgeAddress(config);
   await getGasLimitSendRootOptimism(config);
   await getGasLimitSetRootHistoryExpiryOptimism(config);
   await getGasLimitTransferOwnershipOptimism(config);
   await getGasLimitSendRootBase(config);
   await getGasLimitSetRootHistoryExpiryBase(config);
   await getGasLimitTransferOwnershipBase(config);
-
   await saveConfiguration(config);
-
-  const spinner = ora("Setting Optimism gas limits for the Optimism StateBridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/initialize/op-stack/optimism/SetGasLimitOptimism.s.sol:SetOpGasLimitOptimism --fork-url ${config.ethereumRpcUrl} \
-      --broadcast -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("SetGasLimitOptimism.s.sol ran successfully!");
-
-  spinner = ora("Setting Optimism gas limits for the Base StateBridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/initialize/op-stack/base/SetGasLimitBase.s.sol:SetOpGasLimitBase --fork-url ${config.ethereumRpcUrl} \
-      --broadcast -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("SetGasLimitBase.s.sol ran successfully!");
+  await setGasLimitOptimismStateBridge(config);
+  await setGasLimitBaseStateBridge(config);
 }
 
 ///////////////////////////////////////////////////////////////////
