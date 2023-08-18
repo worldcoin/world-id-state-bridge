@@ -13,9 +13,9 @@ to their respective chain using the `propagateRoot()` method.
 ## Polygon PoS state transfer infrastructure
 
 In order to bridge state from Ethereum to Polygon the `PolygonStateBridge.sol` contract is currently using the
-[FxPortal contracts](https://wiki.polygon.technology/docs/develop/l1-l2-communication/fx-portal/). It takes about 20-40
-minutes to sync the state from the state bridge to the `PolygonWorldID.sol` contract and about 1 hour to checkpoint said
-state to the Polygon bridge on L1.
+[FxPortal contracts](https://wiki.polygon.technology/docs/pos/design/bridge/l1-l2-communication/fx-portal/). It takes
+about 20-40 minutes to sync the state from the state bridge to the `PolygonWorldID.sol` contract and about 1 hour to
+checkpoint said state to the Polygon bridge on L1.
 
 ## Optimism L1<>L2 infrastructure
 
