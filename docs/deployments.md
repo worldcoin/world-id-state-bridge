@@ -130,7 +130,7 @@ each of the deployment commands do and which forge scripts are executed:
   - asks for the `OpStateBridge.sol` (Base) contract address
   - asks for the new gas limits for different actions
   - sets the OP-stack `CrossDomainMessenger` gas limits for the `OpStateBridge.sol` contract on Ethereum mainnet/testnet
-    using the `setGasLimitSendRootOp()`, `setGasLimitSetRootHistoryExpiryOp()`, and`setGasLimitTransferOwnershipOp()`
+    using the `setGasLimitSendRoot()`, `setGasLimitSetRootHistoryExpiry()`, and`setGasLimitTransferOwnershipOp()`
     methods.
 
 ## Addresses of the production and staging deployments

@@ -21,21 +21,22 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     /// @notice The selector of the `receiveRoot` function.
     /// @dev this selector is precomputed in the constructor to not have to recompute them for every
     /// call of the _processMesageFromRoot function
-    bytes4 private receiveRootSelector;
+    bytes4 private immutable receiveRootSelector = bytes4(keccak256("receiveRoot(uint256)"));
 
     /// @notice The selector of the `receiveRootHistoryExpiry` function.
     /// @dev this selector is precomputed in the constructor to not have to recompute them for every
     /// call of the _processMesageFromRoot function
-    bytes4 private receiveRootHistoryExpirySelector;
+    bytes4 private immutable receiveRootHistoryExpirySelector =
+        bytes4(keccak256("setRootHistoryExpiry(uint256)"));
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Thrown when the message selector passed from FxRoot is invalid.
+    /// @notice Emitted when the message selector passed from FxRoot is invalid.
     error InvalidMessageSelector(bytes4 selector);
 
-    /// @notice Thrown when an attempt is made to renounce ownership.
+    /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -50,10 +51,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     constructor(uint8 _treeDepth, address _fxChild)
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
-    {
-        receiveRootSelector = bytes4(keccak256("receiveRoot(uint256)"));
-        receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
-    }
+    {}
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///

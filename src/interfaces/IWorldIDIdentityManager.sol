@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-/// @title ISemaphoreRoot
+/// @title IWorldIDIdentityManager
 /// @author Worldcoin
 /// @dev used to fetch the latest root from the WorldIDIdentityManager
 interface IWorldIDIdentityManager {

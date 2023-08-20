@@ -63,15 +63,15 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
-    event SetRootHistoryExpiryOp(uint256 rootHistoryExpiry);
+    event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
     /// @notice Emmitted when the the StateBridge sets the gas limit for sendRootOp
     /// @param _opGasLimit The new opGasLimit for sendRootOp
-    event SetGasLimitSendRootOp(uint32 _opGasLimit);
+    event SetGasLimitSendRoot(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for setRootHistoryExpiryOpt
-    /// @param _opGasLimit The new opGasLimit for setRootHistoryExpiryOptimism
-    event SetGasLimitSetRootHistoryExpiryOp(uint32 _opGasLimit);
+    /// @notice Emmitted when the the StateBridge sets the gas limit for SetRootHistoryExpiryt
+    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpirytimism
+    event SetGasLimitSetRootHistoryExpiry(uint32 _opGasLimit);
 
     /// @notice Emmitted when the the StateBridge sets the gas limit for transferOwnershipOp
     /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
@@ -81,7 +81,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     ///                            ERRORS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Thrown when an attempt is made to renounce ownership.
+    /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
     function setUp() public {
@@ -126,7 +126,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
         assertEq(vm.activeFork(), mainnetFork);
     }
 
-    function test_canSendRootToOp() public {
+    function test_propagateRoot_suceeds() public {
         vm.expectEmit(true, true, true, true);
         emit RootPropagated(sampleRoot);
 
@@ -181,36 +181,36 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
         vm.assume(_rootHistoryExpiry != 0);
 
         vm.expectEmit(true, true, true, true);
-        emit SetRootHistoryExpiryOp(_rootHistoryExpiry);
+        emit SetRootHistoryExpiry(_rootHistoryExpiry);
 
         vm.prank(owner);
-        opStateBridge.setRootHistoryExpiryOp(_rootHistoryExpiry);
+        opStateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
     }
 
     /// @notice tests whether the StateBridge contract can set the opGasLimit for sendRootOptimism
     /// @param _opGasLimit The new opGasLimit for sendRootOptimism
-    function test_owner_setGasLimitSendRootOp_succeeds(uint32 _opGasLimit) public {
+    function test_owner_setGasLimitSendRoot_succeeds(uint32 _opGasLimit) public {
         vm.assume(_opGasLimit != 0);
 
         vm.expectEmit(true, true, true, true);
 
-        emit SetGasLimitSendRootOp(_opGasLimit);
+        emit SetGasLimitSendRoot(_opGasLimit);
 
         vm.prank(owner);
-        opStateBridge.setGasLimitSendRootOp(_opGasLimit);
+        opStateBridge.setGasLimitSendRoot(_opGasLimit);
     }
 
-    /// @notice tests whether the StateBridge contract can set the opGasLimit for setRootHistoryExpiryOptimism
-    /// @param _opGasLimit The new opGasLimit for setRootHistoryExpiryOptimism
-    function test_owner_setGasLimitSetRootHistoryExpiryOp_succeeds(uint32 _opGasLimit) public {
+    /// @notice tests whether the StateBridge contract can set the opGasLimit for SetRootHistoryExpirytimism
+    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpirytimism
+    function test_owner_setGasLimitSetRootHistoryExpiry_succeeds(uint32 _opGasLimit) public {
         vm.assume(_opGasLimit != 0);
 
         vm.expectEmit(true, true, true, true);
 
-        emit SetGasLimitSetRootHistoryExpiryOp(_opGasLimit);
+        emit SetGasLimitSetRootHistoryExpiry(_opGasLimit);
 
         vm.prank(owner);
-        opStateBridge.setGasLimitSetRootHistoryExpiryOp(_opGasLimit);
+        opStateBridge.setGasLimitSetRootHistoryExpiry(_opGasLimit);
     }
 
     /// @notice tests whether the StateBridge contract can set the opGasLimit for transferOwnershipOptimism
@@ -256,9 +256,21 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
         opStateBridge.transferOwnershipOp(newOwner, isLocal);
     }
 
+    /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
+    function test_newOwnerZero_transferOwnershipOp_reverts(
+        bool isLocal
+    ) public {
+        address newOwner = address(0);
+
+        vm.expectRevert("Ownable: new owner is the zero address");
+
+        vm.prank(owner);
+        opStateBridge.transferOwnershipOp(newOwner, isLocal);
+    }
+
     /// @notice tests whether the StateBridge contract can set root history expiry on Optimism and Polygon
     /// @param _rootHistoryExpiry The new root history expiry for OpWorldID and PolygonWorldID
-    function test_notOwner_setRootHistoryExpiryOp_reverts(
+    function test_notOwner_SetRootHistoryExpiry_reverts(
         address nonOwner,
         uint256 _rootHistoryExpiry
     ) public {
@@ -267,7 +279,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
         vm.expectRevert("Ownable: caller is not the owner");
 
         vm.prank(nonOwner);
-        opStateBridge.setRootHistoryExpiryOp(_rootHistoryExpiry);
+        opStateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
     }
 
     /// @notice Tests that a nonPendingOwner can't accept ownership of StateBridge
