@@ -37,7 +37,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     ///                            ERRORS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Thrown when an attempt is made to renounce ownership.
+    /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
     ///////////////////////////////////////////////////////////////////
@@ -63,9 +63,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     function propagateRoot() external {
         uint256 latestRoot = worldID.latestRoot();
 
-        bytes memory message;
-
-        message = abi.encodeCall(IPolygonWorldID.receiveRoot, (latestRoot));
+        bytes memory message = abi.encodeCall(IPolygonWorldID.receiveRoot, (latestRoot));
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);
@@ -76,9 +74,8 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Sets the root history expiry for PolygonWorldID
     /// @param _rootHistoryExpiry The new root history expiry
     function setRootHistoryExpiryPolygon(uint256 _rootHistoryExpiry) external onlyOwner {
-        bytes memory message;
-
-        message = abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
+        bytes memory message =
+            abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
 
         /// @notice FxBaseRootTunnel method to send bytes payload to FxBaseChildTunnel contract
         _sendMessageToChild(message);

@@ -8,7 +8,7 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 /// @author Worldcoin
 /// @notice Tests the low-level assembly functions `grabSelector` and `stripSelector` in the BytesUtils library
 contract BytesUtilsTest is PRBTest, StdCheats {
-    /// @notice Thrown when the payload is too short to contain a selector (at least 4 bytes).
+    /// @notice Emitted when the payload is too short to contain a selector (at least 4 bytes).
     error PayloadTooShort();
 
     ///////////////////////////////////////////////////////////////////

@@ -42,8 +42,8 @@ contract SetOpGasLimitOptimism is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        optimismStateBridge.setGasLimitSendRootOp(gasLimitSendRootOptimism);
-        optimismStateBridge.setGasLimitSetRootHistoryExpiryOp(gasLimitSetRootHistoryExpiryOptimism);
+        optimismStateBridge.setGasLimitSendRoot(gasLimitSendRootOptimism);
+        optimismStateBridge.setGasLimitSetRootHistoryExpiry(gasLimitSetRootHistoryExpiryOptimism);
         optimismStateBridge.setGasLimitTransferOwnershipOp(gasLimitTransferOwnershipOptimism);
 
         vm.stopBroadcast();

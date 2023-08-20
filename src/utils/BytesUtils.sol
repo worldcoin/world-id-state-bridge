@@ -1,7 +1,7 @@
 pragma solidity ^0.8.15;
 
 library BytesUtils {
-    /// @notice Thrown when the payload is too short to contain a selector (at least 4 bytes).
+    /// @notice Emitted when the payload is too short to contain a selector (at least 4 bytes).
     error PayloadTooShort();
 
     /// @notice grabSelector, takes a byte array _payload as input and returns the first 4 bytes

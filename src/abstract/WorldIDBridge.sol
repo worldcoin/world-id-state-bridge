@@ -46,22 +46,22 @@ abstract contract WorldIDBridge is IWorldID {
     ///                                  ERRORS                                 ///
     ///////////////////////////////////////////////////////////////////////////////
 
-    /// @notice Thrown when the provided semaphore tree depth is unsupported.
+    /// @notice Emitted when the provided semaphore tree depth is unsupported.
     ///
     /// @param depth The tree depth that was passed.
     error UnsupportedTreeDepth(uint8 depth);
 
-    /// @notice Thrown when attempting to validate a root that has expired.
+    /// @notice Emitted when attempting to validate a root that has expired.
     error ExpiredRoot();
 
-    /// @notice Thrown when attempting to validate a root that has yet to be added to the root
+    /// @notice Emitted when attempting to validate a root that has yet to be added to the root
     ///         history.
     error NonExistentRoot();
 
-    /// @notice Thrown when attempting to update the timestamp for a root that already has one.
+    /// @notice Emitted when attempting to update the timestamp for a root that already has one.
     error CannotOverwriteRoot();
 
-    /// @notice Thrown if the latest root is requested but the bridge has not seen any roots yet.
+    /// @notice Emitted if the latest root is requested but the bridge has not seen any roots yet.
     error NoRootsSeen();
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,8 @@ abstract contract WorldIDBridge is IWorldID {
     /// @notice Emitted when a new root is received by the contract.
     ///
     /// @param root The value of the root that was added.
-    event RootAdded(uint256 root);
+    /// @param timestamp The timestamp of insertion for the given root.
+    event RootAdded(uint256 root, uint128 timestamp);
 
     /// @notice Emitted when the expiry time for the root history is updated.
     ///
@@ -113,11 +114,12 @@ abstract contract WorldIDBridge is IWorldID {
             revert CannotOverwriteRoot();
         }
 
-        uint256 rootBeingReplaced = _latestRoot;
-        _latestRoot = newRoot;
-        rootHistory[rootBeingReplaced] = uint128(block.timestamp);
+        uint128 currTimestamp = uint128(block.timestamp);
 
-        emit RootAdded(newRoot);
+        _latestRoot = newRoot;
+        rootHistory[newRoot] = currTimestamp;
+
+        emit RootAdded(newRoot, currTimestamp);
     }
 
     /// @notice Reverts if the provided root value is not valid.

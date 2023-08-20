@@ -42,8 +42,8 @@ contract SetOpGasLimitBase is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        baseStateBridge.setGasLimitSendRootOp(gasLimitSendRootBase);
-        baseStateBridge.setGasLimitSetRootHistoryExpiryOp(gasLimitSetRootHistoryExpiryBase);
+        baseStateBridge.setGasLimitSendRoot(gasLimitSendRootBase);
+        baseStateBridge.setGasLimitSetRootHistoryExpiry(gasLimitSetRootHistoryExpiryBase);
         baseStateBridge.setGasLimitTransferOwnershipOp(gasLimitTransferOwnershipBase);
 
         vm.stopBroadcast();
