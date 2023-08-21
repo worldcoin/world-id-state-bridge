@@ -174,8 +174,6 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     /// @notice tests whether the StateBridge contract can set root history expiry on Optimism and Polygon
     /// @param _rootHistoryExpiry The new root history expiry for OpWorldID and PolygonWorldID
     function test_owner_setRootHistoryExpiry_succeeds(uint256 _rootHistoryExpiry) public {
-        vm.assume(_rootHistoryExpiry != 0);
-
         vm.expectEmit(true, true, true, true);
         emit SetRootHistoryExpiry(_rootHistoryExpiry);
 
