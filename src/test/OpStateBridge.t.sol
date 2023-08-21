@@ -139,8 +139,6 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     /// using Ownable2Step transferOwnership
     /// @param newOwner the new owner of the contract
     function test_owner_transferOwnership_succeeds(address newOwner) public {
-        vm.assume(newOwner != address(0));
-
         vm.expectEmit(true, true, true, true);
 
         // OpenZeppelin Ownable2Step transferOwnershipStarted event
@@ -164,8 +162,6 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     /// @param newOwner The new owner of the OPWorldID contract (foundry fuzz)
     /// @param isLocal Whether the ownership transfer is local (Optimism EOA/contract) or an Ethereum EOA or contract
     function test_owner_transferOwnershipOp_succeeds(address newOwner, bool isLocal) public {
-        vm.assume(newOwner != address(0));
-
         vm.expectEmit(true, true, true, true);
 
         // CrossDomainOwnable3.sol transferOwnership event
@@ -253,18 +249,6 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
         vm.expectRevert("Ownable: caller is not the owner");
 
         vm.prank(nonOwner);
-        opStateBridge.transferOwnershipOp(newOwner, isLocal);
-    }
-
-    /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
-    function test_newOwnerZero_transferOwnershipOp_reverts(
-        bool isLocal
-    ) public {
-        address newOwner = address(0);
-
-        vm.expectRevert("Ownable: new owner is the zero address");
-
-        vm.prank(owner);
         opStateBridge.transferOwnershipOp(newOwner, isLocal);
     }
 

@@ -242,7 +242,7 @@ contract OpWorldIDTest is Messenger_Initializer {
             0,
             0,
             abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
-        );        
+        );
 
         // It reverts with CannotOverwriteRoot however because of the bridge simulation
         // the L2 cross-domain call doesn't revert, however it does emit a FailedRelayedMessage

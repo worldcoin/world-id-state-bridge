@@ -14,6 +14,7 @@ import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 /// @author Worldcoin
 /// @notice Distributes new World ID Identity Manager roots to an OP Stack network
 /// @dev This contract lives on Ethereum mainnet and works for Optimism and any OP Stack based chain
+/// @dev Ownable2Step allows for transferOwnership to the zero address
 contract OpStateBridge is Ownable2Step {
     ///////////////////////////////////////////////////////////////////
     ///                           STORAGE                           ///

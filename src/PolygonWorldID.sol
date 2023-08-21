@@ -13,6 +13,7 @@ import {BytesUtils} from "./utils/BytesUtils.sol";
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.
+/// @dev Ownable2Step allows for transferOwnership to the zero address
 contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     ///////////////////////////////////////////////////////////////////
     ///                           STORAGE                           ///
