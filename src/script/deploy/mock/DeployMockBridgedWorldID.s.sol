@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-/// @dev Demo deployments
-/// @custom:deployment Goerli 0x0a4501cda7d0decb737376f0efbb692b4922bc56
-/// @custom:link https://goerli.etherscan.io/address/0x0a4501cda7d0decb737376f0efbb692b4922bc56
 import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockBridgedWorldID} from "src/mock/MockBridgedWorldID.sol";
 
-/// @title Mock World ID deployment script
-/// @notice forge script to deploy WorldIDIdentityManagerMock.sol
+/// @title MockBridgedWorldID deployment script
+/// @notice forge script to deploy MockBridgedWorldID.sol
 /// @author Worldcoin
-/// @dev Can be executed by running `make mock` or `make local-mock`.
-contract DeployMockWorldID is Script {
-    WorldIDIdentityManagerMock public worldID;
+/// @dev Can be executed by running `make local-mock`.
+contract DeployMockBridgedWorldID is Script {
+    MockBridgedWorldID public mockBridgedWorldID;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -22,11 +19,12 @@ contract DeployMockWorldID is Script {
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint8 public treeDepth = abi.decode(vm.parseJson(json, ".treeDepth"), (uint8));
 
     function run() external {
         vm.startBroadcast(privateKey);
 
-        worldID = new WorldIDIdentityManagerMock();
+        mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
 
         vm.stopBroadcast();
     }

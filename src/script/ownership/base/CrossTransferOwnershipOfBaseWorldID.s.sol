@@ -3,31 +3,25 @@ pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
 import {OpWorldID} from "src/OpWorldID.sol";
-import {ICrossDomainMessenger} from
-    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
 import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
-import {StateBridge} from "src/StateBridge.sol";
+import {IOpStateBridgeTransferOwnership} from "src/interfaces/IOpStateBridgeTransferOwnership.sol";
+import {OpStateBridge} from "src/OpStateBridge.sol";
 
-/// @title Ownership Transfer of OpWorldID script for testnet
-/// @notice forge script for transferring ownership of OpWorldID to a local (Optimism Goerli)
-/// or cross-chain (Ethereum Goerli) EOA or contract
+/// @title Ownership Transfer of OpWorldID on Base script
+/// @notice forge script for transferring ownership of OpWorldID to a local (Base)
+/// or cross-chain (Ethereum) EOA or contract
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract TransferOwnershipOfOpWorldIDGoerli is Script {
-    address public stateBridgeAddress;
-    address public opWorldIDAddress;
-    address public immutable crossDomainMessengerAddress;
+contract CrossTransferOwnershipOfBaseWorldID is Script {
     uint256 public privateKey;
 
-    OpWorldID public opWorldID;
+    address public baseStateBridgeAddress;
 
-    StateBridge stateBridge;
+    address public newOwner;
 
     /// @notice in CrossDomainOwnable3.sol, isLocal is used to set ownership to a new address with a toggle
     /// for local or cross domain (using the CrossDomainMessenger to pass messages)
     bool public isLocal;
-
-    uint32 public opGasLimit;
 
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
@@ -38,17 +32,12 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
         string memory json = vm.readFile(path);
 
         privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
-        stateBridgeAddress = abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
+        baseStateBridgeAddress =
+            abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
+        newOwner = abi.decode(vm.parseJson(json, ".newBaseWorldIDOwner"), (address));
     }
 
-    constructor() {
-        ///////////////////////////////////////////////////////////////////
-        ///                            GOERLI                           ///
-        ///////////////////////////////////////////////////////////////////
-        crossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
-        stateBridge = StateBridge(stateBridgeAddress);
-    }
+    constructor() {}
 
     function run() public {
         /// @notice cross domain ownership flag
@@ -58,7 +47,12 @@ contract TransferOwnershipOfOpWorldIDGoerli is Script {
 
         vm.startBroadcast(privateKey);
 
-        stateBridge.transferOwnershipOptimism(stateBridgeAddress, isLocal);
+        bytes memory call =
+            abi.encodeCall(IOpStateBridgeTransferOwnership.transferOwnershipOp, (newOwner, isLocal));
+
+        (bool ok,) = baseStateBridgeAddress.call(call);
+
+        require(ok, "call failed");
 
         vm.stopBroadcast();
     }

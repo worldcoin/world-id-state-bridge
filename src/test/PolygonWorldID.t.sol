@@ -45,8 +45,6 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// using Ownable2Step transferOwnership
     /// @param newOwner the new owner of the contract
     function test_owner_transferOwnership_succeeds(address newOwner) public {
-        vm.assume(newOwner != address(0));
-
         vm.prank(owner);
         id.transferOwnership(newOwner);
 

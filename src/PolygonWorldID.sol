@@ -13,6 +13,7 @@ import {BytesUtils} from "./utils/BytesUtils.sol";
 /// @notice A contract that manages the root history of the WorldID merkle root on Polygon PoS.
 /// @dev This contract is deployed on Polygon PoS and is called by the StateBridge contract for each
 ///      new root insertion.
+/// @dev Ownable2Step allows for transferOwnership to the zero address
 contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     ///////////////////////////////////////////////////////////////////
     ///                           STORAGE                           ///
@@ -21,21 +22,22 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     /// @notice The selector of the `receiveRoot` function.
     /// @dev this selector is precomputed in the constructor to not have to recompute them for every
     /// call of the _processMesageFromRoot function
-    bytes4 private receiveRootSelector;
+    bytes4 private immutable receiveRootSelector = bytes4(keccak256("receiveRoot(uint256)"));
 
     /// @notice The selector of the `receiveRootHistoryExpiry` function.
     /// @dev this selector is precomputed in the constructor to not have to recompute them for every
     /// call of the _processMesageFromRoot function
-    bytes4 private receiveRootHistoryExpirySelector;
+    bytes4 private immutable receiveRootHistoryExpirySelector =
+        bytes4(keccak256("setRootHistoryExpiry(uint256)"));
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Thrown when the message selector passed from FxRoot is invalid.
+    /// @notice Emitted when the message selector passed from FxRoot is invalid.
     error InvalidMessageSelector(bytes4 selector);
 
-    /// @notice Thrown when an attempt is made to renounce ownership.
+    /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -50,10 +52,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     constructor(uint8 _treeDepth, address _fxChild)
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
-    {
-        receiveRootSelector = bytes4(keccak256("receiveRoot(uint256,uint128)"));
-        receiveRootHistoryExpirySelector = bytes4(keccak256("setRootHistoryExpiry(uint256)"));
-    }
+    {}
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
@@ -82,8 +81,8 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
         bytes memory payload = BytesUtils.substring(message, 4, message.length - 4);
 
         if (selector == receiveRootSelector) {
-            (uint256 root, uint128 timestamp) = abi.decode(payload, (uint256, uint128));
-            _receiveRoot(root, timestamp);
+            uint256 root = abi.decode(payload, (uint256));
+            _receiveRoot(root);
         } else if (selector == receiveRootHistoryExpirySelector) {
             uint256 rootHistoryExpiry = abi.decode(payload, (uint256));
             _setRootHistoryExpiry(rootHistoryExpiry);

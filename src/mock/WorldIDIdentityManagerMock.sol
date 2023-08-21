@@ -1,28 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import {IBridge} from "src/interfaces/IBridge.sol";
+import {IWorldIDIdentityManager} from "src/interfaces/IWorldIDIdentityManager.sol";
 
 /// @title WorldID Identity Manager Mock
 /// @author Worldcoin
 /// @notice  Mock of the WorldID Identity Manager contract (world-id-contracts) to test functionality on a local chain
 /// @dev deployed through make mock and make local-mock
-contract WorldIDIdentityManagerMock is Initializable {
-    address public stateBridge;
-    mapping(uint256 => bool) public rootHistory;
+contract WorldIDIdentityManagerMock is IWorldIDIdentityManager {
+    uint256 internal _latestRoot;
 
-    function initialize(address _stateBridge) public virtual {
-        stateBridge = _stateBridge;
+    constructor(uint256 newRoot) {
+        _latestRoot = newRoot;
     }
 
-    function sendRootToStateBridge(uint256 root) public {
-        rootHistory[root] = true;
-
-        IBridge(stateBridge).sendRootMultichain(root);
-    }
-
-    function checkValidRoot(uint256 root) public view returns (bool) {
-        return rootHistory[root];
+    function latestRoot() external view returns (uint256) {
+        return _latestRoot;
     }
 }

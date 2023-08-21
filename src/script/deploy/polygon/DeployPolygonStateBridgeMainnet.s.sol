@@ -2,23 +2,17 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {StateBridge} from "src/StateBridge.sol";
+import {PolygonStateBridge} from "src/PolygonStateBridge.sol";
 
-/// @title PolygonWorldID deployment script on Polygon Mumbai
-/// @notice forge script to deploy PolygonWorldID.sol
+/// @title Deploy PolygonStateBridge on Mainnet
+/// @notice forge script to deploy PolygonStateBridge.sol
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
-contract DeployStateBridge is Script {
-    StateBridge public bridge;
+contract DeployPolygonStateBridgeMainnet is Script {
+    PolygonStateBridge public bridge;
 
-    address public opWorldIDAddress;
-    address public polygonWorldIDAddress;
-    address public baseWorldIDAddress;
     address public worldIDIdentityManagerAddress;
-    address public opCrossDomainMessengerAddress;
-    address public baseCrossDomainMessengerAddress;
-    address public stateBridgeAddress;
-
+    address public polygonWorldIDAddress;
     address public checkpointManagerAddress;
     address public fxRootAddress;
 
@@ -43,37 +37,20 @@ contract DeployStateBridge is Script {
         fxRootAddress = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
 
         ///////////////////////////////////////////////////////////////////
-        ///                           OPTIMISM                          ///
-        ///////////////////////////////////////////////////////////////////
-        opCrossDomainMessengerAddress = address(0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1);
-
-        ///////////////////////////////////////////////////////////////////
-        ///                             BASE                            ///
-        ///////////////////////////////////////////////////////////////////
-        // Taken from https://docs.base.org/base-contracts
-        baseCrossDomainMessengerAddress = address(0x866E82a600A1414e583f7F13623F1aC5d58b0Afa);
-
-        ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
         ///////////////////////////////////////////////////////////////////
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-        opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
         polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
-        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
     }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new StateBridge(
+        bridge = new PolygonStateBridge(
             checkpointManagerAddress,
             fxRootAddress,
-            worldIDIdentityManagerAddress,
-            opWorldIDAddress,
-            opCrossDomainMessengerAddress,
-            baseWorldIDAddress,
-            baseCrossDomainMessengerAddress
+            worldIDIdentityManagerAddress
         );
 
         bridge.setFxChildTunnel(polygonWorldIDAddress);

@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-/// @dev Demo deployments
-/// @custom:deployment Optimism Goerli (420) 0x0ed95bda37cc9c14596adba8bf37fc60e2fd9080
-/// @custom:link https://goerli-optimism.etherscan.io/address/0x0ed95bda37cc9c14596adba8bf37fc60e2fd9080
 import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "src/OpWorldID.sol";
+import {MockStateBridge} from "src/mock/MockStateBridge.sol";
 
-/// @title OpWorldID deployment script
-/// @notice forge script to deploy OpWorldID.sol
+/// @title Mock State Bridge deployment script
+/// @notice forge script to deploy MockStateBridge.sol
 /// @author Worldcoin
-/// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
-contract DeployOpWorldID is Script {
-    OpWorldID public opWorldID;
+/// @dev Can be executed by running `make mock` or `make local-mock`.
+contract DeployMockStateBridge is Script {
+    MockStateBridge public bridge;
+
+    address public worldIDIdentityManagerAddress;
+    address public stateBridgeAddress;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -22,12 +22,15 @@ contract DeployOpWorldID is Script {
     string public json = vm.readFile(path);
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-    uint8 public treeDepth = uint8(30);
 
-    function run() external {
+    function setUp() public {}
+
+    function run() public {
         vm.startBroadcast(privateKey);
 
-        opWorldID = new OpWorldID(treeDepth);
+        bridge = new MockStateBridge();
+
+        bridge.propagateRoot();
 
         vm.stopBroadcast();
     }

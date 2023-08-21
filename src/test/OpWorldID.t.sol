@@ -17,6 +17,7 @@ import {
 import {AddressAliasHelper} from
     "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
 import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
+import {Hashing} from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title OpWorldIDTest
@@ -89,7 +90,7 @@ contract OpWorldIDTest is Messenger_Initializer {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
+
         vm.warp(block.timestamp + 200);
 
         // set the xDomainMsgSender storage slot to the L1Messenger
@@ -100,7 +101,7 @@ contract OpWorldIDTest is Messenger_Initializer {
             address(id),
             0,
             0,
-            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
         );
 
         assert(id.latestRoot() == newRoot);
@@ -126,12 +127,10 @@ contract OpWorldIDTest is Messenger_Initializer {
     function test_onlyOwner_notMessenger_reverts(uint256 newRoot) external {
         _switchToCrossDomainOwnership(id);
 
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
-
         // calling locally (not as the messenger)
         vm.prank(bob);
         vm.expectRevert("CrossDomainOwnable3: caller is not the messenger");
-        id.receiveRoot(newRoot, newRootTimestamp);
+        id.receiveRoot(newRoot);
     }
 
     /// @notice Test that a non-owner can't insert a new root
@@ -144,11 +143,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         bytes32 value = Bytes32AddressLib.fillLast12Bytes(address(bob));
         vm.store(address(L2Messenger), key, value);
 
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
-
         vm.prank(address(L2Messenger));
         vm.expectRevert("CrossDomainOwnable3: caller is not the owner");
-        id.receiveRoot(newRoot, newRootTimestamp);
+        id.receiveRoot(newRoot);
     }
 
     /// @notice Test that a root that hasn't been inserted is invalid
@@ -160,7 +157,6 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         address owner = id.owner();
 
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
         vm.warp(block.timestamp + 200);
         uint256 randomRoot = 0x712cab3414951eba341ca234aef42142567c6eea50371dd528d57eb2b856d238;
 
@@ -172,7 +168,7 @@ contract OpWorldIDTest is Messenger_Initializer {
             address(id),
             0,
             0,
-            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
         );
 
         vm.expectRevert(WorldIDBridge.NonExistentRoot.selector);
@@ -191,9 +187,6 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         address owner = id.owner();
 
-        uint128 newRootTimestamp = uint128(block.timestamp + 100);
-        uint128 secondRootTimestamp = uint128(newRootTimestamp + 1);
-
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
         L2Messenger.relayMessage(
@@ -202,7 +195,7 @@ contract OpWorldIDTest is Messenger_Initializer {
             address(id),
             0,
             0,
-            abi.encodeWithSelector(id.receiveRoot.selector, newRoot, newRootTimestamp)
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
         );
 
         vm.roll(block.number + 100);
@@ -214,11 +207,63 @@ contract OpWorldIDTest is Messenger_Initializer {
             address(id),
             0,
             0,
-            abi.encodeWithSelector(id.receiveRoot.selector, secondRoot, secondRootTimestamp)
+            abi.encodeWithSelector(id.receiveRoot.selector, secondRoot)
         );
 
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         vm.warp(block.timestamp + 8 days);
         id.verifyProof(newRoot, 0, 0, 0, proof);
+    }
+
+    function test_receiveRoot_reverts_CannotOverwriteRoot(uint256 newRoot) public {
+        vm.assume(newRoot != 0);
+
+        _switchToCrossDomainOwnership(id);
+
+        address owner = id.owner();
+
+        // set the xDomainMsgSender storage slot to the L1Messenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(0, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+        );
+
+        assert(id.latestRoot() == newRoot);
+
+        bytes32 versionedHash = Hashing.hashCrossDomainMessageV1(
+            Encoding.encodeVersionedNonce(1, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+        );
+
+        // It reverts with CannotOverwriteRoot however because of the bridge simulation
+        // the L2 cross-domain call doesn't revert, however it does emit a FailedRelayedMessage
+        // issue reported to foundry team: expectRevert doesn't search for errors in nested subcalls
+        // vm.expectRevert(abi.encodeWithSelector(WorldIDBridge.CannotOverwriteRoot.selector));
+        // CannotOverwriteRoot can be seen in the execution trace of the call using the -vvvvv flag
+
+        vm.expectEmit(true, true, true, true);
+        emit FailedRelayedMessage(versionedHash);
+
+        vm.roll(block.number + 100);
+        vm.warp(block.timestamp + 200);
+        // set the xDomainMsgSender storage slot to the L1Messenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
+        L2Messenger.relayMessage(
+            Encoding.encodeVersionedNonce(1, 1),
+            owner,
+            address(id),
+            0,
+            0,
+            abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+        );
     }
 }
