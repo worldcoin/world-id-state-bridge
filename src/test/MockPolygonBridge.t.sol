@@ -1,6 +1,7 @@
 pragma solidity ^0.8.15;
 
 import {MockPolygonBridge} from "src/mock/MockPolygonBridge.sol";
+import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 
@@ -13,14 +14,18 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
 
     address owner;
 
-    /// @notice Thrown when root history expiry is set
+    /// @notice The time in the `rootHistory` mapping associated with a root that has never been
+    ///         seen before.
+    uint128 internal constant NULL_ROOT_TIME = 0;
+
+    /// @notice Emitted when root history expiry is set
     event RootHistoryExpirySet(uint256 rootHistoryExpiry);
 
-    /// @notice Thrown when new root is inserted
-    event ReceivedRoot(uint256 root, uint128 supersedeTimestamp);
-
-    /// @notice Thrown when the message selector passed from FxRoot is invalid.
-    error InvalidMessageSelector(bytes4 selector);
+    /// @notice Emitted when a new root is received by the contract.
+    ///
+    /// @param root The value of the root that was added.
+    /// @param timestamp The timestamp of insertion for the given root.
+    event RootAdded(uint256 root, uint128 timestamp);
 
     function setUp() public {
         owner = address(0x1234);
@@ -28,24 +33,27 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
         vm.label(owner, "owner");
 
         vm.prank(owner);
-        polygonWorldID = new MockPolygonBridge();
+        polygonWorldID = new MockPolygonBridge(uint8(30));
     }
 
+    ///////////////////////////////////////////////////////////////////
+    ///                           SUCCEEDS                          ///
+    ///////////////////////////////////////////////////////////////////
+
     /// @notice tests that receiveRoot succeeds if encoded properly
-    function testReceiveRootSucceeds(uint256 newRoot, uint128 supersedeTimestamp) public {
-        bytes memory message =
-            abi.encodeWithSignature("receiveRoot(uint256,uint128)", newRoot, supersedeTimestamp);
+    function test_ReceiveRoot_succeeds(uint256 newRoot) public {
+        bytes memory message = abi.encodeWithSignature("receiveRoot(uint256)", newRoot);
 
         vm.expectEmit(true, true, true, true);
 
-        emit ReceivedRoot(newRoot, supersedeTimestamp);
+        emit RootAdded(newRoot, uint128(block.timestamp));
 
         vm.prank(owner);
         polygonWorldID.processMessageFromRoot(message);
     }
 
     /// @notice tests that setRootHistoryExpiry succeeds if encoded properly
-    function testSetRootHistoryExpirySucceeds(uint256 rootHistoryExpiry) public {
+    function test_setRootHistoryExpiry_succeeds(uint256 rootHistoryExpiry) public {
         bytes memory message =
             abi.encodeWithSignature("setRootHistoryExpiry(uint256)", rootHistoryExpiry);
 
@@ -57,16 +65,43 @@ contract MockPolygonBridgeTest is PRBTest, StdCheats {
         polygonWorldID.processMessageFromRoot(message);
     }
 
+    ///////////////////////////////////////////////////////////////////
+    ///                           REVERTS                           ///
+    ///////////////////////////////////////////////////////////////////
+
     /// @notice tests that an invalid function signature reverts
-    function testProcessMessageFromRootReverts(bytes4 invalidSelector, bytes32 param) public {
+    function test_processMessageFromRoot_reverts_InvalidMessageSelector(
+        bytes4 invalidSelector,
+        bytes32 param
+    ) public {
         vm.assume(
-            invalidSelector != bytes4(keccak256("receiveRoot(uint256,uint128)"))
+            invalidSelector != bytes4(keccak256("receiveRoot(uint256)"))
                 && invalidSelector != bytes4(keccak256("setRootHistoryExpiry(uint256)"))
         );
 
         bytes memory message = abi.encode(invalidSelector, param);
 
-        vm.expectRevert(abi.encodeWithSelector(InvalidMessageSelector.selector, invalidSelector));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                MockPolygonBridge.InvalidMessageSelector.selector, invalidSelector
+            )
+        );
+        vm.prank(owner);
+        polygonWorldID.processMessageFromRoot(message);
+    }
+
+    function test_processMessageFromRoot_reverts_CannotOverwriteRoot(uint256 newRoot) public {
+        vm.assume(newRoot != 0);
+
+        bytes memory message = abi.encodeWithSignature("receiveRoot(uint256)", newRoot);
+
+        vm.expectEmit(true, true, true, true);
+        emit RootAdded(newRoot, uint128(block.timestamp));
+
+        vm.prank(owner);
+        polygonWorldID.processMessageFromRoot(message);
+
+        vm.expectRevert(abi.encodeWithSelector(WorldIDBridge.CannotOverwriteRoot.selector));
 
         vm.prank(owner);
         polygonWorldID.processMessageFromRoot(message);

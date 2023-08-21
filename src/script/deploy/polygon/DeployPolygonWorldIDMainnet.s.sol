@@ -12,7 +12,7 @@ contract DeployPolygonWorldID is Script {
     address public stateBridgeAddress;
 
     // Polygon PoS Mainnet Child Tunnel
-    address fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
+    address public fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
 
     PolygonWorldID public polygonWorldId;
     uint256 public privateKey;

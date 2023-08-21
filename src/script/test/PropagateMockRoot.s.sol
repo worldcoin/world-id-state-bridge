@@ -2,11 +2,15 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockStateBridge} from "src/mock/MockStateBridge.sol";
 
-/// @notice Initializes the StateBridge contract
-contract InitializeMockWorldID is Script {
-    WorldIDIdentityManagerMock public worldID;
+/// @title Propagate Mock Root test script
+/// @author Worldcoin
+/// @dev Can be executed by running `make local-mock`.
+contract PropagateMockRoot is Script {
+    MockStateBridge public bridge;
+
+    address public mockStateBridgeAddress;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -17,17 +21,17 @@ contract InitializeMockWorldID is Script {
 
     uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
 
-    address public worldIDIdentityManagerAddress =
-        abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-    address public stateBridgeAddress =
-        abi.decode(vm.parseJson(json, ".stateBridgeAddress"), (address));
+    function setUp() public {
+        mockStateBridgeAddress =
+            abi.decode(vm.parseJson(json, ".mockStateBridgeAddress"), (address));
+    }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
-        worldID = WorldIDIdentityManagerMock(worldIDIdentityManagerAddress);
+        bridge = MockStateBridge(mockStateBridgeAddress);
 
-        worldID.initialize(stateBridgeAddress);
+        bridge.propagateRoot();
 
         vm.stopBroadcast();
     }

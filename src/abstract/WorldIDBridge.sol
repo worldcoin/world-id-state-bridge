@@ -26,7 +26,7 @@ abstract contract WorldIDBridge is IWorldID {
     uint8 internal treeDepth;
 
     /// @notice The amount of time a root is considered as valid on the bridged chain.
-    uint256 internal ROOT_HISTORY_EXPIRY = 1 hours;
+    uint256 internal ROOT_HISTORY_EXPIRY = 1 weeks;
 
     /// @notice The value of the latest merkle tree root.
     uint256 internal _latestRoot;
@@ -46,22 +46,22 @@ abstract contract WorldIDBridge is IWorldID {
     ///                                  ERRORS                                 ///
     ///////////////////////////////////////////////////////////////////////////////
 
-    /// @notice Thrown when the provided semaphore tree depth is unsupported.
+    /// @notice Emitted when the provided semaphore tree depth is unsupported.
     ///
     /// @param depth The tree depth that was passed.
     error UnsupportedTreeDepth(uint8 depth);
 
-    /// @notice Thrown when attempting to validate a root that has expired.
+    /// @notice Emitted when attempting to validate a root that has expired.
     error ExpiredRoot();
 
-    /// @notice Thrown when attempting to validate a root that has yet to be added to the root
+    /// @notice Emitted when attempting to validate a root that has yet to be added to the root
     ///         history.
     error NonExistentRoot();
 
-    /// @notice Thrown when attempting to update the timestamp for a root that already has one.
+    /// @notice Emitted when attempting to update the timestamp for a root that already has one.
     error CannotOverwriteRoot();
 
-    /// @notice Thrown if the latest root is requested but the bridge has not seen any roots yet.
+    /// @notice Emitted if the latest root is requested but the bridge has not seen any roots yet.
     error NoRootsSeen();
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -71,9 +71,8 @@ abstract contract WorldIDBridge is IWorldID {
     /// @notice Emitted when a new root is received by the contract.
     ///
     /// @param root The value of the root that was added.
-    /// @param supersedeTimestamp The L1 time at which `root` became the latest root, and the prior
-    ///        latest root became a member of the root history.
-    event RootAdded(uint256 root, uint128 supersedeTimestamp);
+    /// @param timestamp The timestamp of insertion for the given root.
+    event RootAdded(uint256 root, uint128 timestamp);
 
     /// @notice Emitted when the expiry time for the root history is updated.
     ///
@@ -105,24 +104,22 @@ abstract contract WorldIDBridge is IWorldID {
     ///      equivalent operation.
     ///
     /// @param newRoot The value of the new root.
-    /// @param supersedeTimestamp The value of the L1 timestamp at the time that `newRoot` became
-    ///        the current root. This timestamp is associated with the latest root at the time of
-    ///        the call being inserted into the root history.
     ///
     /// @custom:reverts CannotOverwriteRoot If the root already exists in the root history.
     /// @custom:reverts string If the caller is not the owner.
-    function _receiveRoot(uint256 newRoot, uint128 supersedeTimestamp) internal {
+    function _receiveRoot(uint256 newRoot) internal {
         uint256 existingTimestamp = rootHistory[newRoot];
 
         if (existingTimestamp != NULL_ROOT_TIME) {
             revert CannotOverwriteRoot();
         }
 
-        uint256 rootBeingReplaced = _latestRoot;
-        _latestRoot = newRoot;
-        rootHistory[rootBeingReplaced] = supersedeTimestamp;
+        uint128 currTimestamp = uint128(block.timestamp);
 
-        emit RootAdded(newRoot, supersedeTimestamp);
+        _latestRoot = newRoot;
+        rootHistory[newRoot] = currTimestamp;
+
+        emit RootAdded(newRoot, currTimestamp);
     }
 
     /// @notice Reverts if the provided root value is not valid.
