@@ -106,6 +106,8 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// using Ownable2Step transferOwnership
     /// @param newOwner the new owner of the contract
     function test_owner_transferOwnership_succeeds(address newOwner) public {
+        vm.assume(newOwner != address(0) && newOwner != owner);
+
         vm.expectEmit(true, true, true, true);
 
         // OpenZeppelin Ownable2Step transferOwnershipStarted event

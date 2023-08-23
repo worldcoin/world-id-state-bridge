@@ -13,7 +13,6 @@ import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol"
 /// @notice Distributes new World ID Identity Manager roots to World ID supported networks
 /// @dev This contract lives on Ethereum mainnet and is called by the World ID Identity Manager contract
 /// in the registerIdentities method
-/// @dev Ownable2Step allows for transferOwnership to the zero address
 contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     ///////////////////////////////////////////////////////////////////
     ///                           STORAGE                           ///
