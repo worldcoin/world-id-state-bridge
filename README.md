@@ -55,6 +55,12 @@ documentation.
 
 ## Usage
 
+### Install Dependencies
+
+```sh
+make install
+```
+
 ### Build
 
 Build the contracts:
