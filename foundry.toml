@@ -33,6 +33,7 @@ remappings = [
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
   "fx-portal/contracts/=lib/contracts/contracts/",
+  "@arbitrum-nitro-contracts/=lib/nitro-contracts/src/",
 ]
 
 # Make formatting consistent.

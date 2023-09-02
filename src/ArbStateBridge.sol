@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-// Optimism interface for cross domain messaging
-// import {ICrossDomainMessenger} from
-//     "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+// Arbitrum interface for cross domain messaging
+import {IInbox} from "@arbitrum-nitro-contracts/bridge/IInbox.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {IRootHistory} from "./interfaces/IRootHistory.sol";
 import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
@@ -15,6 +14,8 @@ import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
 /// @notice Distributes new World ID Identity Manager roots to an OP Stack network
 /// @dev This contract lives on Ethereum mainnet and works for Optimism and any OP Stack based chain
 contract ArbStateBridge is Ownable2Step {
+    uint32 public constant RELAY_MESSAGE_L2_GAS_LIMIT = 2_000_000;
+
     ///////////////////////////////////////////////////////////////////
     ///                           STORAGE                           ///
     ///////////////////////////////////////////////////////////////////
@@ -22,18 +23,20 @@ contract ArbStateBridge is Ownable2Step {
     /// @notice The address of the OpWorldID contract on any OP Stack chain
     address public immutable arbWorldIDAddress;
 
-    address internal immutable inbox;
+    address public immutable inbox;
 
     /// @notice Ethereum mainnet worldID Address
     address public immutable worldIDAddress;
 
-    uint256 internal _maxSubmissionCostSendRoot;
-    uint256 internal _gasLimitSendRoot;
-    uint256 internal _maxFeePerGasSendRoot;
+    // Amount of ETH allocated to pay for the base submission fee. The base submission fee is a parameter unique to
+    // retryable transactions; the user is charged the base submission fee to cover the storage costs of keeping their
+    // ticket’s calldata in the retry buffer. (current base submission fee is queryable via
+    // ArbRetryableTx.getSubmissionPrice). ArbRetryableTicket precompile interface exists at L2 address
+    // 0x000000000000000000000000000000000000006E.
+    uint256 internal l2MaxSubmissionCost;
 
-    uint256 internal _maxSubmissionCostSetRootHistoryExpiry;
-    uint256 internal _gasLimitSetRootHistoryExpiry;
-    uint256 internal _maxFeePerGasSetRootHistoryExpiry;
+    // L2 Gas price bid for immediate L2 execution attempt (queryable via standard eth*gasPrice RPC)
+    uint256 internal l2GasPrice;
 
     // uint32 internal _gasLimitTransferOwnership;
 
@@ -87,22 +90,13 @@ contract ArbStateBridge is Ownable2Step {
     /// @param _arbWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _inbox aa
     /// Stack network
-    constructor(
-        address _worldIDIdentityManager,
-        address _arbWorldIDAddress,
-        address _inbox
-    ) {
+    constructor(address _worldIDIdentityManager, address _arbWorldIDAddress, address _inbox) {
         arbWorldIDAddress = _arbWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
         inbox = _inbox;
 
-        _maxSubmissionCostSendRoot = 100000;
-        _gasLimitSendRoot = 100000;
-        _maxFeePerGasSendRoot = 100000;
-
-        _maxSubmissionCostSetRootHistoryExpiry = 100000;
-        _gasLimitSetRootHistoryExpiry = 100000;
-        _maxFeePerGasSetRootHistoryExpiry = 100000;
+        l2MaxSubmissionCost = 0.01e18;
+        l2GasPrice = 5e9; // 5 gwei
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -111,22 +105,22 @@ contract ArbStateBridge is Ownable2Step {
 
     /// @notice Sends the latest WorldID Identity Manager root to the IOpStack.
     /// @dev Calls this method on the L1 Proxy contract to relay roots to the destination OP Stack chain
-    function propagateRoot() external {
+    function propagateRoot() external payable {
         uint256 latestRoot = IWorldIDIdentityManager(worldIDAddress).latestRoot();
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the optimism bridge.
         bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (latestRoot));
 
-        uint256 ticketID = inbox.createRetryableTicket{ value: msg.value }(
-            arbWorldIDAddress,
-            0,
-            _maxSubmissionCostSendRoot,
-            msg.sender,
-            msg.sender,
-            _gasLimitSendRoot,
-            _maxFeePerGasSendRoot,
-            message
+        IInbox(inbox).createRetryableTicket{value: msg.value}(
+            arbWorldIDAddress, // destAddr destination L2 contract address
+            0, // l2CallValue call value for retryable L2 message
+            l2MaxSubmissionCost, // maxSubmissionCost Max gas deducted from user's L2 balance to cover base fee
+            msg.sender, // excessFeeRefundAddress maxgas * gasprice - execution cost gets credited here on L2
+            msg.sender, // callValueRefundAddress l2Callvalue gets credited here on L2 if retryable txn times out or gets cancelled
+            RELAY_MESSAGE_L2_GAS_LIMIT, // maxGas Max gas deducted from user's L2 balance to cover L2 execution
+            l2GasPrice, // gasPriceBid price bid for L2 execution
+            message // function call
         );
 
         emit RootPropagated(latestRoot);
@@ -140,38 +134,26 @@ contract ArbStateBridge is Ownable2Step {
         bytes memory message =
             abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
 
-        uint256 ticketID = inbox.createRetryableTicket{ value: msg.value }(
-            arbWorldIDAddress,
-            0,
-            _maxSubmissionCostSetRootHistoryExpiry,
-            msg.sender,
-            msg.sender,
-            _gasLimitSetRootHistoryExpiry,
-            _maxFeePerGasSetRootHistoryExpiry,
-            message
+        IInbox(inbox).createRetryableTicket{value: msg.value}(
+            arbWorldIDAddress, // destAddr destination L2 contract address
+            0, // l2CallValue call value for retryable L2 message
+            l2MaxSubmissionCost, // maxSubmissionCost Max gas deducted from user's L2 balance to cover base fee
+            msg.sender, // excessFeeRefundAddress maxgas * gasprice - execution cost gets credited here on L2
+            msg.sender, // callValueRefundAddress l2Callvalue gets credited here on L2 if retryable txn times out or gets cancelled
+            RELAY_MESSAGE_L2_GAS_LIMIT, // maxGas Max gas deducted from user's L2 balance to cover L2 execution
+            l2GasPrice, // gasPriceBid price bid for L2 execution
+            message // function call
         );
 
         emit SetRootHistoryExpiry(_rootHistoryExpiry);
     }
 
-    ///////////////////////////////////////////////////////////////////
-    ///                         OP GAS LIMIT                        ///
-    ///////////////////////////////////////////////////////////////////
-
-    /// @notice Sets the gas limit for the sendRootOp method
-    /// @param _opGasLimit The new gas limit for the sendRootOp method
-    function setGasLimitSendRoot(uint32 _opGasLimit) external onlyOwner {
-        _gasLimitSetRootHistoryExpiry = _opGasLimit;
-
-        emit SetGasLimitSendRoot(_opGasLimit);
-    }
-
-    /// @notice Sets the gas limit for the SetRootHistoryExpiry method
-    /// @param _opGasLimit The new gas limit for the SetRootHistoryExpiry method
-    function setGasLimitSetRootHistoryExpiry(uint32 _opGasLimit) external onlyOwner {
-        _gasLimitSetRootHistoryExpiry = _opGasLimit;
-
-        emit SetGasLimitSetRootHistoryExpiry(_opGasLimit);
+    /**
+     * @notice Returns required amount of ETH to send a message via the Inbox.
+     * @return amount of ETH that this contract needs to hold in order for relayMessage to succeed.
+     */
+    function getL1CallValue(uint32 l2GasLimit) external view returns (uint256) {
+        return _getL1CallValue(l2GasLimit);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -184,5 +166,13 @@ contract ArbStateBridge is Ownable2Step {
     ///      contract.
     function renounceOwnership() public view override onlyOwner {
         revert CannotRenounceOwnership();
+    }
+
+    /**
+     * @notice Returns required amount of ETH to send a message via the Inbox.
+     * @return amount of ETH that this contract needs to hold in order for relayMessage to succeed.
+     */
+    function _getL1CallValue(uint32 l2GasLimit) internal view returns (uint256) {
+        return l2MaxSubmissionCost + l2GasPrice * l2GasLimit;
     }
 }
