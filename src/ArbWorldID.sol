@@ -4,8 +4,6 @@ pragma solidity ^0.8.15;
 import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
 
 import {IArbWorldID} from "./interfaces/IArbWorldID.sol";
-// import {CrossDomainOwnable3} from
-//     "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 
 /// @title Optimism World ID Bridge
