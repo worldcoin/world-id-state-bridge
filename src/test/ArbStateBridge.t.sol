@@ -94,7 +94,7 @@ contract ArbStateBridgeTest is PRBTest, StdCheats {
         vm.rollFork(17711915);
 
         if (block.chainid == 1) {
-            arbInboxAddress = address(0x5eF0D09d1E6204141B4d37530808eD19f60FBa35);
+            arbInboxAddress = address(0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f);
         } else {
             revert invalidCrossDomainMessengerFork();
         }
@@ -127,11 +127,96 @@ contract ArbStateBridgeTest is PRBTest, StdCheats {
     }
 
     function test_propagateRoot_suceeds() public {
+        uint256 l1CallValue =
+            arbStateBridge.getL1CallValue(arbStateBridge.RELAY_MESSAGE_L2_GAS_LIMIT());
+
         vm.expectEmit(true, true, true, true);
         emit RootPropagated(sampleRoot);
 
-        arbStateBridge.propagateRoot();
+        arbStateBridge.propagateRoot{value: l1CallValue}();
 
         // Bridging is not emulated
+    }
+
+    /// @notice Tests that the owner of the StateBridge contract can transfer ownership
+    /// using Ownable2Step transferOwnership
+    /// @param newOwner the new owner of the contract
+    function test_owner_transferOwnership_succeeds(address newOwner) public {
+        vm.assume(newOwner != address(0));
+
+        vm.expectEmit(true, true, true, true);
+
+        // OpenZeppelin Ownable2Step transferOwnershipStarted event
+        emit OwnershipTransferStarted(owner, newOwner);
+
+        vm.prank(owner);
+        arbStateBridge.transferOwnership(newOwner);
+
+        vm.expectEmit(true, true, true, true);
+
+        // OpenZeppelin Ownable2Step transferOwnership event
+        emit OwnershipTransferred(owner, newOwner);
+
+        vm.prank(newOwner);
+        arbStateBridge.acceptOwnership();
+
+        assertEq(arbStateBridge.owner(), newOwner);
+    }
+
+    /// @notice tests whether the StateBridge contract can set root history expiry on Arbitrum
+    /// @param _rootHistoryExpiry The new root history expiry for ArbWorldID
+    function test_owner_setRootHistoryExpiry_succeeds(uint256 _rootHistoryExpiry) public {
+        uint256 l1CallValue =
+            arbStateBridge.getL1CallValue(arbStateBridge.RELAY_MESSAGE_L2_GAS_LIMIT());
+
+        vm.expectEmit(true, true, true, true);
+        emit SetRootHistoryExpiry(_rootHistoryExpiry);
+
+        vm.prank(owner);
+        arbStateBridge.setRootHistoryExpiry{value: l1CallValue}(_rootHistoryExpiry);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                           REVERTS                           ///
+    ///////////////////////////////////////////////////////////////////
+
+    /// @notice tests whether the StateBridge contract can set root history expiry on Optimism and Polygon
+    /// @param _rootHistoryExpiry The new root history expiry for OpWorldID and PolygonWorldID
+    function test_notOwner_SetRootHistoryExpiry_reverts(
+        address nonOwner,
+        uint256 _rootHistoryExpiry
+    ) public {
+        vm.assume(nonOwner != owner && nonOwner != address(0) && _rootHistoryExpiry != 0);
+
+        vm.expectRevert("Ownable: caller is not the owner");
+
+        vm.prank(nonOwner);
+        arbStateBridge.setRootHistoryExpiry(_rootHistoryExpiry);
+    }
+
+    /// @notice Tests that a nonPendingOwner can't accept ownership of StateBridge
+    /// @param newOwner the new owner of the contract
+    function test_notOwner_acceptOwnership_reverts(address newOwner, address randomAddress)
+        public
+    {
+        vm.assume(
+            newOwner != address(0) && randomAddress != address(0) && randomAddress != newOwner
+        );
+
+        vm.prank(owner);
+        arbStateBridge.transferOwnership(newOwner);
+
+        vm.expectRevert("Ownable2Step: caller is not the new owner");
+
+        vm.prank(randomAddress);
+        arbStateBridge.acceptOwnership();
+    }
+
+    /// @notice Tests that ownership can't be renounced
+    function test_owner_renounceOwnership_reverts() public {
+        vm.expectRevert(ArbStateBridge.CannotRenounceOwnership.selector);
+
+        vm.prank(owner);
+        arbStateBridge.renounceOwnership();
     }
 }
