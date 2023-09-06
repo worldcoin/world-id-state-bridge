@@ -216,7 +216,7 @@ abstract contract WorldIDBridge is IWorldID {
     }
 
     /// @notice Gets the Semaphore tree depth the contract was initialized with.
-    function getTreeDepth() public pure virtual returns (uint8) {
+    function getTreeDepth() public view virtual returns (uint8) {
         return treeDepth;
     }
 }
