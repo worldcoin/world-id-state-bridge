@@ -21,7 +21,7 @@ abstract contract WorldIDBridge is IWorldID {
     ///////////////////////////////////////////////////////////////////////////////
 
     /// @notice The depth of the merkle tree used to store identities.
-    uint8 internal treeDepth;
+    uint8 internal immutable treeDepth;
 
     /// @notice The amount of time a root is considered as valid on the bridged chain.
     uint256 internal ROOT_HISTORY_EXPIRY = 1 weeks;
@@ -216,7 +216,7 @@ abstract contract WorldIDBridge is IWorldID {
     }
 
     /// @notice Gets the Semaphore tree depth the contract was initialized with.
-    function getTreeDepth() public view virtual returns (uint8) {
+    function getTreeDepth() public pure virtual returns (uint8) {
         return treeDepth;
     }
 }
