@@ -66,8 +66,8 @@ contract OpStateBridge is Ownable2Step {
     /// @param _opGasLimit The new opGasLimit for sendRootOp
     event SetGasLimitPropagateRoot(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for SetRootHistoryExpiryt
-    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpirytimism
+    /// @notice Emmitted when the the StateBridge sets the gas limit for SetRootHistoryExpiry
+    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpiryt
     event SetGasLimitSetRootHistoryExpiry(uint32 _opGasLimit);
 
     /// @notice Emmitted when the the StateBridge sets the gas limit for transferOwnershipOp
