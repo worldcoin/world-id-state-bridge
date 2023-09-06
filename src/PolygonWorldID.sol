@@ -4,8 +4,6 @@ pragma solidity ^0.8.15;
 import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
 import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
-import {SemaphoreTreeDepthValidator} from "./utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 import {BytesUtils} from "./utils/BytesUtils.sol";
 
 /// @title Polygon WorldID Bridge
@@ -29,6 +27,12 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     /// call of the _processMesageFromRoot function
     bytes4 private immutable receiveRootHistoryExpirySelector =
         bytes4(keccak256("setRootHistoryExpiry(uint256)"));
+
+    ///////////////////////////////////////////////////////////////////
+    ///                            EVENTS                           ///
+    ///////////////////////////////////////////////////////////////////
+    /// @notice Thrown when setFxRootTunnel is called for the first time
+    event SetFxRootTunnel(address fxRootTunnel);
 
     ///////////////////////////////////////////////////////////////////
     ///                            ERRORS                           ///
@@ -63,6 +67,9 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     ///      FxChildTunnel. Can revert if the message is not valid - decoding fails.
     ///      Can not work if Polygon's StateSync mechanism breaks and FxPortal does not receive the message
     ///      on the other end.
+    /// @dev the message payload has the following format:
+    ///      `bytes4 selector` + `bytes payload`, the first 4 bytes are extracted using BytesUtils, once the
+    ///      selector is extracted, the payload is decoded using abi.decode(payload, (uint256))
     ///
     /// @custom:param uint256 stateId An unused placeholder variable for `stateId`,
     /// required by the signature in fxChild.
@@ -115,6 +122,8 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     function setFxRootTunnel(address _fxRootTunnel) external virtual override onlyOwner {
         require(fxRootTunnel == address(0x0), "FxBaseChildTunnel: ROOT_TUNNEL_ALREADY_SET");
         fxRootTunnel = _fxRootTunnel;
+
+        emit SetFxRootTunnel(_fxRootTunnel);
     }
 
     ///////////////////////////////////////////////////////////////////
