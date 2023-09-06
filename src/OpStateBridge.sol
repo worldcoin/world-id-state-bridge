@@ -28,20 +28,23 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Ethereum mainnet worldID Address
     address public immutable worldIDAddress;
 
-    /// @notice Amount of gas purchased on the OP Stack chain for _propagateRootOptimism
-    uint32 internal _gasLimitSendRoot;
+    /// @notice Amount of gas purchased on the OP Stack chain for propagateRoot
+    uint32 internal _gasLimitPropagateRoot;
 
-    /// @notice Amount of gas purchased on the OP Stack chain for SetRootHistoryExpirytimism
+    /// @notice Amount of gas purchased on the OP Stack chain for SetRootHistoryExpiry
     uint32 internal _gasLimitSetRootHistoryExpiry;
 
-    /// @notice Amount of gas purchased on the OP Stack chain for transferOwnershipOptimism
+    /// @notice Amount of gas purchased on the OP Stack chain for transferOwnershipOp
     uint32 internal _gasLimitTransferOwnership;
+
+    /// @notice The default gas limit amount to buy on an OP stack chain to do simple transactions
+    uint32 public constant DEFAULT_OP_GAS_LIMIT = 1000000;
 
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
+    /// @notice Emitted when the the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
     /// @param previousOwner The previous owner of the OPWorldID contract
     /// @param newOwner The new owner of the OPWorldID contract
@@ -51,23 +54,23 @@ contract OpStateBridge is Ownable2Step {
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
-    /// @notice Emmitted when the the StateBridge sends a root to the OPWorldID contract
+    /// @notice Emitted when the the StateBridge sends a root to the OPWorldID contract
     /// @param root The root sent to the OPWorldID contract on the OP Stack chain
     event RootPropagated(uint256 root);
 
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @notice Emitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for sendRootOp
+    /// @notice Emitted when the the StateBridge sets the gas limit for sendRootOp
     /// @param _opGasLimit The new opGasLimit for sendRootOp
-    event SetGasLimitSendRoot(uint32 _opGasLimit);
+    event SetGasLimitPropagateRoot(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for SetRootHistoryExpiryt
-    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpirytimism
+    /// @notice Emitted when the the StateBridge sets the gas limit for SetRootHistoryExpiry
+    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpiry
     event SetGasLimitSetRootHistoryExpiry(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for transferOwnershipOp
+    /// @notice Emitted when the the StateBridge sets the gas limit for transferOwnershipOp
     /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
     event SetGasLimitTransferOwnershipOp(uint32 _opGasLimit);
 
@@ -78,6 +81,12 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
+    /// @notice Emitted when an attempt is made to set the gas limit to zero
+    error GasLimitZero();
+
+    /// @notice Emitted when an attempt is made to set an address to zero
+    error AddressZero();
+
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
     ///////////////////////////////////////////////////////////////////
@@ -87,17 +96,25 @@ contract OpStateBridge is Ownable2Step {
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _crossDomainMessenger L1CrossDomainMessenger contract used to communicate with the desired OP
     /// Stack network
+    /// @custom:revert if any of the constructor params addresses are zero
     constructor(
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
         address _crossDomainMessenger
     ) {
+        if (
+            _worldIDIdentityManager == address(0) || _opWorldIDAddress == address(0)
+                || _crossDomainMessenger == address(0)
+        ) {
+            revert AddressZero();
+        }
+
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
         crossDomainMessengerAddress = _crossDomainMessenger;
-        _gasLimitSendRoot = 100000;
-        _gasLimitSetRootHistoryExpiry = 100000;
-        _gasLimitTransferOwnership = 100000;
+        _gasLimitPropagateRoot = DEFAULT_OP_GAS_LIMIT;
+        _gasLimitSetRootHistoryExpiry = DEFAULT_OP_GAS_LIMIT;
+        _gasLimitTransferOwnership = DEFAULT_OP_GAS_LIMIT;
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -117,7 +134,7 @@ contract OpStateBridge is Ownable2Step {
             // Contract address on the OP Stack Chain
             opWorldIDAddress,
             message,
-            _gasLimitSendRoot
+            _gasLimitPropagateRoot
         );
 
         emit RootPropagated(latestRoot);
@@ -127,7 +144,12 @@ contract OpStateBridge is Ownable2Step {
     /// of OpWorldID to another contract on L1 or to a local OP Stack chain EOA
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
+    /// @custom:revert if _owner is set to the zero address
     function transferOwnershipOp(address _owner, bool _isLocal) external onlyOwner {
+        if (_owner == address(0)) {
+            revert AddressZero();
+        }
+
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the OP Stack chain bridge.
         bytes memory message =
@@ -165,17 +187,25 @@ contract OpStateBridge is Ownable2Step {
     ///                         OP GAS LIMIT                        ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Sets the gas limit for the sendRootOp method
-    /// @param _opGasLimit The new gas limit for the sendRootOp method
-    function setGasLimitSendRoot(uint32 _opGasLimit) external onlyOwner {
-        _gasLimitSetRootHistoryExpiry = _opGasLimit;
+    /// @notice Sets the gas limit for the propagateRoot method
+    /// @param _opGasLimit The new gas limit for the propagateRoot method
+    function setGasLimitPropagateRoot(uint32 _opGasLimit) external onlyOwner {
+        if (_opGasLimit <= 0) {
+            revert GasLimitZero();
+        }
 
-        emit SetGasLimitSendRoot(_opGasLimit);
+        _gasLimitPropagateRoot = _opGasLimit;
+
+        emit SetGasLimitPropagateRoot(_opGasLimit);
     }
 
     /// @notice Sets the gas limit for the SetRootHistoryExpiry method
     /// @param _opGasLimit The new gas limit for the SetRootHistoryExpiry method
     function setGasLimitSetRootHistoryExpiry(uint32 _opGasLimit) external onlyOwner {
+        if (_opGasLimit <= 0) {
+            revert GasLimitZero();
+        }
+
         _gasLimitSetRootHistoryExpiry = _opGasLimit;
 
         emit SetGasLimitSetRootHistoryExpiry(_opGasLimit);
@@ -184,6 +214,10 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Sets the gas limit for the transferOwnershipOp method
     /// @param _opGasLimit The new gas limit for the transferOwnershipOp method
     function setGasLimitTransferOwnershipOp(uint32 _opGasLimit) external onlyOwner {
+        if (_opGasLimit <= 0) {
+            revert GasLimitZero();
+        }
+
         _gasLimitTransferOwnership = _opGasLimit;
 
         emit SetGasLimitTransferOwnershipOp(_opGasLimit);

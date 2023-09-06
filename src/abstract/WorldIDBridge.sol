@@ -6,8 +6,6 @@ import {IWorldID} from "../interfaces/IWorldID.sol";
 import {SemaphoreTreeDepthValidator} from "../utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 
-import "forge-std/console.sol";
-
 /// @title Bridged World ID
 /// @author Worldcoin
 /// @notice A base contract for the WorldID state bridges that exist on other chains. The state
@@ -23,7 +21,7 @@ abstract contract WorldIDBridge is IWorldID {
     ///////////////////////////////////////////////////////////////////////////////
 
     /// @notice The depth of the merkle tree used to store identities.
-    uint8 internal treeDepth;
+    uint8 internal immutable treeDepth;
 
     /// @notice The amount of time a root is considered as valid on the bridged chain.
     uint256 internal ROOT_HISTORY_EXPIRY = 1 weeks;
@@ -106,7 +104,6 @@ abstract contract WorldIDBridge is IWorldID {
     /// @param newRoot The value of the new root.
     ///
     /// @custom:reverts CannotOverwriteRoot If the root already exists in the root history.
-    /// @custom:reverts string If the caller is not the owner.
     function _receiveRoot(uint256 newRoot) internal {
         uint256 existingTimestamp = rootHistory[newRoot];
 
@@ -158,7 +155,7 @@ abstract contract WorldIDBridge is IWorldID {
     /// @dev Note that a double-signaling check is not included here, and should be carried by the
     ///      caller.
     ///
-    /// @param root The of the Merkle tree
+    /// @param root The root of the Merkle tree
     /// @param signalHash A keccak256 hash of the Semaphore signal
     /// @param nullifierHash The nullifier hash
     /// @param externalNullifierHash A keccak256 hash of the external nullifier
