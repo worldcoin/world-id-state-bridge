@@ -44,13 +44,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     error CannotRenounceOwnership();
 
     /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
-    error CannotSetFxRootToZero();
-
-    /// @notice Emitted when an attempt is made to set the CheckpointManager to the zero address.
-    error CannotSetCheckpointManagerToZero();
-
-    /// @notice Emitted when an attempt is made to set the WorldIDIdentityManager to the zero address.
-    error CannotSetWorldIDToZero();
+    error AddressZero();
 
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
@@ -60,19 +54,15 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @param _checkpointManager address of the checkpoint manager contract
     /// @param _fxRoot address of Polygon's fxRoot contract, part of the FxPortal bridge (Goerli or Mainnet)
     /// @param _worldIDIdentityManager Deployment address of the WorldID Identity Manager contract
+    /// @custom:reverts AddressZero If any of the constructor arguments are the zero address
     constructor(address _checkpointManager, address _fxRoot, address _worldIDIdentityManager)
         FxBaseRootTunnel(_checkpointManager, _fxRoot)
     {
-        if (address(_checkpointManager) == address(0)) {
-            revert CannotSetCheckpointManagerToZero();
-        }
-
-        if (address(_fxRoot) == address(0)) {
-            revert CannotSetFxRootToZero();
-        }
-
-        if (address(_worldIDIdentityManager) == address(0)) {
-            revert CannotSetWorldIDToZero();
+        if (
+            _checkpointManager == address(0) || _fxRoot == address(0)
+                || _worldIDIdentityManager == address(0)
+        ) {
+            revert AddressZero();
         }
 
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
@@ -123,8 +113,14 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @param _fxChildTunnel The address of the child (non-L1) tunnel contract.
     ///
     /// @custom:reverts string If the root tunnel has already been set.
+    /// @custom:reverts AddressZero If the `_fxChildTunnel` is the zero address.
     function setFxChildTunnel(address _fxChildTunnel) public virtual override onlyOwner {
         require(fxChildTunnel == address(0x0), "FxBaseRootTunnel: CHILD_TUNNEL_ALREADY_SET");
+
+        if (_fxChildTunnel == address(0x0)) {
+            revert AddressZero();
+        }
+
         fxChildTunnel = _fxChildTunnel;
 
         emit SetFxChildTunnel(_fxChildTunnel);

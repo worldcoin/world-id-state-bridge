@@ -28,7 +28,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     address public fxChild = address(0x2222222);
 
     /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
-    error CannotSetFxChildTunnelToZero();
+    error AddressZero();
 
     /// @notice Thrown when setFxRootTunnel is called for the first time
     event SetFxRootTunnel(address fxRootTunnel);
@@ -46,7 +46,6 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     ///////////////////////////////////////////////////////////////////
     ///                            TESTS                            ///
     ///////////////////////////////////////////////////////////////////
-
 
     /// @notice Tests that the owner of the PolygonWorldID contract can transfer ownership
     /// using Ownable2Step transferOwnership
@@ -101,11 +100,12 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         id.setFxRootTunnel(newFxRootTunnel);
     }
 
+    /// @notice Tests that the fxChildTunnel can't be set to the zero address
     function test_cannotSetFxChildTunnelToZero_reverts() public {
-        vm.expectRevert(CannotSetFxChildTunnelToZero.selector);
+        vm.expectRevert(AddressZero.selector);
 
         vm.prank(owner);
-        PolygonWorldID demoID = new PolygonWorldID(treeDepth, address(0));
+        new PolygonWorldID(treeDepth, address(0));
     }
 
     /// @notice Tests that a nonPendingOwner can't accept ownership of PolygonWorldID
@@ -132,5 +132,13 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         id.renounceOwnership();
+    }
+
+    /// @notice Tests that the fxRootTunnel can't be set to the zero address
+    function test_cannotSetFxRootTunnelToZero_reverts() public {
+        vm.expectRevert(AddressZero.selector);
+
+        vm.prank(owner);
+        id.setFxRootTunnel(address(0));
     }
 }

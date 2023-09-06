@@ -82,19 +82,10 @@ contract OpStateBridge is Ownable2Step {
     error CannotRenounceOwnership();
 
     /// @notice Emitted when an attempt is made to set the gas limit to zero or less
-    error GasLimitNotGreaterThanZero();
+    error GasLimitZero();
 
-    /// @notice Emitted when an attempt is made to set the owner to the zero address
-    error CannotSetZeroOwner();
-
-    /// @notice Emitted when an attempt is made to set the World ID Identity Manager to the zero address
-    error CannotSetWorldIDToZero();
-
-    /// @notice Emitted when an attempt is made to set the Op World ID Identity Manager to the zero address
-    error CannotSetOpWorldIDToZero();
-
-    /// @notice Emitted when an attempt is made to set the Cross Domain Messenger to the zero address
-    error CannotSetCrossDomainMessengerToZero();
+    /// @notice Emitted when an attempt is made to set an address to zero
+    error AddressZero();
 
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
@@ -105,21 +96,17 @@ contract OpStateBridge is Ownable2Step {
     /// @param _opWorldIDAddress Address of the Optimism contract that will receive the new root and timestamp
     /// @param _crossDomainMessenger L1CrossDomainMessenger contract used to communicate with the desired OP
     /// Stack network
+    /// @custom:revert if any of the constructor params addresses are zero
     constructor(
         address _worldIDIdentityManager,
         address _opWorldIDAddress,
         address _crossDomainMessenger
     ) {
-        if (address(_worldIDIdentityManager) == address(0)) {
-            revert CannotSetWorldIDToZero();
-        }
-
-        if (address(_opWorldIDAddress) == address(0)) {
-            revert CannotSetOpWorldIDToZero();
-        }
-
-        if (address(_crossDomainMessenger) == address(0)) {
-            revert CannotSetCrossDomainMessengerToZero();
+        if (
+            _worldIDIdentityManager == address(0) || _opWorldIDAddress == address(0)
+                || _crossDomainMessenger == address(0)
+        ) {
+            revert AddressZero();
         }
 
         opWorldIDAddress = _opWorldIDAddress;
@@ -157,9 +144,10 @@ contract OpStateBridge is Ownable2Step {
     /// of OpWorldID to another contract on L1 or to a local OP Stack chain EOA
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
+    /// @custom:revert if _owner is set to the zero address
     function transferOwnershipOp(address _owner, bool _isLocal) external onlyOwner {
         if (_owner == address(0)) {
-            revert CannotSetZeroOwner();
+            revert AddressZero();
         }
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
@@ -203,7 +191,7 @@ contract OpStateBridge is Ownable2Step {
     /// @param _opGasLimit The new gas limit for the propagateRoot method
     function setGasLimitPropagateRoot(uint32 _opGasLimit) external onlyOwner {
         if (_opGasLimit <= 0) {
-            revert GasLimitNotGreaterThanZero();
+            revert GasLimitZero();
         }
 
         _gasLimitPropagateRoot = _opGasLimit;
@@ -214,8 +202,8 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Sets the gas limit for the SetRootHistoryExpiry method
     /// @param _opGasLimit The new gas limit for the SetRootHistoryExpiry method
     function setGasLimitSetRootHistoryExpiry(uint32 _opGasLimit) external onlyOwner {
-         if (_opGasLimit <= 0) {
-            revert GasLimitNotGreaterThanZero();
+        if (_opGasLimit <= 0) {
+            revert GasLimitZero();
         }
 
         _gasLimitSetRootHistoryExpiry = _opGasLimit;
@@ -226,8 +214,8 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Sets the gas limit for the transferOwnershipOp method
     /// @param _opGasLimit The new gas limit for the transferOwnershipOp method
     function setGasLimitTransferOwnershipOp(uint32 _opGasLimit) external onlyOwner {
-         if (_opGasLimit <= 0) {
-            revert GasLimitNotGreaterThanZero();
+        if (_opGasLimit <= 0) {
+            revert GasLimitZero();
         }
 
         _gasLimitTransferOwnership = _opGasLimit;

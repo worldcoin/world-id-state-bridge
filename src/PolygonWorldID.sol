@@ -45,7 +45,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     error CannotRenounceOwnership();
 
     /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
-    error CannotSetFxChildTunnelToZero();
+    error AddressZero();
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
@@ -61,7 +61,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
         FxBaseChildTunnel(_fxChild)
     {
         if (address(_fxChild) == address(0)) {
-            revert CannotSetFxChildTunnelToZero();
+            revert AddressZero();
         }
     }
 
@@ -128,6 +128,11 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     /// @custom:reverts string If the root tunnel has already been set.
     function setFxRootTunnel(address _fxRootTunnel) external virtual override onlyOwner {
         require(fxRootTunnel == address(0x0), "FxBaseChildTunnel: ROOT_TUNNEL_ALREADY_SET");
+
+        if (_fxRootTunnel == address(0x0)) {
+            revert AddressZero();
+        }
+
         fxRootTunnel = _fxRootTunnel;
 
         emit SetFxRootTunnel(_fxRootTunnel);

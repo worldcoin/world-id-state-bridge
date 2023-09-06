@@ -85,20 +85,10 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     error CannotRenounceOwnership();
 
     /// @notice Emitted when an attempt is made to set the gas limit to zero or less
-    error GasLimitNotGreaterThanZero();
+    error GasLimitZero();
 
     /// @notice Emitted when an attempt is made to set the owner to the zero address
-    error CannotSetZeroOwner();
-
-    /// @notice Emitted when an attempt is made to set the World ID Identity Manager to the zero address
-    error CannotSetWorldIDToZero();
-
-    /// @notice Emitted when an attempt is made to set the Op World ID Identity Manager to the zero address
-    error CannotSetOpWorldIDToZero();
-
-    /// @notice Emitted when an attempt is made to set the Cross Domain Messenger to the zero address
-    error CannotSetCrossDomainMessengerToZero();
-
+    error AddressZero();
 
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
@@ -245,21 +235,21 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice Tests that the StateBridge constructor params can't be set to the zero address
     function test_cannotInitializeConstructorWithZeroAddresses_reverts() public {
-        vm.expectRevert(CannotSetWorldIDToZero.selector);
+        vm.expectRevert(AddressZero.selector);
         opStateBridge = new OpStateBridge(
             address(0),
             opWorldIDAddress,
             opCrossDomainMessengerAddress
         );
 
-        vm.expectRevert(CannotSetOpWorldIDToZero.selector);
+        vm.expectRevert(AddressZero.selector);
         opStateBridge = new OpStateBridge(
             mockWorldIDAddress,
             address(0),
             opCrossDomainMessengerAddress
         );
 
-        vm.expectRevert(CannotSetCrossDomainMessengerToZero.selector);
+        vm.expectRevert(AddressZero.selector);
         opStateBridge = new OpStateBridge(
             mockWorldIDAddress,
             opWorldIDAddress,
@@ -281,7 +271,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice tests that the StateBridge contract's ownership can't be set to be the zero address
     function test_owner_transferOwnershipOp_toZeroAddress_reverts() public {
-        vm.expectRevert(CannotSetZeroOwner.selector);
+        vm.expectRevert(AddressZero.selector);
 
         vm.prank(owner);
         opStateBridge.transferOwnershipOp(address(0), true);
@@ -344,17 +334,17 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice Tests that the StateBridge contract can't set the opGasLimit for sendRootOptimism to 0
     function test_setGasLimitToZero_reverts() public {
-        vm.expectRevert(GasLimitNotGreaterThanZero.selector);
+        vm.expectRevert(GasLimitZero.selector);
 
         vm.prank(owner);
         opStateBridge.setGasLimitPropagateRoot(0);
 
-        vm.expectRevert(GasLimitNotGreaterThanZero.selector);
+        vm.expectRevert(GasLimitZero.selector);
 
         vm.prank(owner);
         opStateBridge.setGasLimitSetRootHistoryExpiry(0);
 
-        vm.expectRevert(GasLimitNotGreaterThanZero.selector);
+        vm.expectRevert(GasLimitZero.selector);
 
         vm.prank(owner);
         opStateBridge.setGasLimitTransferOwnershipOp(0);
