@@ -158,6 +158,30 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     ///                           REVERTS                           ///
     ///////////////////////////////////////////////////////////////////
 
+    /// @notice tests that the StateBridge contract can't be constructed with a zero address for params
+    function test_constructorParamsCannotBeZeroAddresses_reverts() public {
+        vm.expectRevert("WorldIDIdentityManager cannot be the zero address");
+        polygonStateBridge = new PolygonStateBridge(
+            checkpointManager,
+            fxRoot,
+            address(0)
+        );
+
+        vm.expectRevert("fxRoot cannot be the zero address");
+        polygonStateBridge = new PolygonStateBridge(
+            checkpointManager,
+            address(0),
+            mockWorldIDAddress
+        );
+
+        vm.expectRevert("checkpointManager cannot be the zero address");
+        polygonStateBridge = new PolygonStateBridge(
+            address(0),
+            fxRoot,
+            mockWorldIDAddress
+        );
+    }
+
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
     /// @param newOwner The new owner of the StateBridge contract (foundry fuzz)
     function test_notOwner_transferOwnership_reverts(address nonOwner, address newOwner) public {
