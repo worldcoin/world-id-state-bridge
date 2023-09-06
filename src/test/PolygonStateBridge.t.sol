@@ -57,6 +57,15 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// @param root The latest WorldID Identity Manager root.
     event RootPropagated(uint256 root);
 
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
+    error CannotSetFxRootToZero();
+
+    /// @notice Emitted when an attempt is made to set the CheckpointManager to the zero address.
+    error CannotSetCheckpointManagerToZero();
+
+    /// @notice Emitted when an attempt is made to set the WorldIDIdentityManager to the zero address.
+    error CannotSetWorldIDToZero();
+
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
         mainnetFork = vm.createFork(MAINNET_RPC_URL);
@@ -160,21 +169,21 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice tests that the StateBridge contract can't be constructed with a zero address for params
     function test_constructorParamsCannotBeZeroAddresses_reverts() public {
-        vm.expectRevert("WorldIDIdentityManager cannot be the zero address");
+        vm.expectRevert(CannotSetWorldIDToZero.selector);
         polygonStateBridge = new PolygonStateBridge(
             checkpointManager,
             fxRoot,
             address(0)
         );
 
-        vm.expectRevert("fxRoot cannot be the zero address");
+        vm.expectRevert(CannotSetFxRootToZero.selector);
         polygonStateBridge = new PolygonStateBridge(
             checkpointManager,
             address(0),
             mockWorldIDAddress
         );
 
-        vm.expectRevert("checkpointManager cannot be the zero address");
+        vm.expectRevert(CannotSetCheckpointManagerToZero.selector);
         polygonStateBridge = new PolygonStateBridge(
             address(0),
             fxRoot,

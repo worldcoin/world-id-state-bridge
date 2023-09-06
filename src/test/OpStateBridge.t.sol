@@ -84,6 +84,13 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
+    /// @notice Emitted when an attempt is made to set the gas limit to zero or less
+    error GasLimitNotGreaterThanZero();
+
+    /// @notice Emitted when an attempt is made to set the owner to the zero address
+    error CannotSetZeroOwner();
+
+
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
         mainnetFork = vm.createFork(MAINNET_RPC_URL);
@@ -241,7 +248,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice tests that the StateBridge contract's ownership can't be set to be the zero address
     function test_owner_transferOwnershipOp_toZeroAddress_reverts() public {
-        vm.expectRevert("New owner can't be the zero address");
+        vm.expectRevert(CannotSetZeroOwner.selector);
 
         vm.prank(owner);
         opStateBridge.transferOwnershipOp(address(0), true);
@@ -304,17 +311,17 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice Tests that the StateBridge contract can't set the opGasLimit for sendRootOptimism to 0
     function test_setGasLimitToZero_reverts() public {
-        vm.expectRevert("Gas limit must be greater than 0");
+        vm.expectRevert(GasLimitNotGreaterThanZero.selector);
 
         vm.prank(owner);
         opStateBridge.setGasLimitPropagateRoot(0);
 
-        vm.expectRevert("Gas limit must be greater than 0");
+        vm.expectRevert(GasLimitNotGreaterThanZero.selector);
 
         vm.prank(owner);
         opStateBridge.setGasLimitSetRootHistoryExpiry(0);
 
-        vm.expectRevert("Gas limit must be greater than 0");
+        vm.expectRevert(GasLimitNotGreaterThanZero.selector);
 
         vm.prank(owner);
         opStateBridge.setGasLimitTransferOwnershipOp(0);

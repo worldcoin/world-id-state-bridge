@@ -67,7 +67,7 @@ contract OpStateBridge is Ownable2Step {
     event SetGasLimitPropagateRoot(uint32 _opGasLimit);
 
     /// @notice Emitted when the the StateBridge sets the gas limit for SetRootHistoryExpiry
-    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpiryt
+    /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpiry
     event SetGasLimitSetRootHistoryExpiry(uint32 _opGasLimit);
 
     /// @notice Emitted when the the StateBridge sets the gas limit for transferOwnershipOp
@@ -80,6 +80,12 @@ contract OpStateBridge is Ownable2Step {
 
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
+
+    /// @notice Emitted when an attempt is made to set the gas limit to zero or less
+    error GasLimitNotGreaterThanZero();
+
+    /// @notice Emitted when an attempt is made to set the owner to the zero address
+    error CannotSetZeroOwner();
 
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
@@ -131,7 +137,9 @@ contract OpStateBridge is Ownable2Step {
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Optimism, false if it is a cross-domain owner
     function transferOwnershipOp(address _owner, bool _isLocal) external onlyOwner {
-        require(_owner != address(0), "New owner can't be the zero address");
+        if (_owner == address(0)) {
+            revert CannotSetZeroOwner();
+        }
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the OP Stack chain bridge.
@@ -173,7 +181,9 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Sets the gas limit for the propagateRoot method
     /// @param _opGasLimit The new gas limit for the propagateRoot method
     function setGasLimitPropagateRoot(uint32 _opGasLimit) external onlyOwner {
-        require(_opGasLimit > 0, "Gas limit must be greater than 0");
+        if (_opGasLimit <= 0) {
+            revert GasLimitNotGreaterThanZero();
+        }
 
         _gasLimitPropagateRoot = _opGasLimit;
 
@@ -183,7 +193,9 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Sets the gas limit for the SetRootHistoryExpiry method
     /// @param _opGasLimit The new gas limit for the SetRootHistoryExpiry method
     function setGasLimitSetRootHistoryExpiry(uint32 _opGasLimit) external onlyOwner {
-        require(_opGasLimit > 0, "Gas limit must be greater than 0");
+         if (_opGasLimit <= 0) {
+            revert GasLimitNotGreaterThanZero();
+        }
 
         _gasLimitSetRootHistoryExpiry = _opGasLimit;
 
@@ -193,7 +205,9 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Sets the gas limit for the transferOwnershipOp method
     /// @param _opGasLimit The new gas limit for the transferOwnershipOp method
     function setGasLimitTransferOwnershipOp(uint32 _opGasLimit) external onlyOwner {
-        require(_opGasLimit > 0, "Gas limit must be greater than 0");
+         if (_opGasLimit <= 0) {
+            revert GasLimitNotGreaterThanZero();
+        }
 
         _gasLimitTransferOwnership = _opGasLimit;
 

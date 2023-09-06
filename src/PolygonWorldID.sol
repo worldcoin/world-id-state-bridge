@@ -44,6 +44,9 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
+    error CannotSetFxChildTunnelToZero();
+
     ///////////////////////////////////////////////////////////////////////////////
     ///                                CONSTRUCTION                             ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -56,7 +59,11 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     constructor(uint8 _treeDepth, address _fxChild)
         WorldIDBridge(_treeDepth)
         FxBaseChildTunnel(_fxChild)
-    {}
+    {
+        if (address(_fxChild) == address(0)) {
+            revert CannotSetFxChildTunnelToZero();
+        }
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
