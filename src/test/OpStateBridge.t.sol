@@ -42,17 +42,17 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Emmitted when the ownership transfer of OpStateBridge is started (OZ Ownable2Step)
+    /// @notice Emitted when the ownership transfer of OpStateBridge is started (OZ Ownable2Step)
     event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
 
-    /// @notice Emmitted when the ownership transfer of OpStateBridge is accepted (OZ Ownable2Step)
+    /// @notice Emitted when the ownership transfer of OpStateBridge is accepted (OZ Ownable2Step)
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    // @notice Emmitted when the the StateBridge sends a root to the OPWorldID contract
+    // @notice Emitted when the the StateBridge sends a root to the OPWorldID contract
     /// @param root The root sent to the OPWorldID contract on the OP Stack chain
     event RootPropagated(uint256 root);
 
-    /// @notice Emmitted when the the StateBridge gives ownership of the OPWorldID contract
+    /// @notice Emitted when the the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
     /// @param previousOwner The previous owner of the OPWorldID contract
     /// @param newOwner The new owner of the OPWorldID contract
@@ -61,19 +61,19 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @notice Emitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for sendRootOp
+    /// @notice Emitted when the the StateBridge sets the gas limit for sendRootOp
     /// @param _opGasLimit The new opGasLimit for sendRootOp
     event SetGasLimitPropagateRoot(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for SetRootHistoryExpiryt
+    /// @notice Emitted when the the StateBridge sets the gas limit for SetRootHistoryExpiryt
     /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpirytimism
     event SetGasLimitSetRootHistoryExpiry(uint32 _opGasLimit);
 
-    /// @notice Emmitted when the the StateBridge sets the gas limit for transferOwnershipOp
+    /// @notice Emitted when the the StateBridge sets the gas limit for transferOwnershipOp
     /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
     event SetGasLimitTransferOwnershipOp(uint32 _opGasLimit);
 
