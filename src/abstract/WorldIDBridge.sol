@@ -6,8 +6,6 @@ import {IWorldID} from "../interfaces/IWorldID.sol";
 import {SemaphoreTreeDepthValidator} from "../utils/SemaphoreTreeDepthValidator.sol";
 import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
 
-import "forge-std/console.sol";
-
 /// @title Bridged World ID
 /// @author Worldcoin
 /// @notice A base contract for the WorldID state bridges that exist on other chains. The state
