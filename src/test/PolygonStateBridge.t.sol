@@ -46,14 +46,14 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// @param newOwner The new owner of the StateBridge contract
     event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
 
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @notice Emitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
-    // @notice Emmitted when the owner calls setFxChildTunnel for the first time
+    // @notice Emitted when the owner calls setFxChildTunnel for the first time
     event SetFxChildTunnel(address fxChildTunnel);
 
-    /// @notice Emmitted when a root is sent to PolygonWorldID
+    /// @notice Emitted when a root is sent to PolygonWorldID
     /// @param root The latest WorldID Identity Manager root.
     event RootPropagated(uint256 root);
 
