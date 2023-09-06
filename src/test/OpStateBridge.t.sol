@@ -90,6 +90,15 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     /// @notice Emitted when an attempt is made to set the owner to the zero address
     error CannotSetZeroOwner();
 
+    /// @notice Emitted when an attempt is made to set the World ID Identity Manager to the zero address
+    error CannotSetWorldIDToZero();
+
+    /// @notice Emitted when an attempt is made to set the Op World ID Identity Manager to the zero address
+    error CannotSetOpWorldIDToZero();
+
+    /// @notice Emitted when an attempt is made to set the Cross Domain Messenger to the zero address
+    error CannotSetCrossDomainMessengerToZero();
+
 
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
@@ -233,6 +242,30 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     ///////////////////////////////////////////////////////////////////
     ///                           REVERTS                           ///
     ///////////////////////////////////////////////////////////////////
+
+    /// @notice Tests that the StateBridge constructor params can't be set to the zero address
+    function test_cannotInitializeConstructorWithZeroAddresses_reverts() public {
+        vm.expectRevert(CannotSetWorldIDToZero.selector);
+        opStateBridge = new OpStateBridge(
+            address(0),
+            opWorldIDAddress,
+            opCrossDomainMessengerAddress
+        );
+
+        vm.expectRevert(CannotSetOpWorldIDToZero.selector);
+        opStateBridge = new OpStateBridge(
+            mockWorldIDAddress,
+            address(0),
+            opCrossDomainMessengerAddress
+        );
+
+        vm.expectRevert(CannotSetCrossDomainMessengerToZero.selector);
+        opStateBridge = new OpStateBridge(
+            mockWorldIDAddress,
+            opWorldIDAddress,
+            address(0)
+        );
+    }
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
     /// @param newOwner The new owner of the StateBridge contract (foundry fuzz)

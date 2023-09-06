@@ -87,6 +87,15 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Emitted when an attempt is made to set the owner to the zero address
     error CannotSetZeroOwner();
 
+    /// @notice Emitted when an attempt is made to set the World ID Identity Manager to the zero address
+    error CannotSetWorldIDToZero();
+
+    /// @notice Emitted when an attempt is made to set the Op World ID Identity Manager to the zero address
+    error CannotSetOpWorldIDToZero();
+
+    /// @notice Emitted when an attempt is made to set the Cross Domain Messenger to the zero address
+    error CannotSetCrossDomainMessengerToZero();
+
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
     ///////////////////////////////////////////////////////////////////
@@ -101,6 +110,18 @@ contract OpStateBridge is Ownable2Step {
         address _opWorldIDAddress,
         address _crossDomainMessenger
     ) {
+        if (address(_worldIDIdentityManager) == address(0)) {
+            revert CannotSetWorldIDToZero();
+        }
+
+        if (address(_opWorldIDAddress) == address(0)) {
+            revert CannotSetOpWorldIDToZero();
+        }
+
+        if (address(_crossDomainMessenger) == address(0)) {
+            revert CannotSetCrossDomainMessengerToZero();
+        }
+
         opWorldIDAddress = _opWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
         crossDomainMessengerAddress = _crossDomainMessenger;
