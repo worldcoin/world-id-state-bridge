@@ -29,6 +29,9 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
+    /// @notice Emmitted when the owner calls setFxChildTunnel for the first time
+    event SetFxChildTunnel(address fxChildTunnel);
+
     /// @notice Emmitted when a root is sent to PolygonWorldID
     /// @param root The latest WorldID Identity Manager root.
     event RootPropagated(uint256 root);
@@ -51,6 +54,15 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     constructor(address _checkpointManager, address _fxRoot, address _worldIDIdentityManager)
         FxBaseRootTunnel(_checkpointManager, _fxRoot)
     {
+        require(
+            _worldIDIdentityManager != address(0),
+            "WorldIDIdentityManager cannot be the zero address"
+        );
+
+        require(_fxRoot != address(0), "fxRoot cannot be the zero address");
+
+        require(_checkpointManager != address(0), "checkpointManager cannot be the zero address");
+
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
     }
 
@@ -102,6 +114,8 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     function setFxChildTunnel(address _fxChildTunnel) public virtual override onlyOwner {
         require(fxChildTunnel == address(0x0), "FxBaseRootTunnel: CHILD_TUNNEL_ALREADY_SET");
         fxChildTunnel = _fxChildTunnel;
+
+        emit SetFxChildTunnel(_fxChildTunnel);
     }
 
     ///////////////////////////////////////////////////////////////////
