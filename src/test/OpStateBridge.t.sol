@@ -84,7 +84,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
-    /// @notice Emitted when an attempt is made to set the gas limit to zero or less
+    /// @notice Emitted when an attempt is made to set the gas limit to zero
     error GasLimitZero();
 
     /// @notice Emitted when an attempt is made to set the owner to the zero address
