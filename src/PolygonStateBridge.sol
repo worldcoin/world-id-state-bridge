@@ -43,6 +43,15 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
+    error CannotSetFxRootToZero();
+
+    /// @notice Emitted when an attempt is made to set the CheckpointManager to the zero address.
+    error CannotSetCheckpointManagerToZero();
+
+    /// @notice Emitted when an attempt is made to set the WorldIDIdentityManager to the zero address.
+    error CannotSetWorldIDToZero();
+
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
     ///////////////////////////////////////////////////////////////////
@@ -54,14 +63,17 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     constructor(address _checkpointManager, address _fxRoot, address _worldIDIdentityManager)
         FxBaseRootTunnel(_checkpointManager, _fxRoot)
     {
-        require(
-            _worldIDIdentityManager != address(0),
-            "WorldIDIdentityManager cannot be the zero address"
-        );
+        if (address(_checkpointManager) == address(0)) {
+            revert CannotSetCheckpointManagerToZero();
+        }
 
-        require(_fxRoot != address(0), "fxRoot cannot be the zero address");
+        if (address(_fxRoot) == address(0)) {
+            revert CannotSetFxRootToZero();
+        }
 
-        require(_checkpointManager != address(0), "checkpointManager cannot be the zero address");
+        if (address(_worldIDIdentityManager) == address(0)) {
+            revert CannotSetWorldIDToZero();
+        }
 
         worldID = IWorldIDIdentityManager(_worldIDIdentityManager);
     }
