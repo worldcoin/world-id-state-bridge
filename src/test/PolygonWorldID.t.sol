@@ -27,6 +27,12 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice fxChild contract address
     address public fxChild = address(0x2222222);
 
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
+    error AddressZero();
+
+    /// @notice Thrown when setFxRootTunnel is called for the first time
+    event SetFxRootTunnel(address fxRootTunnel);
+
     function setUp() public {
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(owner);
@@ -82,6 +88,26 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         id.setRootHistoryExpiry(expiryTime);
     }
 
+    /// @notice checks that the owner of the PolygonWorldID contract can set the fxRootTunnel
+    /// @param newFxRootTunnel the new fxRootTunnel
+    function testOwnerCanSetFxRootTunnel(address newFxRootTunnel) public {
+        vm.assume(newFxRootTunnel != address(0));
+
+        vm.expectEmit(true, true, true, true);
+        emit SetFxRootTunnel(newFxRootTunnel);
+
+        vm.prank(owner);
+        id.setFxRootTunnel(newFxRootTunnel);
+    }
+
+    /// @notice Tests that the fxChildTunnel can't be set to the zero address
+    function test_cannotSetFxChildTunnelToZero_reverts() public {
+        vm.expectRevert(AddressZero.selector);
+
+        vm.prank(owner);
+        new PolygonWorldID(treeDepth, address(0));
+    }
+
     /// @notice Tests that a nonPendingOwner can't accept ownership of PolygonWorldID
     /// @param newOwner the new owner of the contract
     function test_notOwner_acceptOwnership_reverts(address newOwner, address randomAddress)
@@ -106,5 +132,13 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         id.renounceOwnership();
+    }
+
+    /// @notice Tests that the fxRootTunnel can't be set to the zero address
+    function test_cannotSetFxRootTunnelToZero_reverts() public {
+        vm.expectRevert(AddressZero.selector);
+
+        vm.prank(owner);
+        id.setFxRootTunnel(address(0));
     }
 }

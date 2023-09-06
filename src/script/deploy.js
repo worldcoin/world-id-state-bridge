@@ -445,7 +445,7 @@ async function deployOptimismOpStateBridgeGoerli(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployStateBridgeMainnet.s.sol ran successfully!");
+  spinner.succeed("DeployOptimismStateBridgeGoerli.s.sol ran successfully!");
 }
 
 async function deployOptimismOpStateBridgeMainnet(config) {
@@ -460,7 +460,7 @@ async function deployOptimismOpStateBridgeMainnet(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployStateBridgeMainnet.s.sol ran successfully!");
+  spinner.succeed("DeployOptimismStateBridgeMainnet.s.sol ran successfully!");
 }
 
 async function deployBaseOpStateBridgeGoerli(config) {
@@ -475,7 +475,7 @@ async function deployBaseOpStateBridgeGoerli(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployBaseStateBridgeMainnet.s.sol ran successfully!");
+  spinner.succeed("DeployBaseStateBridgeGoerli.s.sol ran successfully!");
 }
 
 async function deployBaseOpStateBridgeMainnet(config) {
@@ -505,7 +505,7 @@ async function deployPolygonStateBridgeGoerli(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployStateBridgeMainnet.s.sol ran successfully!");
+  spinner.succeed("DeployPolygonStateBridgeGoerli.s.sol ran successfully!");
 }
 
 async function deployPolygonStateBridgeMainnet(config) {
@@ -520,7 +520,7 @@ async function deployPolygonStateBridgeMainnet(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployStateBridgeMainnet.s.sol ran successfully!");
+  spinner.succeed("DeployPolygonStateBridgeMainnet.s.sol ran successfully!");
 }
 
 async function deployPolygonWorldIDMumbai(config) {
@@ -535,7 +535,7 @@ async function deployPolygonWorldIDMumbai(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployPolygonWorldID.s.sol ran successfully!");
+  spinner.succeed("DeployPolygonWorldIDMumbai.s.sol ran successfully!");
 }
 
 async function deployPolygonWorldIDMainnet(config) {
@@ -550,7 +550,7 @@ async function deployPolygonWorldIDMainnet(config) {
     console.error(err);
   }
 
-  spinner.succeed("DeployPolygonWorldID.s.sol ran successfully!");
+  spinner.succeed("DeployPolygonWorldIDMainnet.s.sol ran successfully!");
 }
 
 async function deployOptimismWorldID(config) {

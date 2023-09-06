@@ -46,13 +46,19 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// @param newOwner The new owner of the StateBridge contract
     event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
 
-    /// @notice Emmitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @notice Emitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
-    /// @notice Emmitted when a root is sent to PolygonWorldID
+    // @notice Emitted when the owner calls setFxChildTunnel for the first time
+    event SetFxChildTunnel(address fxChildTunnel);
+
+    /// @notice Emitted when a root is sent to PolygonWorldID
     /// @param root The latest WorldID Identity Manager root.
     event RootPropagated(uint256 root);
+
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
+    error AddressZero();
 
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
@@ -139,9 +145,53 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
         polygonStateBridge.setRootHistoryExpiryPolygon(_rootHistoryExpiry);
     }
 
+    /// @notice tests that the owner of the StateBridge contract can set the fxChildTunnel
+    /// @param newFxChildTunnel the new fxChildTunnel
+    function test_owner_setFxChildTunnel(address newFxChildTunnel) public {
+        vm.assume(newFxChildTunnel != address(0));
+
+        vm.expectEmit(true, true, true, true);
+        emit SetFxChildTunnel(newFxChildTunnel);
+
+        vm.prank(owner);
+        polygonStateBridge.setFxChildTunnel(newFxChildTunnel);
+    }
+
     ///////////////////////////////////////////////////////////////////
     ///                           REVERTS                           ///
     ///////////////////////////////////////////////////////////////////
+
+    /// @notice tests that the StateBridge contract can't be constructed with a zero address for params
+    function test_constructorParamsCannotBeZeroAddresses_reverts() public {
+        vm.expectRevert(AddressZero.selector);
+        polygonStateBridge = new PolygonStateBridge(
+            checkpointManager,
+            fxRoot,
+            address(0)
+        );
+
+        vm.expectRevert(AddressZero.selector);
+        polygonStateBridge = new PolygonStateBridge(
+            checkpointManager,
+            address(0),
+            mockWorldIDAddress
+        );
+
+        vm.expectRevert(AddressZero.selector);
+        polygonStateBridge = new PolygonStateBridge(
+            address(0),
+            fxRoot,
+            mockWorldIDAddress
+        );
+    }
+
+    /// @notice tests that the FxChildTunnel can't be set to the zero address
+    function test_setFxChildCannotBeZeroAddress_reverts() public {
+        vm.expectRevert(AddressZero.selector);
+
+        vm.prank(owner);
+        polygonStateBridge.setFxChildTunnel(address(0));
+    }
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
     /// @param newOwner The new owner of the StateBridge contract (foundry fuzz)
