@@ -104,7 +104,6 @@ abstract contract WorldIDBridge is IWorldID {
     /// @param newRoot The value of the new root.
     ///
     /// @custom:reverts CannotOverwriteRoot If the root already exists in the root history.
-    /// @custom:reverts string If the caller is not the owner.
     function _receiveRoot(uint256 newRoot) internal {
         uint256 existingTimestamp = rootHistory[newRoot];
 
