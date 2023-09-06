@@ -50,6 +50,9 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
+    // @notice Emmitted when the owner calls setFxChildTunnel for the first time
+    event SetFxChildTunnel(address fxChildTunnel);
+
     /// @notice Emmitted when a root is sent to PolygonWorldID
     /// @param root The latest WorldID Identity Manager root.
     event RootPropagated(uint256 root);
@@ -137,6 +140,18 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         polygonStateBridge.setRootHistoryExpiryPolygon(_rootHistoryExpiry);
+    }
+
+    /// @notice tests that the owner of the StateBridge contract can set the fxChildTunnel
+    /// @param newFxChildTunnel the new fxChildTunnel
+    function test_owner_setFxChildTunnel(address newFxChildTunnel) public {
+        vm.assume(newFxChildTunnel != address(0));
+
+        vm.expectEmit(true, true, true, true);
+        emit SetFxChildTunnel(newFxChildTunnel);
+
+        vm.prank(owner);
+        polygonStateBridge.setFxChildTunnel(newFxChildTunnel);
     }
 
     ///////////////////////////////////////////////////////////////////

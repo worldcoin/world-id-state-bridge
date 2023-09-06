@@ -27,6 +27,9 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice fxChild contract address
     address public fxChild = address(0x2222222);
 
+    /// @notice Thrown when setFxRootTunnel is called for the first time
+    event SetFxRootTunnel(address fxRootTunnel);
+
     function setUp() public {
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(owner);
@@ -80,6 +83,18 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
             "PolygonWorldID: Root history expiry should only be set via the state bridge"
         );
         id.setRootHistoryExpiry(expiryTime);
+    }
+
+    /// @notice checks that the owner of the PolygonWorldID contract can set the fxRootTunnel
+    /// @param newFxRootTunnel the new fxRootTunnel
+    function testOwnerCanSetFxRootTunnel(address newFxRootTunnel) public {
+        vm.assume(newFxRootTunnel != address(0));
+
+        vm.expectEmit(true, true, true, true);
+        emit SetFxRootTunnel(newFxRootTunnel);
+
+        vm.prank(owner);
+        id.setFxRootTunnel(newFxRootTunnel);
     }
 
     /// @notice Tests that a nonPendingOwner can't accept ownership of PolygonWorldID
