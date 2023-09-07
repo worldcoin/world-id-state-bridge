@@ -33,6 +33,9 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice Thrown when setFxRootTunnel is called for the first time
     event SetFxRootTunnel(address fxRootTunnel);
 
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel when it has already been set.
+    error FxBaseChildRootTunnelAlreadySet();
+
     function setUp() public {
         /// @notice Initialize the PolygonWorldID contract
         vm.prank(owner);
@@ -106,6 +109,19 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         new PolygonWorldID(treeDepth, address(0));
+    }
+
+    /// @notice tests that the FxRootTunnel can't be set once it has already been set
+    function test_cannotSetFxRootTunnelMoreThanOnce_reverts(address _fxRootTunnel) public {
+        vm.assume(_fxRootTunnel != address(0));
+
+        vm.prank(owner);
+        id.setFxRootTunnel(_fxRootTunnel);
+
+        vm.expectRevert(FxBaseChildRootTunnelAlreadySet.selector);
+
+        vm.prank(owner);
+        id.setFxRootTunnel(_fxRootTunnel);
     }
 
     /// @notice Tests that a nonPendingOwner can't accept ownership of PolygonWorldID
