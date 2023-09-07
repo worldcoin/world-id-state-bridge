@@ -42,7 +42,7 @@
     "@eth-optimism/sdk": "^1.10.4",
     "ethers": "^6.6.5",
     "prettier": "^2.8.7",
-    "solhint": "^3.4.0"
+    "solhint": "^3.6.1"
   },
   "scripts": {
     "format": "forge fmt",
