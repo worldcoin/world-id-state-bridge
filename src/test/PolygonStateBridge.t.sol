@@ -60,6 +60,9 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
     error AddressZero();
 
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel when it has already been set.
+    error FxBaseRootChildTunnelAlreadySet();
+
     function setUp() public {
         /// @notice Create a fork of the Ethereum mainnet
         mainnetFork = vm.createFork(MAINNET_RPC_URL);
@@ -191,6 +194,19 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         polygonStateBridge.setFxChildTunnel(address(0));
+    }
+
+    /// @notice tests that the FxChildTunnel can't be set once it has already been set
+    function test_cannotSetFxChildTunnelMoreThanOnce_reverts(address _fxChildTunnel) public {
+        vm.assume(_fxChildTunnel != address(0));
+
+        vm.prank(owner);
+        polygonStateBridge.setFxChildTunnel(_fxChildTunnel);
+
+        vm.expectRevert(FxBaseRootChildTunnelAlreadySet.selector);
+
+        vm.prank(owner);
+        polygonStateBridge.setFxChildTunnel(_fxChildTunnel);
     }
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner

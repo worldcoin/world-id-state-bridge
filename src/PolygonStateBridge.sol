@@ -46,6 +46,9 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
     error AddressZero();
 
+    /// @notice Emitted when an attempt is made to set the FxChildTunnel when it has already been set.
+    error FxBaseRootChildTunnelAlreadySet();
+
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
     ///////////////////////////////////////////////////////////////////
@@ -115,7 +118,9 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @custom:reverts string If the root tunnel has already been set.
     /// @custom:reverts AddressZero If the `_fxChildTunnel` is the zero address.
     function setFxChildTunnel(address _fxChildTunnel) public virtual override onlyOwner {
-        require(fxChildTunnel == address(0x0), "FxBaseRootTunnel: CHILD_TUNNEL_ALREADY_SET");
+        if (fxChildTunnel != address(0x0)) {
+            revert FxBaseRootChildTunnelAlreadySet();
+        }
 
         if (_fxChildTunnel == address(0x0)) {
             revert AddressZero();
