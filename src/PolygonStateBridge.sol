@@ -43,10 +43,12 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
-    /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
+    /// @notice Emitted when an attempt is made to set the FxBaseRootTunnel,
+    /// FxChildTunnel, CheckpointManager or WorldIDIdentityManager addresses to the zero address.
     error AddressZero();
 
-    /// @notice Emitted when an attempt is made to set the FxChildTunnel when it has already been set.
+    /// @notice Emitted when an attempt is made to set the FxBaseRootTunnel's
+    /// fxChildTunnel when it has already been set.
     error FxBaseRootChildTunnelAlreadySet();
 
     ///////////////////////////////////////////////////////////////////

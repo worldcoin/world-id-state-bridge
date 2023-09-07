@@ -60,7 +60,8 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
     error AddressZero();
 
-    /// @notice Emitted when an attempt is made to set the FxChildTunnel when it has already been set.
+    /// @notice Emitted when an attempt is made to set the FxBaseRootTunnel's
+    /// fxChildTunnel when it has already been set.
     error FxBaseRootChildTunnelAlreadySet();
 
     function setUp() public {
@@ -196,7 +197,7 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
         polygonStateBridge.setFxChildTunnel(address(0));
     }
 
-    /// @notice tests that the FxChildTunnel can't be set once it has already been set
+    /// @notice tests that the FxBaseRootTunnel's fxChildTunnel can't be set once it has already been set
     function test_cannotSetFxChildTunnelMoreThanOnce_reverts(address _fxChildTunnel) public {
         vm.assume(_fxChildTunnel != address(0));
 

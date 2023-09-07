@@ -44,10 +44,12 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     /// @notice Emitted when an attempt is made to renounce ownership.
     error CannotRenounceOwnership();
 
-    /// @notice Emitted when an attempt is made to set the FxChildTunnel to the zero address.
+    /// @notice Emitted when an attempt is made to set the FxBaseChildTunnel or
+    /// the FxRoot Tunnel to the zero address.
     error AddressZero();
 
-    /// @notice Emitted when an attempt is made to set the FxChildTunnel when it has already been set.
+    /// @notice Emitted when an attempt is made to set the FxBaseChildTunnel's 
+    /// fxRootTunnel when it has already been set.
     error FxBaseChildRootTunnelAlreadySet();
 
     ///////////////////////////////////////////////////////////////////////////////

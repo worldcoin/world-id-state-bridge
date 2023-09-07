@@ -33,7 +33,8 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice Thrown when setFxRootTunnel is called for the first time
     event SetFxRootTunnel(address fxRootTunnel);
 
-    /// @notice Emitted when an attempt is made to set the FxChildTunnel when it has already been set.
+    /// @notice Emitted when an attempt is made to set the FxBaseChildTunnel's 
+    /// fxRootTunnel when it has already been set.
     error FxBaseChildRootTunnelAlreadySet();
 
     function setUp() public {
@@ -111,7 +112,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
         new PolygonWorldID(treeDepth, address(0));
     }
 
-    /// @notice tests that the FxRootTunnel can't be set once it has already been set
+    /// @notice tests that the FxBaseChildTunnel's fxRootTunnel can't be set once it has already been set
     function test_cannotSetFxRootTunnelMoreThanOnce_reverts(address _fxRootTunnel) public {
         vm.assume(_fxRootTunnel != address(0));
 
