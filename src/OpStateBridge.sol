@@ -44,7 +44,7 @@ contract OpStateBridge is Ownable2Step {
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Emitted when the the StateBridge gives ownership of the OPWorldID contract
+    /// @notice Emitted when the StateBridge gives ownership of the OPWorldID contract
     /// to the WorldID Identity Manager contract away
     /// @param previousOwner The previous owner of the OPWorldID contract
     /// @param newOwner The new owner of the OPWorldID contract
@@ -54,23 +54,23 @@ contract OpStateBridge is Ownable2Step {
         address indexed previousOwner, address indexed newOwner, bool isLocal
     );
 
-    /// @notice Emitted when the the StateBridge sends a root to the OPWorldID contract
+    /// @notice Emitted when the StateBridge sends a root to the OPWorldID contract
     /// @param root The root sent to the OPWorldID contract on the OP Stack chain
     event RootPropagated(uint256 root);
 
-    /// @notice Emitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @notice Emitted when the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
-    /// @notice Emitted when the the StateBridge sets the gas limit for sendRootOp
+    /// @notice Emitted when the StateBridge sets the gas limit for sendRootOp
     /// @param _opGasLimit The new opGasLimit for sendRootOp
     event SetGasLimitPropagateRoot(uint32 _opGasLimit);
 
-    /// @notice Emitted when the the StateBridge sets the gas limit for SetRootHistoryExpiry
+    /// @notice Emitted when the StateBridge sets the gas limit for SetRootHistoryExpiry
     /// @param _opGasLimit The new opGasLimit for SetRootHistoryExpiry
     event SetGasLimitSetRootHistoryExpiry(uint32 _opGasLimit);
 
-    /// @notice Emitted when the the StateBridge sets the gas limit for transferOwnershipOp
+    /// @notice Emitted when the StateBridge sets the gas limit for transferOwnershipOp
     /// @param _opGasLimit The new opGasLimit for transferOwnershipOptimism
     event SetGasLimitTransferOwnershipOp(uint32 _opGasLimit);
 

@@ -25,7 +25,7 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
 
-    /// @notice Emitted when the the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
+    /// @notice Emitted when the StateBridge sets the root history expiry for OpWorldID and PolygonWorldID
     /// @param rootHistoryExpiry The new root history expiry
     event SetRootHistoryExpiry(uint256 rootHistoryExpiry);
 
