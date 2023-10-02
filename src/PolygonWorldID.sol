@@ -48,7 +48,7 @@ contract PolygonWorldID is WorldIDBridge, FxBaseChildTunnel, Ownable2Step {
     /// the FxRoot Tunnel to the zero address.
     error AddressZero();
 
-    /// @notice Emitted when an attempt is made to set the FxBaseChildTunnel's 
+    /// @notice Emitted when an attempt is made to set the FxBaseChildTunnel's
     /// fxRootTunnel when it has already been set.
     error FxBaseChildRootTunnelAlreadySet();
 

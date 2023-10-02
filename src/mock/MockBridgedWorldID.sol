@@ -3,7 +3,7 @@ pragma solidity ^0.8.15;
 
 import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
 import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import {SemaphoreVerifier} from "src/SemaphoreVerifier.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 /// @title OPWorldID and PolygonWorldID Mock

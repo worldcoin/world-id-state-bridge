@@ -4,7 +4,7 @@ pragma solidity ^0.8.15;
 import {IWorldID} from "../interfaces/IWorldID.sol";
 
 import {SemaphoreTreeDepthValidator} from "../utils/SemaphoreTreeDepthValidator.sol";
-import {SemaphoreVerifier} from "semaphore/base/SemaphoreVerifier.sol";
+import {SemaphoreVerifier} from "src/SemaphoreVerifier.sol";
 
 /// @title Bridged World ID
 /// @author Worldcoin
@@ -174,7 +174,7 @@ abstract contract WorldIDBridge is IWorldID {
 
         // With that done we can now verify the proof.
         semaphoreVerifier.verifyProof(
-            root, nullifierHash, signalHash, externalNullifierHash, proof, treeDepth
+            proof, [root, nullifierHash, signalHash, externalNullifierHash]
         );
     }
 
