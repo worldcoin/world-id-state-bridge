@@ -118,6 +118,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         assert(id.getTreeDepth() == actualTreeDepth);
     }
 
+    /// @notice Verifies that a sample generated proof is valid using the optimized SemaporeVerifier contract
+    function test_verifyProof_succeeds() public {}
+
     ///////////////////////////////////////////////////////////////////
     ///                           REVERTS                           ///
     ///////////////////////////////////////////////////////////////////

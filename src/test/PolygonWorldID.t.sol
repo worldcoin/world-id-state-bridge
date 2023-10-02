@@ -33,7 +33,7 @@ contract PolygonWorldIDTest is PRBTest, StdCheats {
     /// @notice Thrown when setFxRootTunnel is called for the first time
     event SetFxRootTunnel(address fxRootTunnel);
 
-    /// @notice Emitted when an attempt is made to set the FxBaseChildTunnel's 
+    /// @notice Emitted when an attempt is made to set the FxBaseChildTunnel's
     /// fxRootTunnel when it has already been set.
     error FxBaseChildRootTunnelAlreadySet();
 
