@@ -44,7 +44,29 @@ for your execution environment. Requirements are:
 
 For L1 to L1 bridges, there are solutions like [Succinct](https://succinct.xyz/)'s
 [Telepathy](https://www.telepathy.xyz/) which have weaker security guarantees than storage proofs or native L1<>L2
-bridges, but possibly allow for a World ID integration, provided that the reqirements above are met.
+bridges, but possibly allow for a World ID integration, provided that the requirements above are met.
+
+### Build your own state bridge
+
+#### Intro
+
+The point of the state bridge contracts in `world-id-state-bridge` is to have two contracts, one deployed on Ethereum
+mainnet and the other one on a target L2. The mainnet contract (e.g. `OpStateBridge`) has a public function which will
+fetch the latest root of the World ID merkle tree using the
+[`WorldIDIdentityManagerImplV1`](https://github.com/worldcoin/world-id-contracts/blob/main/src/WorldIDIdentityManagerImplV1.sol)
+method named
+[`latestRoot()`](https://github.com/worldcoin/world-id-contracts/blob/42c26ecbd82fba56983addee6485d5b617960a2a/src/WorldIDIdentityManagerImplV1.sol#L433-L438)
+and then will use the native L1<>L2 bridge to send a message to the target L2 contract (e.g. `OpWorldID`). The messaging
+layer of the L2 will forward the message to the target contract and call it with the correct payload.
+
+> [!NOTE] The current implementation of WorldID will only work for EVM-compatible networks as mentioned in the
+> [Supported networks](#supported-networks) and [Future integrations](#future-integrations) sections. If you are an
+> EVM-compatible rollup you also need to support the pairing cryptography and keccak256 precompiles.
+
+#### Specification
+
+If you want to build your own state bridge, you can use the `OpStateBridge` contract as a template. The contract has two
+main methods, namely `propagateRoot()` and `setRootHistoryExpiry()` which you will need to implement
 
 ## Documentation
 
