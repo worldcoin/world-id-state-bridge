@@ -30,7 +30,7 @@ contract WorldIDIdentityManagerMock is IWorldIDIdentityManager {
 
     function insertRoot(uint256 postRoot) public {
         uint256 preRoot = _latestRoot;
-        _latestRoot = newRoot;
+        _latestRoot = postRoot;
 
         emit TreeChanged(preRoot, TreeChange.Insertion, postRoot);
     }
