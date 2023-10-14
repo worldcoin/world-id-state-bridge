@@ -44,7 +44,7 @@ for your execution environment. Requirements are:
 
 For L1 to L1 bridges, there are solutions like [Succinct](https://succinct.xyz/)'s
 [Telepathy](https://www.telepathy.xyz/) which have weaker security guarantees than storage proofs or native L1<>L2
-bridges, but possibly allow for a World ID integration, provided that the reqirements above are met.
+bridges, but possibly allow for a World ID integration, provided that the requirements above are met.
 
 ## Documentation
 
