@@ -2,6 +2,9 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
+import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockBridgedWorldID} from "src/mock/MockBridgedWorldID.sol";
 import {MockStateBridge} from "src/mock/MockStateBridge.sol";
 
 /// @title Mock State Bridge deployment script
@@ -9,10 +12,15 @@ import {MockStateBridge} from "src/mock/MockStateBridge.sol";
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock` or `make local-mock`.
 contract DeployMockStateBridge is Script {
-    MockStateBridge public bridge;
+    MockStateBridge public mockStateBridge;
+    WorldIDIdentityManagerMock public mockWorldID;
+    MockBridgedWorldID public mockBridgedWorldID;
 
-    address public worldIDIdentityManagerAddress;
-    address public stateBridgeAddress;
+    address owner;
+
+    uint8 treeDepth;
+
+    uint256 initialRoot;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -28,9 +36,16 @@ contract DeployMockStateBridge is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new MockStateBridge();
+        treeDepth = uint8(30);
 
-        bridge.propagateRoot();
+        initialRoot = uint256(0x111);
+
+        mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
+        mockWorldID = new WorldIDIdentityManagerMock(initialRoot);
+        mockStateBridge = new MockStateBridge(address(mockWorldID), address(mockBridgedWorldID));
+
+
+        mockStateBridge.propagateRoot();
 
         vm.stopBroadcast();
     }
