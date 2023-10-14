@@ -21,9 +21,9 @@ contract MockStateBridge is Ownable {
     error InvalidRoot();
 
     /// @notice constructor
-    constructor(address mockWorldID, address mockBridgedWorldID) {
-        worldID = IWorldIDIdentityManager(mockWorldID);
-        mockBridgedWorldID = new MockBridgedWorldID(mockBridgedWorldID);
+    constructor(address _mockWorldID, address _mockBridgedWorldID) {
+        worldID = IWorldIDIdentityManager(_mockWorldID);
+        mockBridgedWorldID = MockBridgedWorldID(_mockBridgedWorldID);
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to the Bridged WorldID contract.

@@ -15,6 +15,10 @@ contract MockStateBridgeTest is PRBTest, StdCheats {
 
     address owner;
 
+    uint8 treeDepth;
+
+    uint256 initialRoot;
+
     /// @notice The time in the `rootHistory` mapping associated with a root that has never been
     ///         seen before.
     uint128 internal constant NULL_ROOT_TIME = 0;
@@ -34,9 +38,14 @@ contract MockStateBridgeTest is PRBTest, StdCheats {
         vm.label(owner, "owner");
 
         vm.prank(owner);
-        mockStateBridge = new MockStateBridge();
-        mockBridgedWorldID = new MockBridgedWorldID();
-        mockWorldID = new WorldIDIdentityManagerMock();
+
+        treeDepth = uint8(30);
+
+        initialRoot = uint256(0x111);
+
+        mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
+        mockWorldID = new WorldIDIdentityManagerMock(initialRoot);
+        mockStateBridge = new MockStateBridge(address(mockWorldID), address(mockBridgedWorldID));
     }
 
     function testPropagateRootSucceeds() public {
