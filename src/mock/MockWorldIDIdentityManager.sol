@@ -7,7 +7,7 @@ import {IWorldIDIdentityManager} from "src/interfaces/IWorldIDIdentityManager.so
 /// @author Worldcoin
 /// @notice  Mock of the WorldID Identity Manager contract (world-id-contracts) to test functionality on a local chain
 /// @dev deployed through make mock and make local-mock
-contract WorldIDIdentityManagerMock is IWorldIDIdentityManager {
+contract MockWorldIDIdentityManager is IWorldIDIdentityManager {
     uint256 internal _latestRoot;
 
     /// @notice Represents the kind of change that is made to the root of the tree.

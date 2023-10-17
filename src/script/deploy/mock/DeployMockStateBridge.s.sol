@@ -2,8 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockWorldIDIdentityManager} from "src/mock/MockWorldIDIdentityManager.sol";
 import {MockBridgedWorldID} from "src/mock/MockBridgedWorldID.sol";
 import {MockStateBridge} from "src/mock/MockStateBridge.sol";
 
@@ -13,7 +12,7 @@ import {MockStateBridge} from "src/mock/MockStateBridge.sol";
 /// @dev Can be executed by running `make mock` or `make local-mock`.
 contract DeployMockStateBridge is Script {
     MockStateBridge public mockStateBridge;
-    WorldIDIdentityManagerMock public mockWorldID;
+    MockWorldIDIdentityManager public mockWorldID;
     MockBridgedWorldID public mockBridgedWorldID;
 
     address owner;
@@ -41,7 +40,7 @@ contract DeployMockStateBridge is Script {
         initialRoot = uint256(0x111);
 
         mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
-        mockWorldID = new WorldIDIdentityManagerMock(initialRoot);
+        mockWorldID = new MockWorldIDIdentityManager(initialRoot);
         mockStateBridge = new MockStateBridge(address(mockWorldID), address(mockBridgedWorldID));
 
 
