@@ -278,7 +278,7 @@ async function getSampleRoot(config) {
     config.sampleRoot = process.env.SAMPLE_ROOT;
   }
   if (!config.sampleRoot) {
-    config.sampleRoot = await ask("Enter root to be inserted into WorldIDIdentityManagerMock: ");
+    config.sampleRoot = await ask("Enter root to be inserted into MockWorldIDIdentityManager: ");
   }
 }
 

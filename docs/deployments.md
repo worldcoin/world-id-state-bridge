@@ -111,7 +111,7 @@ each of the deployment commands do and which forge scripts are executed:
     provided by `anvil` for the script when being promted on the CLI.
   - good to test the generic function interface of the state bridges, the `WorldIDIdentityManager` contract, and the
     target chain World ID contract (`PolygonWorldID` / `OpWorldID`).
-  - deploys a `WorldIDIdentityManagerMock.sol` contract to the local anvil instance
+  - deploys a `MockWorldIDIdentityManager.sol` contract to the local anvil instance
     ([DeployMockWorldID.s.sol](../src/script/deploy/mock/DeployMockWorldID.s.sol))
   - inserts a sample root to the contract on deploy time (constructor param in the script above)
   - deploys a `MockStateBridge.sol` contract to the local anvil instance

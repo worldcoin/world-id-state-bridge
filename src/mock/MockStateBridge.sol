@@ -11,7 +11,7 @@ import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol
 /// @notice Mock of the StateBridge to test functionality on a local chain
 /// @custom:deployment deployed through make local-mock
 contract MockStateBridge is Ownable {
-    /// @notice WorldIDIdentityManagerMock contract which will hold a mock root
+    /// @notice MockWorldIDIdentityManager contract which will hold a mock root
     IWorldIDIdentityManager public worldID;
 
     /// @notice MockBridgedWorldID contract which will receive the root

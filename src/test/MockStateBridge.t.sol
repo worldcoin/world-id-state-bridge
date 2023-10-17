@@ -1,7 +1,7 @@
 pragma solidity ^0.8.15;
 
 import {MockStateBridge} from "src/mock/MockStateBridge.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockWorldIDIdentityManager} from "src/mock/MockWorldIDIdentityManager.sol";
 import {MockBridgedWorldID} from "src/mock/MockBridgedWorldID.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
@@ -9,15 +9,15 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 /// @title Mock State Bridge Test
 /// @author Worldcoin
 contract MockStateBridgeTest is PRBTest, StdCheats {
-    MockStateBridge mockStateBridge;
-    WorldIDIdentityManagerMock mockWorldID;
-    MockBridgedWorldID mockBridgedWorldID;
+    MockStateBridge public mockStateBridge;
+    MockWorldIDIdentityManager public mockWorldID;
+    MockBridgedWorldID public mockBridgedWorldID;
 
-    address owner;
+    address public owner;
 
-    uint8 treeDepth;
+    uint8 public treeDepth;
 
-    uint256 initialRoot;
+    uint256 public initialRoot;
 
     /// @notice The time in the `rootHistory` mapping associated with a root that has never been
     ///         seen before.
@@ -44,7 +44,7 @@ contract MockStateBridgeTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
-        mockWorldID = new WorldIDIdentityManagerMock(initialRoot);
+        mockWorldID = new MockWorldIDIdentityManager(initialRoot);
         mockStateBridge = new MockStateBridge(address(mockWorldID), address(mockBridgedWorldID));
     }
 
