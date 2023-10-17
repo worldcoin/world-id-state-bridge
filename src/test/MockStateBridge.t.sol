@@ -44,8 +44,16 @@ contract MockStateBridgeTest is PRBTest, StdCheats {
 
         vm.prank(owner);
         mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
+
+        vm.prank(owner);
         mockWorldID = new MockWorldIDIdentityManager(initialRoot);
+
+
+        vm.prank(owner);
         mockStateBridge = new MockStateBridge(address(mockWorldID), address(mockBridgedWorldID));
+
+        vm.prank(owner);
+        mockBridgedWorldID.transferOwnership(address(mockStateBridge));
     }
 
     function testPropagateRootSucceeds() public {
