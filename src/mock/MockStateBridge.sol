@@ -2,7 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {MockBridgedWorldID} from "./MockBridgedWorldID.sol";
-import {WorldIDIdentityManagerMock} from "./WorldIDIdentityManagerMock.sol";
+import {IWorldIDIdentityManager} from "src/interfaces/IWorldIDIdentityManager.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol";
 
@@ -11,8 +11,8 @@ import {IWorldIDIdentityManager} from "../interfaces/IWorldIDIdentityManager.sol
 /// @notice Mock of the StateBridge to test functionality on a local chain
 /// @custom:deployment deployed through make local-mock
 contract MockStateBridge is Ownable {
-    /// @notice WorldIDIdentityManagerMock contract which will hold a mock root
-    WorldIDIdentityManagerMock public worldID;
+    /// @notice MockWorldIDIdentityManager contract which will hold a mock root
+    IWorldIDIdentityManager public worldID;
 
     /// @notice MockBridgedWorldID contract which will receive the root
     MockBridgedWorldID public mockBridgedWorldID;
@@ -21,9 +21,9 @@ contract MockStateBridge is Ownable {
     error InvalidRoot();
 
     /// @notice constructor
-    constructor() {
-        worldID = new WorldIDIdentityManagerMock(uint256(0x111));
-        mockBridgedWorldID = new MockBridgedWorldID(uint8(30));
+    constructor(address _mockWorldID, address _mockBridgedWorldID) {
+        worldID = IWorldIDIdentityManager(_mockWorldID);
+        mockBridgedWorldID = MockBridgedWorldID(_mockBridgedWorldID);
     }
 
     /// @notice Sends the latest WorldID Identity Manager root to the Bridged WorldID contract.

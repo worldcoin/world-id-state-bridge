@@ -2,7 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {PolygonStateBridge} from "src/PolygonStateBridge.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockWorldIDIdentityManager} from "src/mock/MockWorldIDIdentityManager.sol";
 
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
@@ -21,7 +21,7 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     error invalidCrossDomainMessengerFork();
 
     PolygonStateBridge polygonStateBridge;
-    WorldIDIdentityManagerMock public mockWorldID;
+    MockWorldIDIdentityManager public mockWorldID;
 
     uint32 public opGasLimit;
 
@@ -74,7 +74,7 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
         vm.rollFork(17711915);
 
         sampleRoot = uint256(0x123);
-        mockWorldID = new WorldIDIdentityManagerMock(sampleRoot);
+        mockWorldID = new MockWorldIDIdentityManager(sampleRoot);
         mockWorldIDAddress = address(mockWorldID);
 
         checkpointManager = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);

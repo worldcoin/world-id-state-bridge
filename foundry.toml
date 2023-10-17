@@ -86,7 +86,7 @@ verbosity = 3
 # We can specify the contracts to track gas data for by tracing.
 gas_reports = [
   "WorldIDIdentityManager",
-  "WorldIDIdentityManagerMock",
+  "MockWorldIDIdentityManager",
   "Verifier",
 ]
 

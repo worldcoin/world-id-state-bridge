@@ -2,7 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {OpStateBridge} from "src/OpStateBridge.sol";
-import {WorldIDIdentityManagerMock} from "src/mock/WorldIDIdentityManagerMock.sol";
+import {MockWorldIDIdentityManager} from "src/mock/MockWorldIDIdentityManager.sol";
 import {MockBridgedWorldID} from "src/mock/MockBridgedWorldID.sol";
 
 import {PRBTest} from "@prb/test/PRBTest.sol";
@@ -22,7 +22,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     error invalidCrossDomainMessengerFork();
 
     OpStateBridge public opStateBridge;
-    WorldIDIdentityManagerMock public mockWorldID;
+    MockWorldIDIdentityManager public mockWorldID;
 
     uint32 public opGasLimit;
 
@@ -107,7 +107,7 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
         // inserting mock root
         sampleRoot = uint256(0x111);
-        mockWorldID = new WorldIDIdentityManagerMock(sampleRoot);
+        mockWorldID = new MockWorldIDIdentityManager(sampleRoot);
         mockWorldIDAddress = address(mockWorldID);
 
         opWorldIDAddress = address(0x1);
