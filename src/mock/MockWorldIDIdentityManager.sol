@@ -54,6 +54,7 @@ contract MockWorldIDIdentityManager is IWorldIDIdentityManager {
         uint256[] calldata identityCommitments,
         uint256 postRoot
     ) public {
+        _latestRoot = postRoot;
         emit TreeChanged(preRoot, TreeChange.Insertion, postRoot);
     }
 
@@ -79,6 +80,7 @@ contract MockWorldIDIdentityManager is IWorldIDIdentityManager {
         uint256 preRoot,
         uint256 postRoot
     ) public {
+        _latestRoot = postRoot;
         emit TreeChanged(preRoot, TreeChange.Deletion, postRoot);
     }
 
