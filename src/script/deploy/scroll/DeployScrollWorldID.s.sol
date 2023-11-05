@@ -2,29 +2,26 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {OpWorldID} from "src/OpWorldID.sol";
+import {ScrollWorldID} from "src/ScrollWorldID.sol";
 
-/// @title OpWorldID deployment script
-/// @notice forge script to deploy OpWorldID.sol to an OP Stack chain
+/// @title Scroll World ID deployment script
+/// @notice forge script to deploy ScrollWorldID.sol to Scroll
 /// @author Worldcoin
-/// @dev Can be executed by running `make mock`, `make deploy` or `make deploy-testnet`.
 contract DeployOpWorldID is Script {
-    OpWorldID public opWorldID;
+    ScrollWorldID public scrollWorldID;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
     string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
+    uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
-    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
     uint8 public treeDepth = uint8(30);
 
     function run() external {
         vm.startBroadcast(privateKey);
 
-        opWorldID = new OpWorldID(treeDepth);
+        scrollWorldID = new ScrollWorldID(treeDepth);
 
         vm.stopBroadcast();
     }

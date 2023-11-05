@@ -27,8 +27,8 @@ contract MockWorldIDIdentityManager is IWorldIDIdentityManager {
     constructor(uint256 initRoot) {
         _latestRoot = initRoot;
     }
-    
-     /// @notice Registers identities into the WorldID system.
+
+    /// @notice Registers identities into the WorldID system.
     /// @dev Can only be called by the identity operator.
     /// @dev Registration is performed off-chain and verified on-chain via the `insertionProof`.
     ///      This saves gas and time over inserting identities one at a time.
