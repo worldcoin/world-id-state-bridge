@@ -2,18 +2,17 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
-import {OpStateBridge} from "src/OpStateBridge.sol";
+import {IScrollCrossDomainOwnable} from "src/interfaces/IScrollCrossDomainOwnable.sol";
 
-/// @title Ownership Transfer of OpWorldID script for Optimism
-/// @notice forge script for transferring ownership of OpWorldID to a local (Optimism)
-/// or cross-chain (Ethereum Goerli) EOA or contract
+/// @title Ownership Transfer of OpWorldID on Base
+/// @notice forge script for transferring ownership of OpWorldID to a local (Base / Base Goerli)
+/// or cross-chain (Ethereum / Ethereum goerli) EOA or contract
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract LocalTransferOwnershipOfOptimismWorldID is Script {
+contract LocalTransferOwnershipOfBaseWorldID is Script {
     uint256 public privateKey;
 
-    address public optimismWorldIDAddress;
+    address public scrollWorldIDAddress;
 
     address public newOwner;
 
@@ -27,14 +26,9 @@ contract LocalTransferOwnershipOfOptimismWorldID is Script {
         ///////////////////////////////////////////////////////////////////
         ///                            CONFIG                           ///
         ///////////////////////////////////////////////////////////////////
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/src/script/.deploy-config.json");
-        string memory json = vm.readFile(path);
-
-        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        optimismWorldIDAddress =
-            abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
-        newOwner = abi.decode(vm.parseJson(json, ".optimismStateBridgeAddress"), (address));
+        privateKey = vm.envUint("PRIVATE_KEY");
+        scrollWorldIDAddress = vm.envAddress("SCROLL_WORLD_ID");
+        newOwner = vm.envAddress("NEW_OWNER");
     }
 
     constructor() {}
@@ -48,9 +42,9 @@ contract LocalTransferOwnershipOfOptimismWorldID is Script {
         vm.startBroadcast(privateKey);
 
         bytes memory call =
-            abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (newOwner, isLocal));
+            abi.encodeCall(IScrollCrossDomainOwnable.transferOwnership, (newOwner, isLocal));
 
-        (bool ok,) = optimismWorldIDAddress.call(call);
+        (bool ok,) = scrollWorldIDAddress.call(call);
 
         require(ok, "call failed");
 

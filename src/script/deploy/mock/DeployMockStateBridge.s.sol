@@ -43,7 +43,6 @@ contract DeployMockStateBridge is Script {
         mockWorldID = new MockWorldIDIdentityManager(initialRoot);
         mockStateBridge = new MockStateBridge(address(mockWorldID), address(mockBridgedWorldID));
 
-
         mockStateBridge.propagateRoot();
 
         vm.stopBroadcast();
