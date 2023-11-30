@@ -41,13 +41,11 @@ contract MockStateBridgeTest is PRBTest, StdCheats {
 
         initialRoot = uint256(0x111);
 
-
         vm.prank(owner);
         mockBridgedWorldID = new MockBridgedWorldID(treeDepth);
 
         vm.prank(owner);
         mockWorldID = new MockWorldIDIdentityManager(initialRoot);
-
 
         vm.prank(owner);
         mockStateBridge = new MockStateBridge(address(mockWorldID), address(mockBridgedWorldID));
@@ -59,10 +57,9 @@ contract MockStateBridgeTest is PRBTest, StdCheats {
     function testPropagateRootSucceeds() public {
         vm.expectEmit(true, true, true, true);
         emit RootAdded(initialRoot, uint128(block.timestamp));
-        
+
         mockStateBridge.propagateRoot();
 
         assert(mockWorldID.latestRoot() == mockBridgedWorldID.latestRoot());
     }
-
 }
