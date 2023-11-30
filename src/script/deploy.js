@@ -193,6 +193,15 @@ async function getPolygonscanApiKey(config) {
   }
 }
 
+async function getBlockscoutApiUrl(config) {
+  if (!config.blockscoutApiUrl) {
+    config.blockscoutApiUrl = process.env.BLOCKSCOUT_API_URL;
+  }
+  if (!config.blockscoutApiUrl) {
+    config.blockscoutApiUrl = (await ask(`Enter Blockscout API URL: `)) + "/api";
+  }
+}
+
 async function getTreeDepth(config) {
   if (!config.treeDepth) {
     config.treeDepth = await ask("Enter WorldID tree depth: ");
@@ -430,128 +439,8 @@ async function saveConfiguration(config) {
 }
 
 ///////////////////////////////////////////////////////////////////
-///                          DEPLOYMENT                         ///
+///                         DEPLOYMENTS                         ///
 ///////////////////////////////////////////////////////////////////
-
-async function deployOptimismOpStateBridgeGoerli(config) {
-  const spinner = ora("Deploying Optimism State Bridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/op-stack/optimism/DeployOptimismStateBridgeGoerli.s.sol:DeployOpStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployOptimismStateBridgeGoerli.s.sol ran successfully!");
-}
-
-async function deployOptimismOpStateBridgeMainnet(config) {
-  const spinner = ora("Deploying Optimism State Bridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/op-stack/optimism/DeployOptimismStateBridgeMainnet.s.sol:DeployOpStateBridgeMainnet --fork-url ${config.ethereumRpcUrl} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployOptimismStateBridgeMainnet.s.sol ran successfully!");
-}
-
-async function deployBaseOpStateBridgeGoerli(config) {
-  const spinner = ora("Deploying Base State Bridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/op-stack/base/DeployBaseStateBridgeGoerli.s.sol:DeployBaseStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployBaseStateBridgeGoerli.s.sol ran successfully!");
-}
-
-async function deployBaseOpStateBridgeMainnet(config) {
-  const spinner = ora("Deploying Base State Bridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/op-stack/base/DeployBaseStateBridgeMainnet.s.sol:DeployBaseStateBridgeMainnet --fork-url ${config.ethereumRpcUrl} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployBaseStateBridgeMainnet.s.sol ran successfully!");
-}
-
-async function deployPolygonStateBridgeGoerli(config) {
-  const spinner = ora("Deploying Polygon State Bridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/polygon/DeployPolygonStateBridgeGoerli.s.sol:DeployPolygonStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployPolygonStateBridgeGoerli.s.sol ran successfully!");
-}
-
-async function deployPolygonStateBridgeMainnet(config) {
-  const spinner = ora("Deploying Polygon State Bridge...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/polygon/DeployPolygonStateBridgeMainnet.s.sol:DeployPolygonStateBridgeMainnet --fork-url ${config.ethereumRpcUrl} \
-      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployPolygonStateBridgeMainnet.s.sol ran successfully!");
-}
-
-async function deployPolygonWorldIDMumbai(config) {
-  const spinner = ora("Deploying PolygonWorldID...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/polygon/DeployPolygonWorldIDMumbai.s.sol:DeployPolygonWorldIDMumbai --fork-url ${config.polygonRpcUrl} \
-      --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployPolygonWorldIDMumbai.s.sol ran successfully!");
-}
-
-async function deployPolygonWorldIDMainnet(config) {
-  const spinner = ora("Deploying PolygonWorldID...").start();
-
-  try {
-    const data =
-      execSync(`forge script src/script/deploy/polygon/DeployPolygonWorldIDMainnet.s.sol:DeployPolygonWorldID --fork-url ${config.polygonRpcUrl} \
-      --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
-    console.log(data.toString());
-  } catch (err) {
-    console.error(err);
-  }
-
-  spinner.succeed("DeployPolygonWorldIDMainnet.s.sol ran successfully!");
-}
 
 async function deployOptimismWorldID(config) {
   const spinner = ora("Deploying OpWorldID on Optimism...").start();
@@ -576,6 +465,169 @@ async function deployBaseWorldID(config) {
     const data = execSync(
       `forge script src/script/deploy/op-stack/DeployOpWorldID.s.sol:DeployOpWorldID --fork-url ${config.baseRpcUrl} \
       --etherscan-api-key ${config.baseEtherscanApiKey} --broadcast --verify -vvvv`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployOpWorldID.s.sol ran successfully!");
+}
+
+///////////////////////////////////////////////////////////////////
+///                      MAINNET DEPLOYMENT                     ///
+///////////////////////////////////////////////////////////////////
+
+async function deployOptimismOpStateBridgeMainnet(config) {
+  const spinner = ora("Deploying Optimism State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/op-stack/optimism/DeployOptimismStateBridgeMainnet.s.sol:DeployOpStateBridgeMainnet --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployOptimismStateBridgeMainnet.s.sol ran successfully!");
+}
+
+async function deployBaseOpStateBridgeMainnet(config) {
+  const spinner = ora("Deploying Base State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/op-stack/base/DeployBaseStateBridgeMainnet.s.sol:DeployBaseStateBridgeMainnet --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployBaseStateBridgeMainnet.s.sol ran successfully!");
+}
+
+async function deployPolygonStateBridgeMainnet(config) {
+  const spinner = ora("Deploying Polygon State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/polygon/DeployPolygonStateBridgeMainnet.s.sol:DeployPolygonStateBridgeMainnet --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployPolygonStateBridgeMainnet.s.sol ran successfully!");
+}
+
+async function deployPolygonWorldIDMainnet(config) {
+  const spinner = ora("Deploying PolygonWorldID...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/polygon/DeployPolygonWorldIDMainnet.s.sol:DeployPolygonWorldID --fork-url ${config.polygonRpcUrl} \
+      --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployPolygonWorldIDMainnet.s.sol ran successfully!");
+}
+
+///////////////////////////////////////////////////////////////////
+///                      TESTNET DEPLOYMENT                     ///
+///////////////////////////////////////////////////////////////////
+
+async function deployOptimismOpStateBridgeGoerli(config) {
+  const spinner = ora("Deploying Optimism State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/op-stack/optimism/DeployOptimismStateBridgeGoerli.s.sol:DeployOpStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployOptimismStateBridgeGoerli.s.sol ran successfully!");
+}
+
+async function deployBaseOpStateBridgeGoerli(config) {
+  const spinner = ora("Deploying Base State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/op-stack/base/DeployBaseStateBridgeGoerli.s.sol:DeployBaseStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployBaseStateBridgeGoerli.s.sol ran successfully!");
+}
+
+async function deployPolygonStateBridgeGoerli(config) {
+  const spinner = ora("Deploying Polygon State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/polygon/DeployPolygonStateBridgeGoerli.s.sol:DeployPolygonStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
+      --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployPolygonStateBridgeGoerli.s.sol ran successfully!");
+}
+
+async function deployPolygonWorldIDMumbai(config) {
+  const spinner = ora("Deploying PolygonWorldID...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/polygon/DeployPolygonWorldIDMumbai.s.sol:DeployPolygonWorldIDMumbai --fork-url ${config.polygonRpcUrl} \
+      --etherscan-api-key ${config.polygonscanApiKey} --legacy --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployPolygonWorldIDMumbai.s.sol ran successfully!");
+}
+
+///////////////////////////////////////////////////////////////////
+///                      DEVNET DEPLOYMENT                      ///
+///////////////////////////////////////////////////////////////////
+
+async function deployOptimismOpStateBridgeDevnet(config) {
+  const spinner = ora("Deploying Optimism State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/op-stack/optimism/DeployOptimismStateBridgeDevnet.s.sol:DeployOpStateBridgeDevnet --fork-url ${config.ethereumRpcUrl} \
+      -e ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployOptimismStateBridgeGoerli.s.sol ran successfully!");
+}
+
+async function deployOpWorldIDDevnet(config) {
+  const spinner = ora("Deploying OpWorldID on Optimism...").start();
+
+  try {
+    const data = execSync(
+      `forge script src/script/deploy/op-stack/DeployOpWorldID.s.sol:DeployOpWorldID --fork-url ${config.optimismRpcUrl} \
+      --verifier blockscout --verifier-url ${config.blockscoutApiUrl} --broadcast --verify -vvvv`,
     );
     console.log(data.toString());
   } catch (err) {
@@ -849,6 +901,26 @@ async function deploymentTestnet(config) {
   await localTransferOwnershipOfBaseWorldIDToStateBridge(config);
 }
 
+async function devnetDeployment(config) {
+  dotenv.config();
+
+  await getPrivateKey(config);
+  await getEthereumRpcUrl(config);
+  await getOptimismRpcUrl(config);
+  await getEthereumEtherscanApiKey(config);
+  await getBlockscoutApiUrl(config);
+  await getTreeDepth(config);
+  await saveConfiguration(config);
+  await deployOpWorldIDDevnet(config);
+  await getOptimismWorldIDAddress(config);
+  await getWorldIDIdentityManagerAddress(config);
+  await saveConfiguration(config);
+  await deployOptimismOpStateBridgeDevnet(config);
+  await getOptimismStateBridgeAddress(config);
+  await saveConfiguration(config);
+  await localTransferOwnershipOfOpWorldIDToStateBridge(config);
+}
+
 async function mockDeployment(config) {
   dotenv.config();
 
@@ -957,6 +1029,25 @@ async function main() {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
       await deploymentTestnet(config);
+      await saveConfiguration(config);
+    });
+
+  program
+    .name("deploy-devnet")
+    .description(
+      "A CLI interface for deploying the WorldID state bridge on the Sepolia testnet and bridge to Conduit OPStack devnet.",
+    )
+    .option("--no-config", "Do not use any existing configuration.");
+
+  program
+    .command("deploy-devnet")
+    .description(
+      "Interactively deploys the WorldID state bridge on the Sepolia testnet and bridge to Conduit OPStack devnet.",
+    )
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await devnetDeployment(config);
       await saveConfiguration(config);
     });
 

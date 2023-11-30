@@ -27,6 +27,8 @@ deploy: install build; node --no-warnings src/script/deploy.js deploy
 
 deploy-testnet: install build; node --no-warnings src/script/deploy.js deploy-testnet
 
+deploy-devnet: install build; node --no-warnings src/script/deploy.js deploy-devnet
+
 mock: install build; node --no-warnings src/script/deploy.js mock
 
 local-mock: install build; node --no-warnings src/script/deploy.js local-mock
