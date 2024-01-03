@@ -37,7 +37,7 @@ contract ScrollStateBridge is Ownable2Step {
     uint32 internal _gasLimitTransferOwnership;
 
     /// @notice The default gas limit amount to buy on Scroll
-    uint32 public constant DEFAULT_OP_GAS_LIMIT = 1000000;
+    uint32 public constant DEFAULT_SCROLL_GAS_LIMIT = 1000000;
 
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
@@ -110,9 +110,9 @@ contract ScrollStateBridge is Ownable2Step {
         scrollWorldIDAddress = _scrollWorldIDAddress;
         worldIDAddress = _worldIDIdentityManager;
         scrollMessengerAddress = _scrollMessengerAddress;
-        _gasLimitPropagateRoot = DEFAULT_OP_GAS_LIMIT;
-        _gasLimitSetRootHistoryExpiry = DEFAULT_OP_GAS_LIMIT;
-        _gasLimitTransferOwnership = DEFAULT_OP_GAS_LIMIT;
+        _gasLimitPropagateRoot = DEFAULT_SCROLL_GAS_LIMIT;
+        _gasLimitSetRootHistoryExpiry = DEFAULT_SCROLL_GAS_LIMIT;
+        _gasLimitTransferOwnership = DEFAULT_SCROLL_GAS_LIMIT;
     }
 
     ///////////////////////////////////////////////////////////////////
