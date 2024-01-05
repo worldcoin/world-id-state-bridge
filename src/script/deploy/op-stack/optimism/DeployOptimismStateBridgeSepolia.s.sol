@@ -29,7 +29,7 @@ contract DeployOpStateBridgeGoerli is Script {
         ///////////////////////////////////////////////////////////////////
         ///                           OPTIMISM                          ///
         ///////////////////////////////////////////////////////////////////
-        opCrossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+        opCrossDomainMessengerAddress = address(0x58Cc85b8D04EA49cC6DBd3CbFFd00B4B8D6cb3ef);
 
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///

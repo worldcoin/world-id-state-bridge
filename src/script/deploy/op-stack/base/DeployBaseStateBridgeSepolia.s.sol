@@ -29,7 +29,7 @@ contract DeployBaseStateBridgeGoerli is Script {
         ///                             BASE                            ///
         ///////////////////////////////////////////////////////////////////
         // Taken from https://docs.base.org/base-contracts
-        baseCrossDomainMessengerAddress = address(0x8e5693140eA606bcEB98761d9beB1BC87383706D);
+        baseCrossDomainMessengerAddress = address(0xC34855F4De64F1840e5686e64278da901e261f20);
 
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
