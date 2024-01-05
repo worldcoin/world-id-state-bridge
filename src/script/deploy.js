@@ -542,34 +542,34 @@ async function deployPolygonWorldIDMainnet(config) {
 ///                      TESTNET DEPLOYMENT                     ///
 ///////////////////////////////////////////////////////////////////
 
-async function deployOptimismOpStateBridgeGoerli(config) {
+async function deployOptimismOpStateBridgeSepolia(config) {
   const spinner = ora("Deploying Optimism State Bridge...").start();
 
   try {
     const data =
-      execSync(`forge script src/script/deploy/op-stack/optimism/DeployOptimismStateBridgeGoerli.s.sol:DeployOpStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
+      execSync(`forge script src/script/deploy/op-stack/optimism/DeployOptimismStateBridgeSepolia.s.sol:DeployOpStateBridgeSepolia --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
     console.error(err);
   }
 
-  spinner.succeed("DeployOptimismStateBridgeGoerli.s.sol ran successfully!");
+  spinner.succeed("DeployOptimismStateBridgeSepolia.s.sol ran successfully!");
 }
 
-async function deployBaseOpStateBridgeGoerli(config) {
+async function deployBaseOpStateBridgeSepolia(config) {
   const spinner = ora("Deploying Base State Bridge...").start();
 
   try {
     const data =
-      execSync(`forge script src/script/deploy/op-stack/base/DeployBaseStateBridgeGoerli.s.sol:DeployBaseStateBridgeGoerli --fork-url ${config.ethereumRpcUrl} \
+      execSync(`forge script src/script/deploy/op-stack/base/DeployBaseStateBridgeSepolia.s.sol:DeployBaseStateBridgeSepolia --fork-url ${config.ethereumRpcUrl} \
       --etherscan-api-key ${config.ethereumEtherscanApiKey} --broadcast --verify -vvvv`);
     console.log(data.toString());
   } catch (err) {
     console.error(err);
   }
 
-  spinner.succeed("DeployBaseStateBridgeGoerli.s.sol ran successfully!");
+  spinner.succeed("DeployBaseStateBridgeSepolia.s.sol ran successfully!");
 }
 
 async function deployPolygonStateBridgeGoerli(config) {
@@ -885,8 +885,8 @@ async function deploymentTestnet(config) {
   await getOptimismWorldIDAddress(config);
   await getBaseWorldIDAddress(config);
   await saveConfiguration(config);
-  await deployOptimismOpStateBridgeGoerli(config);
-  await deployBaseOpStateBridgeGoerli(config);
+  await deployOptimismOpStateBridgeSepolia(config);
+  await deployBaseOpStateBridgeSepolia(config);
   await getOptimismStateBridgeAddress(config);
   await getBaseStateBridgeAddress(config);
   await saveConfiguration(config);

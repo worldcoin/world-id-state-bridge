@@ -7,8 +7,8 @@ import {OpStateBridge} from "src/OpStateBridge.sol";
 /// @title Base State Bridge deployment script
 /// @notice forge script to deploy OpStateBridge.sol on Base
 /// @author Worldcoin
-/// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract DeployBaseStateBridgeGoerli is Script {
+/// @dev Can be executed by running `make deploy-testnet`.
+contract DeployBaseStateBridgeSepolia is Script {
     OpStateBridge public bridge;
 
     address public baseWorldIDAddress;
