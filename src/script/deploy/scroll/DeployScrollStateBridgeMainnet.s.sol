@@ -31,10 +31,8 @@ contract DeployScrollStateBridgeGoerli is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new ScrollStateBridge (
-            worldIDIdentityManagerAddress,
-            scrollWorldIDAddress,
-            scrollL1MessengerAddress
+        bridge = new ScrollStateBridge(
+            worldIDIdentityManagerAddress, scrollWorldIDAddress, scrollL1MessengerAddress
         );
 
         vm.stopBroadcast();

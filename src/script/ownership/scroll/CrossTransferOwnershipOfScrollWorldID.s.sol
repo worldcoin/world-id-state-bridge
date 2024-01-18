@@ -4,7 +4,8 @@ pragma solidity ^0.8.15;
 import {Script} from "forge-std/Script.sol";
 import {ScrollWorldID} from "src/ScrollWorldID.sol";
 import {IScrollCrossDomainOwnable} from "src/interfaces/IScrollCrossDomainOwnable.sol";
-import {IScrollStateBridgeTransferOwnership} from "src/interfaces/IScrollStateBridgeTransferOwnership.sol";
+import {IScrollStateBridgeTransferOwnership} from
+    "src/interfaces/IScrollStateBridgeTransferOwnership.sol";
 
 /// @title Ownership Transfer of World ID on Scroll script
 /// @author Worldcoin
@@ -12,7 +13,7 @@ contract CrossTransferOwnershipOfScrollWorldID is Script {
     /// @notice in ScrollCrossDomainOwnable.sol, isLocal is used to set ownership to a new address with a toggle
     /// for local or cross domain (using the ScrollMessenger to pass messages)
     bool public isLocal;
-    
+
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
@@ -30,8 +31,9 @@ contract CrossTransferOwnershipOfScrollWorldID is Script {
 
         vm.startBroadcast(privateKey);
 
-        bytes memory call =
-            abi.encodeCall(IScrollStateBridgeTransferOwnership.transferOwnershipScroll, (newOwner, isLocal));
+        bytes memory call = abi.encodeCall(
+            IScrollStateBridgeTransferOwnership.transferOwnershipScroll, (newOwner, isLocal)
+        );
 
         (bool ok,) = scrollStateBridgeAddress.call(call);
 
