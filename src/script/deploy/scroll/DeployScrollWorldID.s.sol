@@ -7,7 +7,7 @@ import {ScrollWorldID} from "src/ScrollWorldID.sol";
 /// @title Scroll World ID deployment script
 /// @notice forge script to deploy ScrollWorldID.sol to Scroll
 /// @author Worldcoin
-contract DeployOpWorldID is Script {
+contract DeployScrollWorldID is Script {
     ScrollWorldID public scrollWorldID;
 
     ///////////////////////////////////////////////////////////////////
