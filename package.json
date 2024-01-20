@@ -33,7 +33,7 @@
     "@eth-optimism/contracts": "^0.6.0",
     "@eth-optimism/contracts-bedrock": "^0.16.0",
     "@eth-optimism/sdk": "^1.10.4",
-    "alchemy-sdk": "^2.9.2",
+    "alchemy-sdk": "^2.10.1",
     "commander": "^10.0.1",
     "dotenv": "^16.3.1",
     "ethers": "^6.2.3",
