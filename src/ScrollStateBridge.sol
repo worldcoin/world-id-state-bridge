@@ -121,14 +121,14 @@ contract ScrollStateBridge is Ownable2Step {
 
     /// @notice Sends the latest WorldID Identity Manager root to Scroll
     /// @dev Calls this method on the L1 Proxy contract to relay roots to Scroll
-    function propagateRoot() external {
+    function propagateRoot() external payable {
         uint256 latestRoot = IWorldIDIdentityManager(worldIDAddress).latestRoot();
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the Scroll messenger
         bytes memory message = abi.encodeCall(IScrollWorldID.receiveRoot, (latestRoot));
 
-        IScrollMessenger(scrollMessengerAddress).sendMessage(
+        IScrollMessenger(scrollMessengerAddress).sendMessage{value:msg.value}(
             // World ID contract address on Scroll
             scrollWorldIDAddress,
             //value
