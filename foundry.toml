@@ -10,6 +10,9 @@ optimizer_runs = 10_000
 fuzz = {runs = 256}
 fs_permissions = [{ access = "read", path = "./"}]
 
+
+offline = true
+
 src="src"
 libs = ["lib"]
 out = "out"
