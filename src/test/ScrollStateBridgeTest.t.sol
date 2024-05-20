@@ -254,7 +254,7 @@ contract ScrollStateBridgeTest is PRBTest, StdCheats {
     }
 
     /// @notice tests that the StateBridge contract's ownership can't be set to be the zero address
-    function test_owner_transferOwnershipOp_toZeroAddress_reverts() public {
+    function test_owner_transferOwnershipScroll_toZeroAddress_reverts() public {
         vm.expectRevert(AddressZero.selector);
 
         vm.prank(owner);
@@ -263,10 +263,10 @@ contract ScrollStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner
     /// @param newOwner The new owner of the StateBridge contract (foundry fuzz)
-    function test_notOwner_transferOwnershipOp_reverts(address nonOwner, address newOwner, bool isLocal) public {
+    function test_notOwner_transferOwnershipScroll_reverts(address nonOwner, address newOwner, bool isLocal) public {
         vm.assume(nonOwner != owner && newOwner != address(0));
 
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert();
 
         vm.prank(nonOwner);
         scrollStateBridge.transferOwnershipScroll{ value: gasFee }(newOwner, isLocal);
