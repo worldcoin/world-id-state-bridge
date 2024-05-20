@@ -16,7 +16,7 @@
 	branch = v4.8.1
 [submodule "lib/contracts"]
 	path = lib/contracts
-	url = https://github.com/fx-portal/contracts
+	url = https://github.com/scroll-tech/scroll/contracts
 	branch = v1.0.5
 [submodule "lib/solmate"]
 	path = lib/solmate
