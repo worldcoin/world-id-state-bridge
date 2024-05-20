@@ -121,14 +121,14 @@ contract ScrollStateBridge is Ownable2Step {
 
     /// @notice Sends the latest WorldID Identity Manager root to Scroll
     /// @dev Calls this method on the L1 Proxy contract to relay roots to Scroll
-    function propagateRoot() external {
+    function propagateRoot() external payable {
         uint256 latestRoot = IWorldIDIdentityManager(worldIDAddress).latestRoot();
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the Scroll messenger
         bytes memory message = abi.encodeCall(IScrollWorldID.receiveRoot, (latestRoot));
 
-        IScrollMessenger(scrollMessengerAddress).sendMessage(
+        IScrollMessenger(scrollMessengerAddress).sendMessage{value:msg.value}(
             // World ID contract address on Scroll
             scrollWorldIDAddress,
             //value
@@ -148,7 +148,7 @@ contract ScrollStateBridge is Ownable2Step {
     /// @param _owner new owner (EOA or contract)
     /// @param _isLocal true if new owner is on Scroll, false if it is a cross-domain owner
     /// @custom:revert if _owner is set to the zero address
-    function transferOwnershipScroll(address _owner, bool _isLocal) external onlyOwner {
+    function transferOwnershipScroll(address _owner, bool _isLocal) external payable onlyOwner {
         if (_owner == address(0)) {
             revert AddressZero();
         }
@@ -158,7 +158,7 @@ contract ScrollStateBridge is Ownable2Step {
         bytes memory message =
             abi.encodeCall(IScrollCrossDomainOwnable.transferOwnership, (_owner, _isLocal));
 
-        IScrollMessenger(scrollMessengerAddress).sendMessage(
+        IScrollMessenger(scrollMessengerAddress).sendMessage{value:msg.value}(
             // World ID contract address on Scroll
             scrollWorldIDAddress,
             //value
@@ -175,13 +175,13 @@ contract ScrollStateBridge is Ownable2Step {
 
     /// @notice Adds functionality to the StateBridge to set the root history expiry on ScrollWorldID
     /// @param _rootHistoryExpiry new root history expiry
-    function setRootHistoryExpiry(uint256 _rootHistoryExpiry) external onlyOwner {
+    function setRootHistoryExpiry(uint256 _rootHistoryExpiry) external payable onlyOwner {
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the Scroll bridge.
         bytes memory message =
             abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
 
-        IScrollMessenger(scrollMessengerAddress).sendMessage(
+        IScrollMessenger(scrollMessengerAddress).sendMessage{value:msg.value}(
             // World ID contract address on Scroll
             scrollWorldIDAddress,
             //value

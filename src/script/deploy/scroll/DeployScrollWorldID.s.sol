@@ -17,11 +17,13 @@ contract DeployScrollWorldID is Script {
     uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
     uint8 public treeDepth = uint8(30);
+    // L2ScrollMessenger address on Sepolia 
+     address scrollMessengerAddress = address(0xBa50f5340FB9F3Bd074bD638c9BE13eCB36E603d);
 
     function run() external {
         vm.startBroadcast(privateKey);
 
-        scrollWorldID = new ScrollWorldID(treeDepth);
+        scrollWorldID = new ScrollWorldID(treeDepth,scrollMessengerAddress);
 
         vm.stopBroadcast();
     }
