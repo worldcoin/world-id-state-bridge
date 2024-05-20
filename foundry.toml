@@ -4,14 +4,15 @@
 
 [profile.default]
 
-solc = "0.8.16"
+
+auto_detect_solc = true
 optimizer = true
 optimizer_runs = 10_000
 fuzz = {runs = 256}
 fs_permissions = [{ access = "read", path = "./"}]
 
 
-offline = true
+
 
 src="src"
 libs = ["lib"]
@@ -20,7 +21,6 @@ test = "test"
 
 gas_reports = ["*"]
 
-auto_detect_solc = false
 bytecode_hash = "none"
 
 remappings = [
@@ -30,6 +30,7 @@ remappings = [
   "solmate/=lib/solmate/",
   "@rari-capital/solmate/=lib/solmate/",
   "@scroll-tech/contracts/=node_modules/@scroll-tech/contracts/",
+  "scroll-tech/contracts/=lib/scroll/contracts/src/",
   "@eth-optimism/contracts/=node_modules/@eth-optimism/contracts/",
   "@eth-optimism/contracts-bedrock/=node_modules/@eth-optimism/contracts-bedrock/",
   "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
-import {IL2ScrollMessenger} from "@scroll-tech/contracts/L2/IL2ScrollMessenger.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import { IL2ScrollMessenger } from "@scroll-tech/contracts/L2/IL2ScrollMessenger.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @title SrollCrossDomainOwnable
 /// @author Worldcoin, OPLabsPBC
@@ -14,21 +14,31 @@ abstract contract ScrollCrossDomainOwnable is Ownable {
     /// @notice The L2ScrollMessenger is used to check whether a call is coming from L1.
     /// @dev Sepolia address on Scroll for the L2ScrollMessenger:
     /// https://docs.scroll.io/en/developers/scroll-contracts/
-    address scrollMessengerAddress = address(0xBa50f5340FB9F3Bd074bD638c9BE13eCB36E603d);
-    IL2ScrollMessenger public messenger = IL2ScrollMessenger(scrollMessengerAddress);
+    address scrollMessengerAddress ;
+
+    IL2ScrollMessenger public messenger ;
 
     /// @notice If true, the contract uses the cross domain _checkOwner function override.
     ///         If false it uses the standard Ownable _checkOwner function.
     bool public isLocal = true;
+    /// @notice Emitted when an attempt is made to set an address to zero
+    error AddressZero();
 
     /// @notice Emits when ownership of the contract is transferred. Includes the
     ///         isLocal field in addition to the standard `Ownable` OwnershipTransferred event.
     /// @param previousOwner The previous owner of the contract.
     /// @param newOwner      The new owner of the contract.
     /// @param isLocal       Configures the `isLocal` contract variable.
-    event OwnershipTransferred(
-        address indexed previousOwner, address indexed newOwner, bool isLocal
-    );
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, bool isLocal);
+
+    constructor(address _scrollMessengerAddress) {
+        if (_scrollMessengerAddress == address(0)) {
+            revert AddressZero();
+        }
+
+        scrollMessengerAddress = _scrollMessengerAddress;
+        messenger = IL2ScrollMessenger(_scrollMessengerAddress);
+    }
 
     /// @notice Allows for ownership to be transferred with specifying the locality.
     /// @param _owner   The new owner of the contract.
@@ -50,15 +60,9 @@ abstract contract ScrollCrossDomainOwnable is Ownable {
         if (isLocal) {
             require(owner() == msg.sender, "ScrollCrossDomainOwnable: caller is not the owner");
         } else {
-            require(
-                msg.sender == address(messenger),
-                "ScrollCrossDomainOwnable: caller is not the messenger"
-            );
+            require(msg.sender == address(messenger), "ScrollCrossDomainOwnable: caller is not the messenger");
 
-            require(
-                owner() == messenger.xDomainMessageSender(),
-                "ScrollCrossDomainOwnable: caller is not the owner"
-            );
+            require(owner() == messenger.xDomainMessageSender(), "ScrollCrossDomainOwnable: caller is not the owner");
         }
     }
 }

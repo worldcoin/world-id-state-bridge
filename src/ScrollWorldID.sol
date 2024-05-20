@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
+import { WorldIDBridge } from "./abstract/WorldIDBridge.sol";
 
-import {IScrollWorldID} from "./interfaces/IScrollWorldID.sol";
-import {ScrollCrossDomainOwnable} from "src/ScrollCrossDomainOwnable.sol";
+import { IScrollWorldID } from "./interfaces/IScrollWorldID.sol";
+import { ScrollCrossDomainOwnable } from "src/ScrollCrossDomainOwnable.sol";
 
 /// @title Scroll World ID Bridge
 /// @author Worldcoin
@@ -20,7 +20,10 @@ contract ScrollWorldID is WorldIDBridge, ScrollCrossDomainOwnable, IScrollWorldI
     /// @notice Initializes the contract the depth of the associated merkle tree.
     ///
     /// @param _treeDepth The depth of the WorldID Semaphore merkle tree.
-    constructor(uint8 _treeDepth) WorldIDBridge(_treeDepth) {}
+    constructor(
+        uint8 _treeDepth,
+        address _scrollMessengerAddress
+    ) WorldIDBridge(_treeDepth) ScrollCrossDomainOwnable(_scrollMessengerAddress) {}
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                               ROOT MIRRORING                            ///
