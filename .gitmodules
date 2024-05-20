@@ -21,3 +21,6 @@
 [submodule "lib/solmate"]
 	path = lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "lib/scroll"]
+	path = lib/scroll
+	url = https://github.com/scroll-tech/scroll
