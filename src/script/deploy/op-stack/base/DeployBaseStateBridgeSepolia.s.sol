@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-/// @dev Demo deployments
 import {Script} from "forge-std/Script.sol";
 import {OpStateBridge} from "src/OpStateBridge.sol";
 
-/// @title Optimism State Bridge deployment script
-/// @notice forge script to deploy StateBridge.sol on Optimism
+/// @title Base State Bridge deployment script
+/// @notice forge script to deploy OpStateBridge.sol on Base
 /// @author Worldcoin
-/// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract DeployOpStateBridgeGoerli is Script {
+/// @dev Can be executed by running `make deploy-testnet`.
+contract DeployBaseStateBridgeSepolia is Script {
     OpStateBridge public bridge;
 
-    address public opWorldIDAddress;
+    address public baseWorldIDAddress;
     address public worldIDIdentityManagerAddress;
-    address public opCrossDomainMessengerAddress;
+    address public baseCrossDomainMessengerAddress;
 
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
@@ -27,25 +26,26 @@ contract DeployOpStateBridgeGoerli is Script {
 
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
-        ///                           OPTIMISM                          ///
+        ///                             BASE                            ///
         ///////////////////////////////////////////////////////////////////
-        opCrossDomainMessengerAddress = address(0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
+        // Taken from https://docs.base.org/base-contracts
+        baseCrossDomainMessengerAddress = address(0xC34855F4De64F1840e5686e64278da901e261f20);
 
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
         ///////////////////////////////////////////////////////////////////
         worldIDIdentityManagerAddress =
             abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-        opWorldIDAddress = abi.decode(vm.parseJson(json, ".optimismWorldIDAddress"), (address));
+        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
     }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new OpStateBridge (
+        bridge = new OpStateBridge(
             worldIDIdentityManagerAddress,
-            opWorldIDAddress,
-            opCrossDomainMessengerAddress
+            baseWorldIDAddress,
+            baseCrossDomainMessengerAddress
         );
 
         vm.stopBroadcast();
