@@ -4,7 +4,8 @@
 
 [profile.default]
 
-solc = "0.8.15"
+auto_detect_solc = true
+evm_version = "shanghai"
 optimizer = true
 optimizer_runs = 10_000
 fuzz = {runs = 256}
@@ -17,7 +18,6 @@ test = "test"
 
 gas_reports = ["*"]
 
-auto_detect_solc = false
 bytecode_hash = "none"
 
 remappings = [
@@ -32,6 +32,7 @@ remappings = [
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
   "fx-portal/contracts/=lib/contracts/contracts/",
+  "@scroll-tech/contracts/=node_modules/@scroll-tech/contracts/"
 ]
 
 # Make formatting consistent.

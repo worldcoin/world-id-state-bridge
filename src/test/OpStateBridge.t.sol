@@ -112,11 +112,8 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
 
         opWorldIDAddress = address(0x1);
 
-        opStateBridge = new OpStateBridge (
-            mockWorldIDAddress,
-            opWorldIDAddress,
-            opCrossDomainMessengerAddress
-        );
+        opStateBridge =
+            new OpStateBridge(mockWorldIDAddress, opWorldIDAddress, opCrossDomainMessengerAddress);
 
         owner = opStateBridge.owner();
     }
@@ -236,25 +233,15 @@ contract OpStateBridgeTest is PRBTest, StdCheats {
     /// @notice Tests that the StateBridge constructor params can't be set to the zero address
     function test_cannotInitializeConstructorWithZeroAddresses_reverts() public {
         vm.expectRevert(AddressZero.selector);
-        opStateBridge = new OpStateBridge(
-            address(0),
-            opWorldIDAddress,
-            opCrossDomainMessengerAddress
-        );
+        opStateBridge =
+            new OpStateBridge(address(0), opWorldIDAddress, opCrossDomainMessengerAddress);
 
         vm.expectRevert(AddressZero.selector);
-        opStateBridge = new OpStateBridge(
-            mockWorldIDAddress,
-            address(0),
-            opCrossDomainMessengerAddress
-        );
+        opStateBridge =
+            new OpStateBridge(mockWorldIDAddress, address(0), opCrossDomainMessengerAddress);
 
         vm.expectRevert(AddressZero.selector);
-        opStateBridge = new OpStateBridge(
-            mockWorldIDAddress,
-            opWorldIDAddress,
-            address(0)
-        );
+        opStateBridge = new OpStateBridge(mockWorldIDAddress, opWorldIDAddress, address(0));
     }
 
     /// @notice tests that the StateBridge contract's ownership can't be changed by a non-owner

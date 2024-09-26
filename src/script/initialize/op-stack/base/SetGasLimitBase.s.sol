@@ -16,25 +16,19 @@ contract SetOpGasLimitBase is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
-
-    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
     ///////////////////////////////////////////////////////////////////
     ///                        OP GAS LIMITS                        ///
     ///////////////////////////////////////////////////////////////////
-    uint32 public gasLimitSendRootBase =
-        abi.decode(vm.parseJson(json, ".gasLimitSendRootBase"), (uint32));
+    uint32 public gasLimitSendRootBase = uint32(vm.envUint("GAS_LIMIT_SEND_ROOT_BASE"));
     uint32 public gasLimitSetRootHistoryExpiryBase =
-        abi.decode(vm.parseJson(json, ".gasLimitSetRootHistoryExpiryBase"), (uint32));
+        uint32(vm.envUint("GAS_LIMIT_SET_ROOT_HISTORY_EXPIRY_BASE"));
     uint32 public gasLimitTransferOwnershipBase =
-        abi.decode(vm.parseJson(json, ".gasLimitTransferOwnershipBase"), (uint32));
+        uint32(vm.envUint("GAS_LIMIT_TRANSFER_OWNERSHIP_BASE"));
 
     function setUp() public {
-        baseStateBridgeAddress =
-            abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
+        baseStateBridgeAddress = vm.envAddress("BASE_STATE_BRIDGE_ADDRESS");
 
         baseStateBridge = OpStateBridge(baseStateBridgeAddress);
     }

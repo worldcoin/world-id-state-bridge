@@ -4,7 +4,7 @@
 
 Propagates new World ID merkle tree roots from the `WorldIDIdentityManager` contract
 ([`world-id-contracts`](https://github.com/worldcoin/world-id-contracts) repo) on Ethereum mainnet to Optimism, Base and
-Polygon PoS (there is also a staging environment on Goerli testnets, more info in [deployments.md](./deployments.md)).
+Polygon PoS (there is also a staging environment on Sepolia testnets, more info in [deployments.md](./deployments.md)).
 
 Currently there are 3 different state bridges which support Optimism, Base and Polygon PoS respectively. World ID merkle
 tree roots are queried from the `WorldIDIdentityManager` contracts using the `latestRoot()` public method and propagated

@@ -19,15 +19,10 @@ contract InitializePolygonWorldID is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
-
     function setUp() public {
-        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-
-        stateBridgeAddress = abi.decode(vm.parseJson(json, ".polygonStateBridgeAddress"), (address));
-        polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
+        privateKey = vm.envUint("PRIVATE_KEY");
+        stateBridgeAddress = vm.envAddress("POLYGON_STATE_BRIDGE_ADDRESS");
+        polygonWorldIDAddress = vm.envAddress("POLYGON_WORLD_ID_ADDRESS");
     }
 
     // Polygon PoS Mainnet Child Tunnel

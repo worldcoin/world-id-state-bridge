@@ -19,18 +19,14 @@ contract DeployPolygonStateBridgeMainnet is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
-
-    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
         ///                           POLYGON                           ///
         ///////////////////////////////////////////////////////////////////
 
-        // https://static.matic.network/network/mainnet/v1/index.json
+        // https://github.com/0xPolygon/static/blob/master/network/mainnet/v1/index.json
         // RootChainManagerProxy
         checkpointManagerAddress = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);
         // FxRoot
@@ -39,18 +35,15 @@ contract DeployPolygonStateBridgeMainnet is Script {
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
         ///////////////////////////////////////////////////////////////////
-        worldIDIdentityManagerAddress =
-            abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-        polygonWorldIDAddress = abi.decode(vm.parseJson(json, ".polygonWorldIDAddress"), (address));
+        worldIDIdentityManagerAddress = vm.envAddress("WORLD_IDENTITY_MANAGER_ADDRESS");
+        polygonWorldIDAddress = vm.envAddress("POLYGON_WORLD_ID_ADDRESS");
     }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
         bridge = new PolygonStateBridge(
-            checkpointManagerAddress,
-            fxRootAddress,
-            worldIDIdentityManagerAddress
+            checkpointManagerAddress, fxRootAddress, worldIDIdentityManagerAddress
         );
 
         bridge.setFxChildTunnel(polygonWorldIDAddress);

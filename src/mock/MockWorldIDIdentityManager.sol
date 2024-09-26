@@ -68,8 +68,8 @@ contract MockWorldIDIdentityManager is IWorldIDIdentityManager {
     ///        coordinates for `ar` respectively. Elements 2 and 3 are the `x` coordinate for `bs`,
     ///         and elements 4 and 5 are the `y` coordinate for `bs`. Elements 6 and 7 are the `x`
     ///         and `y` coordinates for `krs`.
-    /// @param packedDeletionIndices The indices of the identities that were deleted from the tree. The batch size is inferred from the length of this
-    //// array: batchSize = packedDeletionIndices / 4
+    /// @param packedDeletionIndices The indices of the identities that were deleted from the tree.
+    /// The batch size is inferred from the length of this array: batchSize = packedDeletionIndices / 4
     /// @param preRoot The value for the root of the tree before the corresponding identity commitments have
     /// been deleted. Must be an element of the field `Kr`.
     /// @param postRoot The root obtained after deleting all of `identityCommitments` into the tree

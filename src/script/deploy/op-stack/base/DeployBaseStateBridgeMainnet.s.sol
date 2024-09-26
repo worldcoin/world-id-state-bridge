@@ -18,11 +18,7 @@ contract DeployBaseStateBridgeMainnet is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
-
-    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
@@ -34,18 +30,15 @@ contract DeployBaseStateBridgeMainnet is Script {
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
         ///////////////////////////////////////////////////////////////////
-        worldIDIdentityManagerAddress =
-            abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
+        worldIDIdentityManagerAddress = vm.envAddress("WORLD_IDENTITY_MANAGER_ADDRESS");
+        baseWorldIDAddress = vm.envAddress("BASE_WORLD_ID_ADDRESS");
     }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
         bridge = new OpStateBridge(
-            worldIDIdentityManagerAddress,
-            baseWorldIDAddress,
-            baseCrossDomainMessengerAddress
+            worldIDIdentityManagerAddress, baseWorldIDAddress, baseCrossDomainMessengerAddress
         );
 
         vm.stopBroadcast();

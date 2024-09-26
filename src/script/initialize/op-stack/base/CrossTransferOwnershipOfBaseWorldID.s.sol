@@ -27,14 +27,9 @@ contract CrossTransferOwnershipOfBaseWorldID is Script {
         ///////////////////////////////////////////////////////////////////
         ///                            CONFIG                           ///
         ///////////////////////////////////////////////////////////////////
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/src/script/.deploy-config.json");
-        string memory json = vm.readFile(path);
-
-        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        baseStateBridgeAddress =
-            abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
-        newOwner = abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
+        privateKey = vm.envUint("PRIVATE_KEY");
+        baseStateBridgeAddress = vm.envAddress("BASE_STATE_BRIDGE_ADDRESS");
+        newOwner = vm.envAddress("NEW_BASE_WORLD_ID_OWNER");
     }
 
     constructor() {}
