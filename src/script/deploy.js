@@ -137,6 +137,18 @@ async function getPolygonRpcUrl(config) {
   }
 }
 
+async function getGnosisRpcUrl(config) {
+  if (!config.gnosisRpcUrl) {
+    config.gnosisRpcUrl = process.env.GNOSIS_RPC_URL;
+  }
+  if (!config.gnosisRpcUrl) {
+    config.gnosisRpcUrl = await ask(`Enter Gnosis RPC URL: (${DEFAULT_RPC_URL}) `);
+  }
+  if (!config.gnosisRpcUrl) {
+    config.gnosisRpcUrl = DEFAULT_RPC_URL;
+  }
+}
+
 async function getOptimismEtherscanApiKey(config) {
   if (!config.optimismEtherscanApiKey) {
     config.optimismEtherscanApiKey = process.env.OPTIMISM_ETHERSCAN_API_KEY;
@@ -193,6 +205,20 @@ async function getPolygonscanApiKey(config) {
   }
 }
 
+async function getGnosisscanApiKey(config) {
+  if (!config.gnosisscanApiKey) {
+    config.gnosisscanApiKey = process.env.GNOSISSCAN_API_KEY;
+  }
+  if (!config.gnosisscanApiKey) {
+    config.gnosisscanApiKey = await ask(
+      `Enter Gnosisscan API KEY: (https://gnosisscan.io/myaccount) (Leave it empty for mocks) `,
+    );
+  }
+  if (!config.gnosisscanApiKey) {
+    config.gnosisscanApiKey = PLACEHOLDER_ETHERSCAN_API_KEY;
+  }
+}
+
 async function getBlockscoutApiUrl(config) {
   if (!config.blockscoutApiUrl) {
     config.blockscoutApiUrl = process.env.BLOCKSCOUT_API_URL;
@@ -235,6 +261,15 @@ async function getPolygonStateBridgeAddress(config) {
   }
 }
 
+async function getGnosisStateBridgeAddress(config) {
+  if (!config.gnosisStateBridgeAddress) {
+    config.gnosisStateBridgeAddress = process.env.GNOSIS_STATE_BRIDGE_ADDRESS;
+  }
+  if (!config.gnosisStateBridgeAddress) {
+    config.gnosisStateBridgeAddress = await ask("Enter Gnosis State Bridge Address: ");
+  }
+}
+
 async function getMockStateBridgeAddress(config) {
   if (!config.mockStateBridgeAddress) {
     config.mockStateBridgeAddress = process.env.MOCK_STATE_BRIDGE_ADDRESS;
@@ -268,6 +303,33 @@ async function getPolygonWorldIDAddress(config) {
   }
   if (!config.polygonWorldIDAddress) {
     config.polygonWorldIDAddress = await ask("Enter Polygon World ID Address: ");
+  }
+}
+
+async function getGnosisWorldIDAddress(config) {
+  if (!config.gnosisWorldIDAddress) {
+    config.gnosisWorldIDAddress = process.env.GNOSIS_WORLD_ID_ADDRESS;
+  }
+  if (!config.gnosisWorldIDAddress) {
+    config.gnosisWorldIDAddress = await ask("Enter Gnosis World ID Address: ");
+  }
+}
+
+async function getGnosisAMBAddress(config) {
+  if (!config.gnosisAMBAddress) {
+    config.gnosisAMBAddress = process.env.GNOSIS_AMB_ADDRESS;
+  }
+  if (!config.gnosisAMBAddress) {
+    config.gnosisAMBAddress = await ask("Enter Gnosis AMB contract Address: ");
+  }
+}
+
+async function getEthereumAMBAddress(config) {
+  if (!config.ethereumAMBAddress) {
+    config.ethereumAMBAddress = process.env.ETHEREUM_AMB_ADDRESS;
+  }
+  if (!config.ethereumAMBAddress) {
+    config.ethereumAMBAddress = await ask("Enter Etheruem Mainnet AMB contract Address: ");
   }
 }
 
@@ -587,6 +649,21 @@ async function deployPolygonStateBridgeGoerli(config) {
   spinner.succeed("DeployPolygonStateBridgeGoerli.s.sol ran successfully!");
 }
 
+async function deployGnosisStateBridge(config) {
+  const spinner = ora("Deploying Gnosis State Bridge...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/gnosis/DeployGnosisStateBridge.s.sol:DeployGnosisStateBridge --fork-url ${config.ethereumRpcUrl} \
+      --broadcast -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployPolygonStateBridge.s.sol ran successfully!");
+}
+
 async function deployPolygonWorldIDMumbai(config) {
   const spinner = ora("Deploying PolygonWorldID...").start();
 
@@ -600,6 +677,21 @@ async function deployPolygonWorldIDMumbai(config) {
   }
 
   spinner.succeed("DeployPolygonWorldIDMumbai.s.sol ran successfully!");
+}
+
+async function deployGnosisWorldID(config) {
+  const spinner = ora("Deploying GnosisWorldID...").start();
+
+  try {
+    const data =
+      execSync(`forge script src/script/deploy/gnosis/DeployGnosisWorldID.s.sol:DeployGnosisWorldID --fork-url ${config.gnosisRpcUrl} \
+      --legacy --broadcast -vvvv`);
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("DeployGnosisWorldID.s.sol ran successfully!");
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -706,6 +798,22 @@ async function initializePolygonWorldID(config) {
   }
 
   spinner.succeed("InitializePolygonWorldID.s.sol ran successfully!");
+}
+
+
+async function initializeGnosisWorldID(config) {
+  const spinner = ora("Initializing GnosisWorldID...").start();
+
+  try {
+    const data = execSync(
+      `forge script src/script/initialize/gnosis/InitializeGnosisWorldID.s.sol:InitializeGnosisWorldID --fork-url ${config.gnosisRpcUrl} --broadcast -vvvv --legacy`,
+    );
+    console.log(data.toString());
+  } catch (err) {
+    console.error(err);
+  }
+
+  spinner.succeed("InitializeGnosisWorldID.s.sol ran successfully!");
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -901,6 +1009,26 @@ async function deploymentTestnet(config) {
   await localTransferOwnershipOfBaseWorldIDToStateBridge(config);
 }
 
+async function deploymentGnosis(config) {
+  dotenv.config();
+
+  await getPrivateKey(config);
+  await getEthereumRpcUrl(config);
+  await getEthereumEtherscanApiKey(config);
+  await getGnosisRpcUrl(config);
+  await getGnosisAMBAddress(config);
+  await getEthereumAMBAddress(config);
+  await saveConfiguration(config);
+  await deployGnosisWorldID(config);
+  await getWorldIDIdentityManagerAddress(config);
+  await getGnosisWorldIDAddress(config);
+  await saveConfiguration(config);
+  await deployGnosisStateBridge(config);
+  await getGnosisStateBridgeAddress(config);
+  await saveConfiguration(config);
+  await initializeGnosisWorldID(config);
+}
+
 async function devnetDeployment(config) {
   dotenv.config();
 
@@ -1029,6 +1157,16 @@ async function main() {
       const options = program.opts();
       let config = await loadConfiguration(options.config);
       await deploymentTestnet(config);
+      await saveConfiguration(config);
+    });
+
+  program
+    .command("deploy-gnosis")
+    .description("Interactively deploys the WorldID state bridge on the Sepolia-Chiado testnets.")
+    .action(async () => {
+      const options = program.opts();
+      let config = await loadConfiguration(options.config);
+      await deploymentGnosis(config);
       await saveConfiguration(config);
     });
 
