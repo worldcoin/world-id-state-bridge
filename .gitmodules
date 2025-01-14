@@ -1,5 +1,5 @@
 [submodule "lib/forge-std"]
-	branch = v1.2.0
+	branch = v1.9.5
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
 [submodule "lib/prb-test"]
@@ -21,3 +21,7 @@
 [submodule "lib/solmate"]
 	path = lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "lib/optimism"]
+	path = lib/optimism
+	url = https://github.com/ethereum-optimism/optimism.git
+	branch = develop

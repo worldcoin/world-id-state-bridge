@@ -5,7 +5,7 @@ import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
 
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {CrossDomainOwnable3} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+    "@eth-optimism/contracts-bedrock/src/L2/CrossDomainOwnable3.sol";
 
 /// @title Optimism World ID Bridge
 /// @author Worldcoin

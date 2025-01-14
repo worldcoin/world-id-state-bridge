@@ -8,16 +8,15 @@ import {OpWorldID} from "src/OpWorldID.sol";
 import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
 import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
 import {L2CrossDomainMessenger} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
-import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
+    "@eth-optimism/contracts-bedrock/src/L2/L2CrossDomainMessenger.sol";
+import {Predeploys} from "@eth-optimism/contracts-bedrock/src/libraries/Predeploys.sol";
 import {
-    CommonTest,
-    Messenger_Initializer
-} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+    CommonTest
+} from "@eth-optimism/contracts-bedrock/test/setup/CommonTest.sol";
 import {AddressAliasHelper} from
-    "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
-import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
-import {Hashing} from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
+    "@eth-optimism/contracts-bedrock/src/vendor/AddressAliasHelper.sol";
+import {Encoding} from "@eth-optimism/contracts-bedrock/src/libraries/Encoding.sol";
+import {Hashing} from "@eth-optimism/contracts-bedrock/src/libraries/Hashing.sol";
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title OpWorldIDTest
@@ -25,7 +24,7 @@ import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 /// @notice A test contract for OpWorldID
 /// @dev The OpWorldID contract is deployed on Optimism and is called by the StateBridge contract.
 /// @dev This contract uses the Optimism CommonTest.t.sol testing tool suite.
-contract OpWorldIDTest is Messenger_Initializer {
+contract OpWorldIDTest is CommonTest {
     ///////////////////////////////////////////////////////////////////
     ///                           WORLD ID                          ///
     ///////////////////////////////////////////////////////////////////
@@ -34,9 +33,6 @@ contract OpWorldIDTest is Messenger_Initializer {
 
     /// @notice MarkleTree depth
     uint8 internal treeDepth = 16;
-
-    /// @notice OpenZeppelin Ownable.sol transferOwnership event
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /// @notice CrossDomainOwnable3.sol transferOwnership event
     event OwnershipTransferred(
@@ -93,9 +89,9 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.warp(block.timestamp + 200);
 
-        // set the xDomainMsgSender storage slot to the L1Messenger
-        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
-        L2Messenger.relayMessage(
+        // set the xDomainMsgSender storage slot to the l1CrossDomainMessenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1CrossDomainMessenger)));
+        l2CrossDomainMessenger.relayMessage(
             Encoding.encodeVersionedNonce(0, 1),
             owner,
             address(id),
@@ -141,9 +137,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         // set the xDomainMsgSender storage slot as bob
         bytes32 key = bytes32(uint256(204));
         bytes32 value = Bytes32AddressLib.fillLast12Bytes(address(bob));
-        vm.store(address(L2Messenger), key, value);
+        vm.store(address(l2CrossDomainMessenger), key, value);
 
-        vm.prank(address(L2Messenger));
+        vm.prank(address(l2CrossDomainMessenger));
         vm.expectRevert("CrossDomainOwnable3: caller is not the owner");
         id.receiveRoot(newRoot);
     }
@@ -160,9 +156,9 @@ contract OpWorldIDTest is Messenger_Initializer {
         vm.warp(block.timestamp + 200);
         uint256 randomRoot = 0x712cab3414951eba341ca234aef42142567c6eea50371dd528d57eb2b856d238;
 
-        // set the xDomainMsgSender storage slot to the L1Messenger
-        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
-        L2Messenger.relayMessage(
+        // set the xDomainMsgSender storage slot to the l1CrossDomainMessenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1CrossDomainMessenger)));
+        l2CrossDomainMessenger.relayMessage(
             Encoding.encodeVersionedNonce(0, 1),
             owner,
             address(id),
@@ -187,9 +183,9 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         address owner = id.owner();
 
-        // set the xDomainMsgSender storage slot to the L1Messenger
-        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
-        L2Messenger.relayMessage(
+        // set the xDomainMsgSender storage slot to the l1CrossDomainMessenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1CrossDomainMessenger)));
+        l2CrossDomainMessenger.relayMessage(
             Encoding.encodeVersionedNonce(0, 1),
             owner,
             address(id),
@@ -200,8 +196,8 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.roll(block.number + 100);
         vm.warp(block.timestamp + 200);
-        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
-        L2Messenger.relayMessage(
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1CrossDomainMessenger)));
+        l2CrossDomainMessenger.relayMessage(
             Encoding.encodeVersionedNonce(1, 1),
             owner,
             address(id),
@@ -222,9 +218,9 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         address owner = id.owner();
 
-        // set the xDomainMsgSender storage slot to the L1Messenger
-        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
-        L2Messenger.relayMessage(
+        // set the xDomainMsgSender storage slot to the l1CrossDomainMessenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1CrossDomainMessenger)));
+        l2CrossDomainMessenger.relayMessage(
             Encoding.encodeVersionedNonce(0, 1),
             owner,
             address(id),
@@ -255,9 +251,9 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         vm.roll(block.number + 100);
         vm.warp(block.timestamp + 200);
-        // set the xDomainMsgSender storage slot to the L1Messenger
-        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
-        L2Messenger.relayMessage(
+        // set the xDomainMsgSender storage slot to the l1CrossDomainMessenger
+        vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1CrossDomainMessenger)));
+        l2CrossDomainMessenger.relayMessage(
             Encoding.encodeVersionedNonce(1, 1),
             owner,
             address(id),

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from
-    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {CrossDomainMessenger} from
+    "@eth-optimism/contracts-bedrock/src/universal/CrossDomainMessenger.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {IRootHistory} from "./interfaces/IRootHistory.sol";
 import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
@@ -130,7 +130,7 @@ contract OpStateBridge is Ownable2Step {
         // correct data to the optimism bridge.
         bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (latestRoot));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+        CrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on the OP Stack Chain
             opWorldIDAddress,
             message,
@@ -155,7 +155,7 @@ contract OpStateBridge is Ownable2Step {
         bytes memory message =
             abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+        CrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on the OP Stack Chain
             opWorldIDAddress,
             message,
@@ -173,7 +173,7 @@ contract OpStateBridge is Ownable2Step {
         bytes memory message =
             abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
+        CrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
             // Contract address on the OP Stack Chain
             opWorldIDAddress,
             message,
