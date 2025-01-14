@@ -4,21 +4,16 @@ pragma solidity ^0.8.15;
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
 // import { PRBTest } from "@prb/test/PRBTest.sol";
 // import { StdCheats } from "forge-std/StdCheats.sol";
-import {OpWorldID} from "src/OpWorldID.sol";
-import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
-import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
-import {L2CrossDomainMessenger} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
-import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import {
-    CommonTest,
-    Messenger_Initializer
-} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
-import {AddressAliasHelper} from
-    "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
-import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
-import {Hashing} from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
-import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
+import { OpWorldID } from "src/OpWorldID.sol";
+import { WorldIDBridge } from "src/abstract/WorldIDBridge.sol";
+import { SemaphoreTreeDepthValidator } from "src/utils/SemaphoreTreeDepthValidator.sol";
+import { L2CrossDomainMessenger } from "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
+import { Predeploys } from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
+import { CommonTest, Messenger_Initializer } from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
+import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
+import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
+import { Hashing } from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
+import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title OpWorldIDTest
 /// @author Worldcoin
@@ -39,9 +34,7 @@ contract OpWorldIDTest is Messenger_Initializer {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /// @notice CrossDomainOwnable3.sol transferOwnership event
-    event OwnershipTransferred(
-        address indexed previousOwner, address indexed newOwner, bool isLocal
-    );
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, bool isLocal);
 
     function testConstructorWithInvalidTreeDepth(uint8 actualTreeDepth) public {
         // Setup
@@ -79,7 +72,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
         // CrossDomainOwnable3.sol transferOwnership to crossDomain address (as alice and to alice)
         vm.prank(_id.owner());
-        id.transferOwnership({_owner: alice, _isLocal: false});
+        id.transferOwnership({ _owner: alice, _isLocal: false });
     }
 
     /// @notice Test that you can insert new root and check if it is valid
@@ -150,9 +143,7 @@ contract OpWorldIDTest is Messenger_Initializer {
 
     /// @notice Test that a root that hasn't been inserted is invalid
     /// @param newRoot The root of the merkle tree after the first update
-    function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot, uint256[8] memory proof)
-        public
-    {
+    function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot, uint256[8] memory proof) public {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
@@ -178,9 +169,7 @@ contract OpWorldIDTest is Messenger_Initializer {
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
     /// @param newRoot The root of the merkle tree after the first update (forge fuzzing)
     /// @param secondRoot The root of the merkle tree after the second update (forge fuzzing)
-    function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot, uint256[8] memory proof)
-        public
-    {
+    function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot, uint256[8] memory proof) public {
         vm.assume(newRoot != secondRoot && newRoot != 0 && secondRoot != 0);
 
         _switchToCrossDomainOwnership(id);
