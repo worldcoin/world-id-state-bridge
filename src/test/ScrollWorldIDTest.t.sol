@@ -11,8 +11,8 @@ import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/ve
 
 import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import { Predeploys } from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import { IL1ScrollMessenger } from "@scroll-tech/contracts/L1/IL1ScrollMessenger.sol";
-import { IL2ScrollMessenger } from "@scroll-tech/contracts/L2/IL2ScrollMessenger.sol";
+import { L1ScrollMessenger } from "@scroll-tech/contracts/L1/L1ScrollMessenger.sol";
+import { L2ScrollMessenger } from "@scroll-tech/contracts/L2/L2ScrollMessenger.sol";
 import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
 import { Hashing } from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
 import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
@@ -27,8 +27,8 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
     ///////////////////////////////////////////////////////////////////
 
     address public alice = address(0x1111111);
-    IL1ScrollMessenger internal l1Messenger;
-    IL2ScrollMessenger internal l2Messenger;
+    L1ScrollMessenger internal l1Messenger;
+    L2ScrollMessenger internal l2Messenger;
     // @notice The ScrollWorldID contract
     ScrollWorldID internal id;
 
@@ -53,9 +53,9 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
 
     function setUp() public {
         // Deploy L1 contracts
-        l1Messenger = IL1ScrollMessenger(address(1), address(1), address(1));
-        l2Messenger = IL2ScrollMessenger(
-            payable(new ERC1967Proxy(address(IL2ScrollMessenger(address(l1Messenger), address(1))), new bytes(0)))
+        l1Messenger = new L1ScrollMessenger(address(1), address(1), address(1));
+        l2Messenger = L2ScrollMessenger(
+            payable(new ERC1967Proxy(address(new L2ScrollMessenger(address(l1Messenger), address(1))), new bytes(0)))
         );
         /// @notice Initialize the ScrollWorldID contract
         vm.prank(alice);
@@ -63,7 +63,35 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
 
         /// @dev label important addresses
         vm.label(address(this), "Sender");
-        vm.label(address(id), "PolygonWorldID");
+        vm.label(address(id), "ScrollWorldID");
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///                           INTERNAL                          ///
+    ///////////////////////////////////////////////////////////////////
+    /// @dev Internal function to generate the correct cross domain calldata for a message.
+    /// @param _sender Message sender address.
+    /// @param _target Target contract address.
+    /// @param _value The amount of ETH pass to the target.
+    /// @param _messageNonce Nonce for the provided message.
+    /// @param _message Message to send to the target.
+    /// @return ABI encoded cross domain calldata.
+    function _encodeXDomainCalldata(
+        address _sender,
+        address _target,
+        uint256 _value,
+        uint256 _messageNonce,
+        bytes memory _message
+    ) internal pure returns (bytes memory) {
+        return
+            abi.encodeWithSignature(
+                "relayMessage(address,address,uint256,uint256,bytes)",
+                _sender,
+                _target,
+                _value,
+                _messageNonce,
+                _message
+            );
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -208,17 +236,23 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
         // It reverts with CannotOverwriteRoot however because of the bridge simulation
         // the L2 cross-domain call doesn't revert
         // issue reported to foundry team: expectRevert doesn't search for errors in nested subcalls
+        // The error does appear in the trace
         // vm.expectRevert(abi.encodeWithSelector(WorldIDBridge.CannotOverwriteRoot.selector));
         // CannotOverwriteRoot can be seen in the execution trace of the call using the -vvvvv flag
 
-        bytes32 versionedHash = Hashing.hashCrossDomainMessageV1(
-            Encoding.encodeVersionedNonce(1, 1),
-            owner,
-            address(id),
-            0,
-            0,
-            abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+        // Can be found in the Scroll codebase https://github.com/scroll-tech/scroll-contracts/blob/a0242d3f96cd057e34433a66467db53b0b8750ed/src/L2/L2ScrollMessenger.sol#L126
+        bytes32 versionedHash = keccak256(
+            _encodeXDomainCalldata(
+                owner,
+                address(id),
+                0,
+                Encoding.encodeVersionedNonce(1, 1),
+                abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+            )
         );
+
+        vm.expectEmit(true, true, true, true);
+        emit FailedRelayedMessage(versionedHash);
 
         vm.roll(block.number + 1000);
         vm.warp(block.timestamp + 2000);

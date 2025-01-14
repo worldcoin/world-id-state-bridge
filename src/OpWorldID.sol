@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import { WorldIDBridge } from "./abstract/WorldIDBridge.sol";
+import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
 
-import { IOpWorldID } from "./interfaces/IOpWorldID.sol";
-import { CrossDomainOwnable3 } from "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
+import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
+import {CrossDomainOwnable3} from
+    "@eth-optimism/contracts-bedrock/contracts/L2/CrossDomainOwnable3.sol";
 
 /// @title Optimism World ID Bridge
 /// @author Worldcoin

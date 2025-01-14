@@ -26,13 +26,13 @@ remappings = [
   "src/=src/",
   "solmate/=lib/solmate/",
   "@rari-capital/solmate/=lib/solmate/",
+  "@scroll-tech/contracts/=lib/scroll-contracts/src/",
   "@eth-optimism/contracts/=node_modules/@eth-optimism/contracts/",
   "@eth-optimism/contracts-bedrock/=node_modules/@eth-optimism/contracts-bedrock/",
   "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
   "fx-portal/contracts/=lib/contracts/contracts/",
-  "@scroll-tech/contracts/=node_modules/@scroll-tech/contracts/",
 ]
 
 # Make formatting consistent.
