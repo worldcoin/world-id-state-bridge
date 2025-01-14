@@ -18,7 +18,7 @@ import { Hashing } from "@eth-optimism/contracts-bedrock/contracts/libraries/Has
 import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title ScrollWorldIDTest
-/// @author xKaizendev
+/// @author World
 /// @notice A test contract for ScrollWorldID
 /// @dev The ScrollWorldID contract is deployed on Scroll and is called by the StateBridge contract.
 contract ScrollWorldIDTest is PRBTest, StdCheats {
