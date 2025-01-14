@@ -2,20 +2,20 @@
 pragma solidity ^0.8.15;
 
 /// @dev using Test from forge-std which is inherited from Optimism's CommonTest.t.sol
-import { PRBTest } from "@prb/test/PRBTest.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
-import { ScrollWorldID } from "src/ScrollWorldID.sol";
-import { WorldIDBridge } from "src/abstract/WorldIDBridge.sol";
-import { SemaphoreTreeDepthValidator } from "src/utils/SemaphoreTreeDepthValidator.sol";
-import { AddressAliasHelper } from "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
-
-import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import { Predeploys } from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import { L1ScrollMessenger } from "@scroll-tech/contracts/L1/L1ScrollMessenger.sol";
-import { L2ScrollMessenger } from "@scroll-tech/contracts/L2/L2ScrollMessenger.sol";
-import { Encoding } from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
-import { Hashing } from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
-import { Bytes32AddressLib } from "solmate/src/utils/Bytes32AddressLib.sol";
+import {PRBTest} from "@prb/test/PRBTest.sol";
+import {StdCheats} from "forge-std/StdCheats.sol";
+import {ScrollWorldID} from "src/ScrollWorldID.sol";
+import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
+import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
+import {AddressAliasHelper} from
+    "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
+import {L1ScrollMessenger} from "@scroll-tech/contracts/L1/L1ScrollMessenger.sol";
+import {L2ScrollMessenger} from "@scroll-tech/contracts/L2/L2ScrollMessenger.sol";
+import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
+import {Hashing} from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
+import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
 /// @title ScrollWorldIDTest
 /// @author World
@@ -39,7 +39,9 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /// @notice CrossDomainOwnable3.sol transferOwnership event
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, bool isLocal);
+    event OwnershipTransferred(
+        address indexed previousOwner, address indexed newOwner, bool isLocal
+    );
 
     event FailedRelayedMessage(bytes32 indexed msgHash);
 
@@ -55,7 +57,11 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
         // Deploy L1 contracts
         l1Messenger = new L1ScrollMessenger(address(1), address(1), address(1));
         l2Messenger = L2ScrollMessenger(
-            payable(new ERC1967Proxy(address(new L2ScrollMessenger(address(l1Messenger), address(1))), new bytes(0)))
+            payable(
+                new ERC1967Proxy(
+                    address(new L2ScrollMessenger(address(l1Messenger), address(1))), new bytes(0)
+                )
+            )
         );
         /// @notice Initialize the ScrollWorldID contract
         vm.prank(alice);
@@ -83,15 +89,14 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
         uint256 _messageNonce,
         bytes memory _message
     ) internal pure returns (bytes memory) {
-        return
-            abi.encodeWithSignature(
-                "relayMessage(address,address,uint256,uint256,bytes)",
-                _sender,
-                _target,
-                _value,
-                _messageNonce,
-                _message
-            );
+        return abi.encodeWithSignature(
+            "relayMessage(address,address,uint256,uint256,bytes)",
+            _sender,
+            _target,
+            _value,
+            _messageNonce,
+            _message
+        );
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -109,7 +114,7 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
 
         // CrossDomainOwnable3.sol transferOwnership to crossDomain address (as alice and to alice)
         vm.prank(_id.owner());
-        id.transferOwnership({ _owner: alice, _isLocal: false });
+        id.transferOwnership({_owner: alice, _isLocal: false});
     }
 
     /// @notice Test that you can insert new root and check if it is valid
@@ -126,7 +131,9 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1Messenger)));
 
-        l2Messenger.relayMessage(owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, newRoot));
+        l2Messenger.relayMessage(
+            owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+        );
 
         assert(id.latestRoot() == newRoot);
     }
@@ -174,7 +181,9 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
 
     /// @notice Test that a root that hasn't been inserted is invalid
     /// @param newRoot The root of the merkle tree after the first update
-    function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot, uint256[8] memory proof) public {
+    function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot, uint256[8] memory proof)
+        public
+    {
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
@@ -184,7 +193,9 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
 
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1Messenger)));
-        l2Messenger.relayMessage(owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, newRoot));
+        l2Messenger.relayMessage(
+            owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+        );
 
         vm.expectRevert(WorldIDBridge.NonExistentRoot.selector);
         id.verifyProof(randomRoot, 0, 0, 0, proof);
@@ -193,7 +204,9 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
     /// @notice Test that you can insert a root and check it has expired if more than 7 days have passed
     /// @param newRoot The root of the merkle tree after the first update (forge fuzzing)
     /// @param secondRoot The root of the merkle tree after the second update (forge fuzzing)
-    function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot, uint256[8] memory proof) public {
+    function test_expiredRoot_reverts(uint256 newRoot, uint256 secondRoot, uint256[8] memory proof)
+        public
+    {
         vm.assume(newRoot != secondRoot && newRoot != 0 && secondRoot != 0);
 
         _switchToCrossDomainOwnership(id);
@@ -202,12 +215,16 @@ contract ScrollWorldIDTest is PRBTest, StdCheats {
 
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1Messenger)));
-        l2Messenger.relayMessage(owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, newRoot));
+        l2Messenger.relayMessage(
+            owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, newRoot)
+        );
 
         vm.roll(block.number + 100);
         vm.warp(block.timestamp + 200);
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(l1Messenger)));
-        l2Messenger.relayMessage(owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, secondRoot));
+        l2Messenger.relayMessage(
+            owner, address(id), 0, 0, abi.encodeWithSelector(id.receiveRoot.selector, secondRoot)
+        );
 
         vm.expectRevert(WorldIDBridge.ExpiredRoot.selector);
         vm.warp(block.timestamp + 8 days);

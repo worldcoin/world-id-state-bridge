@@ -6,8 +6,8 @@ import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
 import {OpStateBridge} from "src/OpStateBridge.sol";
 
 /// @title Ownership Transfer of OpWorldID on Base
-/// @notice forge script for transferring ownership of OpWorldID to a local (Base / Base Goerli)
-/// or cross-chain (Ethereum / Ethereum goerli) EOA or contract
+/// @notice forge script for transferring ownership of OpWorldID to a local (Base / Base Sepolia)
+/// or cross-chain (Ethereum / Ethereum Sepolia) EOA or contract
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
 contract LocalTransferOwnershipOfBaseWorldID is Script {
