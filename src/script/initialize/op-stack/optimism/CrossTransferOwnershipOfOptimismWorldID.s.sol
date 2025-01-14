@@ -23,20 +23,13 @@ contract CrossTransferOwnershipOfOptimismWorldID is Script {
     /// for local or cross domain (using the CrossDomainMessenger to pass messages)
     bool public isLocal;
 
-    uint32 public opGasLimit;
-
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
         ///                            CONFIG                           ///
         ///////////////////////////////////////////////////////////////////
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/src/script/.deploy-config.json");
-        string memory json = vm.readFile(path);
-
-        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        optimismStateBridgeAddress =
-            abi.decode(vm.parseJson(json, ".optimismStateBridgeAddress"), (address));
-        newOwner = abi.decode(vm.parseJson(json, ".optimismStateBridgeAddress"), (address));
+        privateKey = vm.envUint("PRIVATE_KEY");
+        optimismStateBridgeAddress = vm.envAddress("OPTIMISM_STATE_BRIDGE_ADDRESS");
+        newOwner = vm.envAddress("NEW_OPTIMISM_WORLD_ID_OWNER");
     }
 
     constructor() {}

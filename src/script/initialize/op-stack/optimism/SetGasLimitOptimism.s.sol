@@ -16,25 +16,19 @@ contract SetOpGasLimitOptimism is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
-
-    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
     ///////////////////////////////////////////////////////////////////
     ///                        OP GAS LIMITS                        ///
     ///////////////////////////////////////////////////////////////////
-    uint32 public gasLimitSendRootOptimism =
-        abi.decode(vm.parseJson(json, ".gasLimitSendRootOptimism"), (uint32));
+    uint32 public gasLimitSendRootOptimism = uint32(vm.envUint("GAS_LIMIT_SEND_ROOT_OPTIMISM"));
     uint32 public gasLimitSetRootHistoryExpiryOptimism =
-        abi.decode(vm.parseJson(json, ".gasLimitSetRootHistoryExpiryOptimism"), (uint32));
+        uint32(vm.envUint("GAS_LIMIT_SET_ROOT_HISTORY_EXPIRY_OPTIMISM"));
     uint32 public gasLimitTransferOwnershipOptimism =
-        abi.decode(vm.parseJson(json, ".gasLimitTransferOwnershipOptimism"), (uint32));
+        uint32(vm.envUint("GAS_LIMIT_TRANSFER_OWNERSHIP_OPTIMISM"));
 
     function setUp() public {
-        optimismStateBridgeAddress =
-            abi.decode(vm.parseJson(json, ".optimismStateBridgeAddress"), (address));
+        optimismStateBridgeAddress = vm.envAddress("OPTIMISM_STATE_BRIDGE_ADDRESS");
 
         optimismStateBridge = OpStateBridge(optimismStateBridgeAddress);
     }

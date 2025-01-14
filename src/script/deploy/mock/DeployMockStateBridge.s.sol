@@ -24,11 +24,8 @@ contract DeployMockStateBridge is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
 
-    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
     function setUp() public {}
 

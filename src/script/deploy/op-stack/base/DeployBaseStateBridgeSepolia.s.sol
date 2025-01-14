@@ -8,7 +8,7 @@ import {OpStateBridge} from "src/OpStateBridge.sol";
 /// @notice forge script to deploy OpStateBridge.sol on Base
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract DeployBaseStateBridgeGoerli is Script {
+contract DeployBaseStateBridgeSepolia is Script {
     OpStateBridge public bridge;
 
     address public baseWorldIDAddress;
@@ -18,34 +18,27 @@ contract DeployBaseStateBridgeGoerli is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
-
-    uint256 public privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+    uint256 public privateKey = vm.envUint("PRIVATE_KEY");
 
     function setUp() public {
         ///////////////////////////////////////////////////////////////////
         ///                             BASE                            ///
         ///////////////////////////////////////////////////////////////////
         // Taken from https://docs.base.org/base-contracts
-        baseCrossDomainMessengerAddress = address(0x8e5693140eA606bcEB98761d9beB1BC87383706D);
+        baseCrossDomainMessengerAddress = address(0xC34855F4De64F1840e5686e64278da901e261f20);
 
         ///////////////////////////////////////////////////////////////////
         ///                           WORLD ID                          ///
         ///////////////////////////////////////////////////////////////////
-        worldIDIdentityManagerAddress =
-            abi.decode(vm.parseJson(json, ".worldIDIdentityManagerAddress"), (address));
-        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
+        worldIDIdentityManagerAddress = vm.envAddress("WORLD_IDENTITY_MANAGER_ADDRESS");
+        baseWorldIDAddress = vm.envAddress("BASE_WORLD_ID_ADDRESS");
     }
 
     function run() public {
         vm.startBroadcast(privateKey);
 
         bridge = new OpStateBridge(
-            worldIDIdentityManagerAddress,
-            baseWorldIDAddress,
-            baseCrossDomainMessengerAddress
+            worldIDIdentityManagerAddress, baseWorldIDAddress, baseCrossDomainMessengerAddress
         );
 
         vm.stopBroadcast();

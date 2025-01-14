@@ -4,9 +4,7 @@ on:
       - main
   pull_request:
   workflow_dispatch:
-
 name: Unit Tests
-
 jobs:
   tests:
     runs-on: ubuntu-latest

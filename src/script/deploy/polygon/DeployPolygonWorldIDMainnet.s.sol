@@ -12,6 +12,7 @@ contract DeployPolygonWorldID is Script {
     address public stateBridgeAddress;
 
     // Polygon PoS Mainnet Child Tunnel
+    // https://github.com/0xPolygon/static/blob/master/network/mainnet/v1/index.json
     address public fxChildAddress = address(0x8397259c983751DAf40400790063935a11afa28a);
 
     PolygonWorldID public polygonWorldId;
@@ -21,12 +22,9 @@ contract DeployPolygonWorldID is Script {
     ///////////////////////////////////////////////////////////////////
     ///                            CONFIG                           ///
     ///////////////////////////////////////////////////////////////////
-    string public root = vm.projectRoot();
-    string public path = string.concat(root, "/src/script/.deploy-config.json");
-    string public json = vm.readFile(path);
 
     function setUp() public {
-        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
+        privateKey = vm.envUint("PRIVATE_KEY");
         treeDepth = uint8(30);
     }
 

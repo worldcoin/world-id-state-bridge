@@ -23,7 +23,7 @@ networks pending storage proof verifier and Semaphore verifier implementations a
 If you want to support World ID on your network, please reach out to us by opening a GitHub issue. To support World ID
 the current requirements are:
 
-- have a native L1<>L2 bridge with Ethereum mainnet and Ethereum Goerli/Sepolia (for testnet integration tests)
+- have a native L1<>L2 bridge with Ethereum mainnet and Ethereum Sepolia/Sepolia (for testnet integration tests)
 - your network needs to have an EVM execution environment (like Optimism, Arbitrum, Scroll, Polygon zkEVM, zkSync Era,
   etc)
 
@@ -152,7 +152,7 @@ deployer address by default.
 
 #### Testnet
 
-Deploy the WorldID state bridge and all its components to the Goerli testnet.
+Deploy the WorldID state bridge and all its components to the Sepolia testnet.
 
 Integration with full system:
 
@@ -179,10 +179,10 @@ deployer address by default.
 
 #### Mock
 
-Deploy the WorldID state bridge and a mock WorldID identity manager to the Goerli testnet for integration tests.
+Deploy the WorldID state bridge and a mock WorldID identity manager to the Sepolia testnet for integration tests.
 
 ```bash
-# to do a mock of WorlIDIdentityManager and test bridge contracts on Goerli
+# to do a mock of WorlIDIdentityManager and test bridge contracts on Sepolia
 make mock
 ```
 
@@ -194,7 +194,7 @@ string as the Etherscan API key (or just hit enter to use a placeholder by defau
 Run a local anvil instance to deploy the contracts locally:
 
 ```bash
-anvil --mnemonic <MNEMONIC> --network goerli --deploy
+anvil --mnemonic <MNEMONIC> --network Sepolia --deploy
 ```
 
 ```bash

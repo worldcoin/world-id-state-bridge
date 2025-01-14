@@ -4,20 +4,20 @@
 
 [profile.default]
 
-solc = "0.8.15"
+auto_detect_solc = true
+evm_version = "shanghai"
 optimizer = true
 optimizer_runs = 10_000
-fuzz = {runs = 256}
-fs_permissions = [{ access = "read", path = "./"}]
+fuzz = { runs = 256 }
+fs_permissions = [{ access = "read", path = "./" }]
 
-src="src"
+src = "src"
 libs = ["lib"]
 out = "out"
 test = "test"
 
 gas_reports = ["*"]
 
-auto_detect_solc = false
 bytecode_hash = "none"
 
 remappings = [
@@ -26,20 +26,21 @@ remappings = [
   "src/=src/",
   "solmate/=lib/solmate/",
   "@rari-capital/solmate/=lib/solmate/",
+  "@scroll-tech/contracts/=lib/scroll-contracts/src/",
   "@eth-optimism/contracts/=node_modules/@eth-optimism/contracts/",
   "@eth-optimism/contracts-bedrock/=node_modules/@eth-optimism/contracts-bedrock/",
   "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
-  "fx-portal/contracts/=lib/contracts/contracts/",
+  "fx-portal/contracts/=lib/fx-portal/contracts/",
 ]
 
 # Make formatting consistent.
 [profile.default.fmt]
-line_length = 100               # The maximum length of lines.
-tab_width = 4                   # Indent by two spaces for each level.
-bracket_spacing = false         # Don't put spaces between brackets and content.
-int_types = "long"              # Specify full integer type names.
+line_length = 100       # The maximum length of lines.
+tab_width = 4           # Indent by two spaces for each level.
+bracket_spacing = false # Don't put spaces between brackets and content.
+int_types = "long"      # Specify full integer type names.
 
 # We want to optimise via the new optimiser backend for better results.
 via_ir = true
@@ -56,7 +57,7 @@ constant_optimizer = true # Computes some constant expressions at compile time.
 yul = true                # Enables the new ABI optimiser.
 
 [profile.default.optimizer_details.yul_details]
-stack_allocation = true   # Improves allocation of stack slots for variables.
+stack_allocation = true # Improves allocation of stack slots for variables.
 
 # === Debug Profile ===========================================================
 
@@ -67,7 +68,7 @@ stack_allocation = true   # Improves allocation of stack slots for variables.
 verbosity = 3
 
 [profile.ci]
-fuzz = {runs = 10_000}
+fuzz = { runs = 10_000 }
 verbosity = 4
 
 
@@ -95,5 +96,5 @@ gas_reports = [
 [profile.production]
 # We make the optimiser run a lot more for production, hoping to reduce our gas
 # costs.
-fs_permissions = [{ access = "read", path = "./"}]
+fs_permissions = [{ access = "read", path = "./" }]
 optimizer_runs = 20000

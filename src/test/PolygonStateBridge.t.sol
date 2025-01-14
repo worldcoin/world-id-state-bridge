@@ -80,11 +80,7 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
         checkpointManager = address(0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287);
         fxRoot = address(0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2);
 
-        polygonStateBridge = new PolygonStateBridge (
-            checkpointManager,
-            fxRoot,
-            mockWorldIDAddress
-        );
+        polygonStateBridge = new PolygonStateBridge(checkpointManager, fxRoot, mockWorldIDAddress);
 
         owner = polygonStateBridge.owner();
     }
@@ -168,25 +164,14 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
     /// @notice tests that the StateBridge contract can't be constructed with a zero address for params
     function test_constructorParamsCannotBeZeroAddresses_reverts() public {
         vm.expectRevert(AddressZero.selector);
-        polygonStateBridge = new PolygonStateBridge(
-            checkpointManager,
-            fxRoot,
-            address(0)
-        );
+        polygonStateBridge = new PolygonStateBridge(checkpointManager, fxRoot, address(0));
 
         vm.expectRevert(AddressZero.selector);
-        polygonStateBridge = new PolygonStateBridge(
-            checkpointManager,
-            address(0),
-            mockWorldIDAddress
-        );
+        polygonStateBridge =
+            new PolygonStateBridge(checkpointManager, address(0), mockWorldIDAddress);
 
         vm.expectRevert(AddressZero.selector);
-        polygonStateBridge = new PolygonStateBridge(
-            address(0),
-            fxRoot,
-            mockWorldIDAddress
-        );
+        polygonStateBridge = new PolygonStateBridge(address(0), fxRoot, mockWorldIDAddress);
     }
 
     /// @notice tests that the FxChildTunnel can't be set to the zero address

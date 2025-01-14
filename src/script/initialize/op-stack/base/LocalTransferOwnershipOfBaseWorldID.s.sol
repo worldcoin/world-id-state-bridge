@@ -27,13 +27,9 @@ contract LocalTransferOwnershipOfBaseWorldID is Script {
         ///////////////////////////////////////////////////////////////////
         ///                            CONFIG                           ///
         ///////////////////////////////////////////////////////////////////
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/src/script/.deploy-config.json");
-        string memory json = vm.readFile(path);
-
-        privateKey = abi.decode(vm.parseJson(json, ".privateKey"), (uint256));
-        baseWorldIDAddress = abi.decode(vm.parseJson(json, ".baseWorldIDAddress"), (address));
-        newOwner = abi.decode(vm.parseJson(json, ".baseStateBridgeAddress"), (address));
+        privateKey = vm.envUint("PRIVATE_KEY");
+        baseWorldIDAddress = vm.envAddress("BASE_WORLD_ID_ADDRESS");
+        newOwner = vm.envAddress("BASE_STATE_BRIDGE_ADDRESS");
     }
 
     constructor() {}

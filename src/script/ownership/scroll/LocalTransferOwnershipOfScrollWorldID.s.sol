@@ -2,23 +2,22 @@
 pragma solidity ^0.8.15;
 
 import {Script} from "forge-std/Script.sol";
-import {ICrossDomainOwnable3} from "src/interfaces/ICrossDomainOwnable3.sol";
-import {OpStateBridge} from "src/OpStateBridge.sol";
+import {IScrollCrossDomainOwnable} from "src/interfaces/IScrollCrossDomainOwnable.sol";
 
-/// @title Ownership Transfer of OpWorldID on Base
-/// @notice forge script for transferring ownership of OpWorldID to a local (Base / Base Sepolia)
+/// @title Ownership Transfer of ScrollWorldID on Scroll
+/// @notice forge script for transferring ownership of ScrollWorldID to a local (Scroll / Scroll Sepolia)
 /// or cross-chain (Ethereum / Ethereum Sepolia) EOA or contract
 /// @author Worldcoin
 /// @dev Can be executed by running `make mock`, `make local-mock`, `make deploy` or `make deploy-testnet`.
-contract LocalTransferOwnershipOfBaseWorldID is Script {
+contract LocalTransferOwnershipOfScrollWorldID is Script {
     uint256 public privateKey;
 
-    address public baseWorldIDAddress;
+    address public scrollWorldIDAddress;
 
     address public newOwner;
 
-    /// @notice in CrossDomainOwnable3.sol, isLocal is used to set ownership to a new address with a toggle
-    /// for local or cross domain (using the CrossDomainMessenger to pass messages)
+    /// @notice in ScrollCrossDomainOwnable.sol, isLocal is used to set ownership to a new address with a toggle
+    /// for local or cross domain (using the ScrollMessenger to pass messages)
     bool public isLocal;
 
     function setUp() public {
@@ -26,8 +25,8 @@ contract LocalTransferOwnershipOfBaseWorldID is Script {
         ///                            CONFIG                           ///
         ///////////////////////////////////////////////////////////////////
         privateKey = vm.envUint("PRIVATE_KEY");
-        baseWorldIDAddress = vm.envAddress("BASE_WORLD_ID_ADDRESS");
-        newOwner = vm.envAddress("NEW_BASE_WORLD_ID_OWNER");
+        newOwner = vm.envAddress("NEW_SCROLL_WORLD_ID_OWNER");
+        scrollWorldIDAddress = vm.envAddress("SCROLL_WORLD_ID_ADDRESS");
     }
 
     constructor() {}
@@ -35,15 +34,15 @@ contract LocalTransferOwnershipOfBaseWorldID is Script {
     function run() public {
         /// @notice cross domain ownership flag
         /// false = cross domain (address on Ethereum)
-        /// true = local (address on Optimism)
+        /// true = local (address on Scroll)
         isLocal = false;
 
         vm.startBroadcast(privateKey);
 
         bytes memory call =
-            abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (newOwner, isLocal));
+            abi.encodeCall(IScrollCrossDomainOwnable.transferOwnership, (newOwner, isLocal));
 
-        (bool ok,) = baseWorldIDAddress.call(call);
+        (bool ok,) = scrollWorldIDAddress.call(call);
 
         require(ok, "call failed");
 
