@@ -20,3 +20,6 @@
 [submodule "lib/scroll-contracts"]
 	path = lib/scroll-contracts
 	url = https://github.com/scroll-tech/scroll-contracts
+[submodule "lib/fx-portal"]
+	path = lib/fx-portal
+	url = https://github.com/0xPolygon/fx-portal
