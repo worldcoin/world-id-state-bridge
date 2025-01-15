@@ -34,3 +34,6 @@ yarn-error.log*
 
 # remappings
 remappings.txt
+
+# eth-optimism produced deployments dir
+deployments/

@@ -4,20 +4,36 @@
 
 [profile.default]
 
-solc = "0.8.15"
+# solc = "0.8.15"
 optimizer = true
 optimizer_runs = 10_000
 fuzz = {runs = 256}
-fs_permissions = [{ access = "read", path = "./"}]
+ffi = true
+fs_permissions = [
+  { access = "read", path = "./"},
+  { access='read-write', path='./.resource-metering.csv' },
+  { access='read-write', path='./snapshots/' },
+  { access='read-write', path='./deployments/' },
+  { access='read', path='./deploy-config/' },
+  { access='read', path='./deploy-config-periphery/' },
+  { access='read', path='./broadcast/' },
+  { access='read', path = './forge-artifacts/' },
+  { access='write', path='./semver-lock.json' },
+  { access='read-write', path='./.testdata/' },
+  { access='read', path='./kout-deployment' },
+  { access='read', path='./test/fixtures' },
+  { access='read', path='./out' },
+]
 
 src="src"
 libs = ["lib"]
 out = "out"
 test = "test"
+evm_version = "cancun"
+ignored_error_codes = ["transient-storage", "code-size", "init-code-size", 5159]
 
 gas_reports = ["*"]
 
-auto_detect_solc = false
 bytecode_hash = "none"
 
 remappings = [
@@ -29,8 +45,8 @@ remappings = [
   '@solady/=lib/optimism/packages/contracts-bedrock/lib/solady/src',
   '@solady-v0.0.245/=lib/optimism/packages/contracts-bedrock/lib/solady-v0.0.245/src',
   '@lib-keccak/=lib/optimism/packages/contracts-bedrock/lib/lib-keccak/contracts/lib',
-  # "@eth-optimism/contracts/=lib/optimism/contracts/",
   "@eth-optimism/contracts-bedrock/=lib/optimism/packages/contracts-bedrock/",
+  "lib/optimism/packages/contracts-bedrock:/=lib.optimism/package/contracts-bedrock",
   "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
   "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
@@ -45,21 +61,21 @@ bracket_spacing = false         # Don't put spaces between brackets and content.
 int_types = "long"              # Specify full integer type names.
 
 # We want to optimise via the new optimiser backend for better results.
-via_ir = true
+# via_ir = true
 
 # We can have quite some control over the optimiser when using the new IR one.
-[profile.default.optimizer_details]
-peephole = true           # Enables the peephole optimisation.
-inliner = true            # Enables the inliner.
-jumpdest_remover = true   # Enables the elimination of jump destinations.
-order_literals = true     # Allows re-ordering literals in commutative ops.
-deduplicate = true        # Removes duplicate code blocks.
-cse = true                # Enables common subexpression elimination. Useful.
-constant_optimizer = true # Computes some constant expressions at compile time.
-yul = true                # Enables the new ABI optimiser.
+# [profile.default.optimizer_details]
+# peephole = true           # Enables the peephole optimisation.
+# inliner = true            # Enables the inliner.
+# jumpdest_remover = true   # Enables the elimination of jump destinations.
+# order_literals = true     # Allows re-ordering literals in commutative ops.
+# deduplicate = true        # Removes duplicate code blocks.
+# cse = true                # Enables common subexpression elimination. Useful.
+# constant_optimizer = true # Computes some constant expressions at compile time.
+# yul = true                # Enables the new ABI optimiser.
 
-[profile.default.optimizer_details.yul_details]
-stack_allocation = true   # Improves allocation of stack slots for variables.
+# [profile.default.optimizer_details.yul_details]
+# stack_allocation = true   # Improves allocation of stack slots for variables.
 
 # === Debug Profile ===========================================================
 
@@ -98,5 +114,8 @@ gas_reports = [
 [profile.production]
 # We make the optimiser run a lot more for production, hoping to reduce our gas
 # costs.
-fs_permissions = [{ access = "read", path = "./"}]
+fs_permissions = [
+  { access = "read", path = "./"},
+  { access='read-write', path='./deployments/' },
+]
 optimizer_runs = 20000
