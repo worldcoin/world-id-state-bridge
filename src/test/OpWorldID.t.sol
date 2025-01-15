@@ -19,6 +19,27 @@ import {Encoding} from "@eth-optimism/contracts-bedrock/src/libraries/Encoding.s
 import {Hashing} from "@eth-optimism/contracts-bedrock/src/libraries/Hashing.sol";
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
+// These files need to be explicitly imported
+// they're being used in the underlying Optimism test deployment code
+// via vm.getCode. This works in the Optimism repo tests because forge automatically
+// builds all contracts under src/
+// But out src/ dir doesn't contain these directories and there's no way
+// to specify an additional source dir
+// import "@eth-optimism/contracts-bedrock/src/universal/ProxyAdmin.sol";
+// import "@eth-optimism/contracts-bedrock/src/universal/Proxy.sol";
+// import "@eth-optimism/contracts-bedrock/src/universal/OptimismMintableERC20Factory.sol";
+// import "@eth-optimism/contracts-bedrock/src/L1/SuperchainConfig.sol";
+// import "@eth-optimism/contracts-bedrock/src/L1/ProtocolVersions.sol";
+// import "@eth-optimism/contracts-bedrock/src/L1/SystemConfig.sol";
+// import "@eth-optimism/contracts-bedrock/src/L1/l1CrossDomainMessenger.sol" as L1CrossDomainMessengerImport;
+// import "@eth-optimism/contracts-bedrock/src/L1/L1ERC721Bridge.sol" as L1ERC721BridgeImport;
+// import "@eth-optimism/contracts-bedrock/src/L1/L1StandardBridge.sol" as L1StandardBridgeImport;
+// import "@eth-optimism/contracts-bedrock/src/L1/OptimismPortal2.sol" as OptimismPortal2Import;
+// import "@eth-optimism/contracts-bedrock/src/dispute/DelayedWETH.sol";
+// import "@eth-optimism/contracts-bedrock/src/cannon/PreimageOracle.sol";
+import "@eth-optimism/contracts-bedrock/src/cannon/MIPS.sol";
+
+
 /// @title OpWorldIDTest
 /// @author Worldcoin
 /// @notice A test contract for OpWorldID
