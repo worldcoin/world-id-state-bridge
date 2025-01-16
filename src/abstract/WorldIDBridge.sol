@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import { IWorldID } from "../interfaces/IWorldID.sol";
+import {IWorldID} from "../interfaces/IWorldID.sol";
 
-import { SemaphoreTreeDepthValidator } from "../utils/SemaphoreTreeDepthValidator.sol";
-import { SemaphoreVerifier } from "src/SemaphoreVerifier.sol";
+import {SemaphoreTreeDepthValidator} from "../utils/SemaphoreTreeDepthValidator.sol";
+import {SemaphoreVerifier} from "src/SemaphoreVerifier.sol";
 
 /// @title Bridged World ID
 /// @author Worldcoin
@@ -173,7 +173,9 @@ abstract contract WorldIDBridge is IWorldID {
         requireValidRoot(root);
 
         // With that done we can now verify the proof.
-        semaphoreVerifier.verifyProof(proof, [root, nullifierHash, signalHash, externalNullifierHash]);
+        semaphoreVerifier.verifyProof(
+            proof, [root, nullifierHash, signalHash, externalNullifierHash]
+        );
     }
 
     /// @notice A verifier for the compressed semaphore protocol.
@@ -198,7 +200,9 @@ abstract contract WorldIDBridge is IWorldID {
         requireValidRoot(root);
 
         // With that done we can now verify the proof.
-        semaphoreVerifier.verifyCompressedProof(compressedProof, [root, nullifierHash, signalHash, externalNullifierHash]);
+        semaphoreVerifier.verifyCompressedProof(
+            compressedProof, [root, nullifierHash, signalHash, externalNullifierHash]
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////////

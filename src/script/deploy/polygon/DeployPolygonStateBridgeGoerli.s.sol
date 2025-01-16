@@ -50,10 +50,8 @@ contract DeployPolygonStateBridgeGoerli is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new PolygonStateBridge (
-            checkpointManagerAddress,
-            fxRootAddress,
-            worldIDIdentityManagerAddress
+        bridge = new PolygonStateBridge(
+            checkpointManagerAddress, fxRootAddress, worldIDIdentityManagerAddress
         );
 
         bridge.setFxChildTunnel(polygonWorldIDAddress);

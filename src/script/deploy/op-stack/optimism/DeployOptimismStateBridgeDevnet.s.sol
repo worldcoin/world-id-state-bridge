@@ -40,10 +40,8 @@ contract DeployOpStateBridgeDevnet is Script {
     function run() public {
         vm.startBroadcast(privateKey);
 
-        bridge = new OpStateBridge (
-            worldIDIdentityManagerAddress,
-            opWorldIDAddress,
-            opCrossDomainMessengerAddress
+        bridge = new OpStateBridge(
+            worldIDIdentityManagerAddress, opWorldIDAddress, opCrossDomainMessengerAddress
         );
 
         vm.stopBroadcast();
