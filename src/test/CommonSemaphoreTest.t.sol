@@ -66,9 +66,24 @@ contract CommonSemaphoreVerifierTest is PRBTest {
     ///////////////////////////////////////////////////////////////////////////////
 
     /// @notice Tests that Semaphore proofs verify correctly.
-    function testValidProof() public {
+    function test_ValidProof() public view {
         verifier.verifyProof(
             inclusionProof,
+            [
+                inclusionRoot,
+                inclusionNullifierHash,
+                inclusionSignalHash,
+                inclusionExternalNullifierHash
+            ]
+        );
+    }
+
+    /// @notice Tests that compressed Semaphore proofs verify correctly.
+    function test_ValidCompressedProof() public view {
+        uint256[4] memory compressedProof = verifier.compressProof(inclusionProof);
+
+        verifier.verifyCompressedProof(
+            compressedProof,
             [
                 inclusionRoot,
                 inclusionNullifierHash,
@@ -82,7 +97,7 @@ contract CommonSemaphoreVerifierTest is PRBTest {
     ///
     /// @param proof The proof to test.
     /// @param input The public input to test.
-    function testInvalidProof(uint256[8] calldata proof, uint256[4] calldata input) public {
+    function test_InvalidProof(uint256[8] calldata proof, uint256[4] calldata input) public {
         bool success;
         bytes memory returnData;
 

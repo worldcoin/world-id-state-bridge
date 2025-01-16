@@ -32,6 +32,9 @@ jobs:
       - name: Build Contracts
         run: make build
 
+      - name: Check formatting
+        run: make format-check
+
       - name: Run Tests
         env:
           MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}

@@ -48,9 +48,7 @@ contract DeployPolygonStateBridgeMainnet is Script {
         vm.startBroadcast(privateKey);
 
         bridge = new PolygonStateBridge(
-            checkpointManagerAddress,
-            fxRootAddress,
-            worldIDIdentityManagerAddress
+            checkpointManagerAddress, fxRootAddress, worldIDIdentityManagerAddress
         );
 
         bridge.setFxChildTunnel(polygonWorldIDAddress);

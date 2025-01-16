@@ -15,14 +15,14 @@ test:; FOUNDRY_PROFILE=debug forge test
 # ===== Profiling Rules ===============================================================================================
 
 # Benchmark the tests.
-bench:; FOUNDRY_PROFILE=bench forge test --gas-report 
+bench:; FOUNDRY_PROFILE=bench forge test --gas-report
 
 # Snapshot the current test usages.
-snapshot:; FOUNDRY_PROFILE=bench forge snapshot 
+snapshot:; FOUNDRY_PROFILE=bench forge snapshot
 
 # ===== Deployment Rules ==============================================================================================
 
-# Deploy contracts 
+# Deploy contracts
 deploy: install build; node --no-warnings src/script/deploy.js deploy
 
 deploy-testnet: install build; node --no-warnings src/script/deploy.js deploy-testnet
@@ -42,6 +42,9 @@ set-op-gas-limit: install build; node --no-warnings src/script/deploy.js set-op-
 
 # Format the solidity code.
 format:; forge fmt; npx prettier --write .
+
+# Checks the formatting
+format-check:; forge fmt --check; npx prettier --check .
 
 # Lint the solidity code.
 lint:; yarn lint

@@ -43,9 +43,7 @@ contract DeployBaseStateBridgeGoerli is Script {
         vm.startBroadcast(privateKey);
 
         bridge = new OpStateBridge(
-            worldIDIdentityManagerAddress,
-            baseWorldIDAddress,
-            baseCrossDomainMessengerAddress
+            worldIDIdentityManagerAddress, baseWorldIDAddress, baseCrossDomainMessengerAddress
         );
 
         vm.stopBroadcast();
