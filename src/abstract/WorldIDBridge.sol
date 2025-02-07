@@ -151,7 +151,10 @@ abstract contract WorldIDBridge is IWorldID {
     ///                             SEMAPHORE PROOFS                            ///
     ///////////////////////////////////////////////////////////////////////////////
 
-    /// @notice A verifier for the semaphore protocol.
+    /// @notice A verifier for the semaphore protocol that supports compressed proofs and is backwards
+    ///         compatible with the previous implementation. If a proof is compressed, the last 4 uints
+    ///         will be 0. If this condition is met, we will call the semaphore compress proof function
+    ///         instead.
     /// @dev Note that a double-signaling check is not included here, and should be carried by the
     ///      caller.
     ///
@@ -160,7 +163,6 @@ abstract contract WorldIDBridge is IWorldID {
     /// @param nullifierHash The nullifier hash
     /// @param externalNullifierHash A keccak256 hash of the external nullifier
     /// @param proof The zero-knowledge proof
-    ///
     /// @custom:reverts string If the zero-knowledge proof cannot be verified for the public inputs.
     function verifyProof(
         uint256 root,
@@ -171,11 +173,13 @@ abstract contract WorldIDBridge is IWorldID {
     ) public view virtual {
         // Check the preconditions on the inputs.
         requireValidRoot(root);
-
-        // With that done we can now verify the proof.
-        semaphoreVerifier.verifyProof(
-            proof, [root, nullifierHash, signalHash, externalNullifierHash]
-        );
+        uint256[4] memory input = [root, nullifierHash, signalHash, externalNullifierHash];
+        if (proof[4] == 0 && proof[5] == 0 && proof[6] == 0 && proof[7] == 0) {
+            uint256[4] memory compressedProof = [proof[0], proof[1], proof[2], proof[3]];
+            semaphoreVerifier.verifyCompressedProof(compressedProof, input);
+        } else {
+            semaphoreVerifier.verifyProof(proof, input);
+        }
     }
 
     /// @notice A verifier for the compressed semaphore protocol.
