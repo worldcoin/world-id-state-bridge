@@ -19,6 +19,3 @@ docs/.gitignore
 !/broadcast
 /broadcast/*
 /broadcast/*/31337/
-
-# remappings
-remappings.txt
