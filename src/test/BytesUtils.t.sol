@@ -11,6 +11,15 @@ contract BytesUtilsTest is PRBTest, StdCheats {
     /// @notice Emitted when the payload is too short to contain a selector (at least 4 bytes).
     error PayloadTooShort();
 
+    /// @dev External wrappers so vm.expectRevert works (library calls inline at the same depth).
+    function externalGrabSelector(bytes memory payload) external pure returns (bytes4) {
+        return BytesUtils.grabSelector(payload);
+    }
+
+    function externalStripSelector(bytes memory payload) external pure returns (bytes memory) {
+        return BytesUtils.stripSelector(payload);
+    }
+
     ///////////////////////////////////////////////////////////////////
     ///                           SUCCEEDS                          ///
     ///////////////////////////////////////////////////////////////////
@@ -66,7 +75,7 @@ contract BytesUtilsTest is PRBTest, StdCheats {
         vm.expectRevert(PayloadTooShort.selector);
 
         // reverts
-        BytesUtils.grabSelector(abi.encodePacked(lessThanFourBytes));
+        this.externalGrabSelector(abi.encodePacked(lessThanFourBytes));
     }
 
     /// @notice Tests that the `stripSelector` function reverts when the payload is too short (<5 bytes)
@@ -81,6 +90,6 @@ contract BytesUtilsTest is PRBTest, StdCheats {
         vm.expectRevert(PayloadTooShort.selector);
 
         // reverts
-        BytesUtils.stripSelector((abi.encodePacked(fourBytesOrLess)));
+        this.externalStripSelector((abi.encodePacked(fourBytesOrLess)));
     }
 }

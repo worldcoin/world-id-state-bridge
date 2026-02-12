@@ -102,8 +102,7 @@ contract CommonSemaphoreVerifierTest is PRBTest {
         bytes memory returnData;
 
         vm.expectRevert(ProofInvalid.selector);
-        (success, returnData) = address(verifier).staticcall(
-            abi.encodeWithSelector(verifier.verifyProof.selector, proof, input)
-        );
+        (success, returnData) = address(verifier)
+            .staticcall(abi.encodeWithSelector(verifier.verifyProof.selector, proof, input));
     }
 }

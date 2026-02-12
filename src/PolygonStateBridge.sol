@@ -6,7 +6,7 @@ import {IPolygonWorldID} from "./interfaces/IPolygonWorldID.sol";
 import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {IRootHistory} from "./interfaces/IRootHistory.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
-import {FxBaseRootTunnel} from "fx-portal/contracts/tunnel/FxBaseRootTunnel.sol";
+import {FxBaseRootTunnel} from "@fx-portal/tunnel/FxBaseRootTunnel.sol";
 
 /// @title Polygon World ID State Bridge
 /// @author Worldcoin

@@ -222,9 +222,7 @@ contract PolygonStateBridgeTest is PRBTest, StdCheats {
 
     /// @notice Tests that a nonPendingOwner can't accept ownership of StateBridge
     /// @param newOwner the new owner of the contract
-    function test_notOwner_acceptOwnership_reverts(address newOwner, address randomAddress)
-        public
-    {
+    function test_notOwner_acceptOwnership_reverts(address newOwner, address randomAddress) public {
         vm.assume(
             newOwner != address(0) && randomAddress != address(0) && randomAddress != newOwner
         );

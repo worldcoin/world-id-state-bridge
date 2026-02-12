@@ -7,25 +7,18 @@ pragma solidity ^0.8.15;
 import {OpWorldID} from "src/OpWorldID.sol";
 import {WorldIDBridge} from "src/abstract/WorldIDBridge.sol";
 import {SemaphoreTreeDepthValidator} from "src/utils/SemaphoreTreeDepthValidator.sol";
-import {L2CrossDomainMessenger} from
-    "@eth-optimism/contracts-bedrock/contracts/L2/L2CrossDomainMessenger.sol";
-import {Predeploys} from "@eth-optimism/contracts-bedrock/contracts/libraries/Predeploys.sol";
-import {
-    CommonTest,
-    Messenger_Initializer
-} from "@eth-optimism/contracts-bedrock/contracts/test/CommonTest.t.sol";
-import {AddressAliasHelper} from
-    "@eth-optimism/contracts-bedrock/contracts/vendor/AddressAliasHelper.sol";
-import {Encoding} from "@eth-optimism/contracts-bedrock/contracts/libraries/Encoding.sol";
-import {Hashing} from "@eth-optimism/contracts-bedrock/contracts/libraries/Hashing.sol";
+import {AddressAliasHelper} from "src/vendor/optimism/AddressAliasHelper.sol";
+import {Encoding} from "src/vendor/optimism/Encoding.sol";
+import {Hashing} from "src/vendor/optimism/Hashing.sol";
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
+import {OpWorldIDTestBase} from "src/test/OpWorldIDTestBase.sol";
 
 /// @title OpWorldIDTest
 /// @author Worldcoin
 /// @notice A test contract for OpWorldID
 /// @dev The OpWorldID contract is deployed on Optimism and is called by the StateBridge contract.
 /// @dev This contract uses the Optimism CommonTest.t.sol testing tool suite.
-contract OpWorldIDTest is Messenger_Initializer {
+contract OpWorldIDTest is OpWorldIDTestBase {
     ///////////////////////////////////////////////////////////////////
     ///                           WORLD ID                          ///
     ///////////////////////////////////////////////////////////////////
@@ -153,12 +146,14 @@ contract OpWorldIDTest is Messenger_Initializer {
     function test_receiveVerifyInvalidRoot_reverts(uint256 newRoot, uint256[8] memory proof)
         public
     {
+        uint256 randomRoot = 0x712cab3414951eba341ca234aef42142567c6eea50371dd528d57eb2b856d238;
+        vm.assume(newRoot != 0 && newRoot != randomRoot);
+
         _switchToCrossDomainOwnership(id);
 
         address owner = id.owner();
 
         vm.warp(block.timestamp + 200);
-        uint256 randomRoot = 0x712cab3414951eba341ca234aef42142567c6eea50371dd528d57eb2b856d238;
 
         // set the xDomainMsgSender storage slot to the L1Messenger
         vm.prank(AddressAliasHelper.applyL1ToL2Alias(address(L1Messenger)));
