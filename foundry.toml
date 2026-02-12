@@ -23,7 +23,6 @@ bytecode_hash = "none"
 remappings = [
   "@prb/test/=lib/prb-test/src/",
   "forge-std/=lib/forge-std/src/",
-  "src/=src/",
   "@fx-portal/=lib/fx-portal/contracts/",
   "solmate/=lib/solmate/",
   "@rari-capital/solmate/=lib/solmate/",
