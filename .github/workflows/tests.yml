@@ -7,35 +7,31 @@ on:
 
 name: Unit Tests
 
+env:
+  MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
+
 jobs:
   tests:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
 
       - name: Install Foundry
-        uses: onbjerg/foundry-toolchain@v1
+        uses: foundry-rs/foundry-toolchain@v1
         with:
           version: stable
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "18"
-          cache: "npm"
-
-      - name: Install Dependencies
-        run: make install
-
       - name: Build Contracts
-        run: make build
+        run: forge build --sizes
 
       - name: Check formatting
-        run: make format-check
+        run: forge fmt --check
 
       - name: Run Tests
         env:
           MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
-        run: make test
+
+        run: forge test

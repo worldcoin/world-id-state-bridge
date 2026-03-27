@@ -1,14 +1,6 @@
 # directories
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
 **/cache
-**/node_modules
 **/out
-node_modules
 .vscode
 
 docs/src/*
@@ -21,16 +13,9 @@ docs/.gitignore
 # files
 *.env
 *.log
-src/script/.deploy-config.json
 .DS_Store
-.pnp.*
-yarn-debug.log*
-yarn-error.log*
 
 # broadcasts
 !/broadcast
 /broadcast/*
 /broadcast/*/31337/
-
-# remappings
-remappings.txt

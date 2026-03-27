@@ -2,13 +2,12 @@
 pragma solidity ^0.8.15;
 
 // Optimism interface for cross domain messaging
-import {ICrossDomainMessenger} from
-    "@eth-optimism/contracts/libraries/bridge/ICrossDomainMessenger.sol";
+import {ICrossDomainMessenger} from "src/vendor/optimism/ICrossDomainMessenger.sol";
 import {IOpWorldID} from "./interfaces/IOpWorldID.sol";
 import {IRootHistory} from "./interfaces/IRootHistory.sol";
 import {IWorldIDIdentityManager} from "./interfaces/IWorldIDIdentityManager.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
-import {ICrossDomainOwnable3} from "./interfaces/ICrossDomainOwnable3.sol";
+import {CrossDomainOwnable3} from "src/vendor/optimism/CrossDomainOwnable3.sol";
 
 /// @title World ID State Bridge Optimism
 /// @author Worldcoin
@@ -130,12 +129,13 @@ contract OpStateBridge is Ownable2Step {
         // correct data to the optimism bridge.
         bytes memory message = abi.encodeCall(IOpWorldID.receiveRoot, (latestRoot));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
-            // Contract address on the OP Stack Chain
-            opWorldIDAddress,
-            message,
-            _gasLimitPropagateRoot
-        );
+        ICrossDomainMessenger(crossDomainMessengerAddress)
+            .sendMessage(
+                // Contract address on the OP Stack Chain
+                opWorldIDAddress,
+                message,
+                _gasLimitPropagateRoot
+            );
 
         emit RootPropagated(latestRoot);
     }
@@ -153,14 +153,15 @@ contract OpStateBridge is Ownable2Step {
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the OP Stack chain bridge.
         bytes memory message =
-            abi.encodeCall(ICrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
+            abi.encodeCall(CrossDomainOwnable3.transferOwnership, (_owner, _isLocal));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
-            // Contract address on the OP Stack Chain
-            opWorldIDAddress,
-            message,
-            _gasLimitTransferOwnership
-        );
+        ICrossDomainMessenger(crossDomainMessengerAddress)
+            .sendMessage(
+                // Contract address on the OP Stack Chain
+                opWorldIDAddress,
+                message,
+                _gasLimitTransferOwnership
+            );
 
         emit OwnershipTransferredOp(owner(), _owner, _isLocal);
     }
@@ -173,12 +174,13 @@ contract OpStateBridge is Ownable2Step {
         bytes memory message =
             abi.encodeCall(IRootHistory.setRootHistoryExpiry, (_rootHistoryExpiry));
 
-        ICrossDomainMessenger(crossDomainMessengerAddress).sendMessage(
-            // Contract address on the OP Stack Chain
-            opWorldIDAddress,
-            message,
-            _gasLimitSetRootHistoryExpiry
-        );
+        ICrossDomainMessenger(crossDomainMessengerAddress)
+            .sendMessage(
+                // Contract address on the OP Stack Chain
+                opWorldIDAddress,
+                message,
+                _gasLimitSetRootHistoryExpiry
+            );
 
         emit SetRootHistoryExpiry(_rootHistoryExpiry);
     }

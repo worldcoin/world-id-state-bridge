@@ -2,7 +2,7 @@
 pragma solidity ^0.8.15;
 
 import {WorldIDBridge} from "./abstract/WorldIDBridge.sol";
-import {FxBaseChildTunnel} from "fx-portal/contracts/tunnel/FxBaseChildTunnel.sol";
+import {FxBaseChildTunnel} from "@fx-portal/tunnel/FxBaseChildTunnel.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {BytesUtils} from "./utils/BytesUtils.sol";
 
