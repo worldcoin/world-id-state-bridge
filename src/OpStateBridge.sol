@@ -40,6 +40,9 @@ contract OpStateBridge is Ownable2Step {
     /// @notice The default gas limit amount to buy on an OP stack chain to do simple transactions
     uint32 public constant DEFAULT_OP_GAS_LIMIT = 1000000;
 
+    /// @notice The last root propagated to the OP Stack chain, used to prevent duplicate messages
+    uint256 private _lastPropagatedRoot;
+
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
@@ -87,6 +90,9 @@ contract OpStateBridge is Ownable2Step {
     /// @notice Emitted when an attempt is made to set an address to zero
     error AddressZero();
 
+    /// @notice Thrown when propagateRoot is called but the root has not changed since last propagation
+    error RootAlreadyPropagated();
+
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
     ///////////////////////////////////////////////////////////////////
@@ -125,6 +131,8 @@ contract OpStateBridge is Ownable2Step {
     /// @dev Calls this method on the L1 Proxy contract to relay roots to the destination OP Stack chain
     function propagateRoot() external {
         uint256 latestRoot = IWorldIDIdentityManager(worldIDAddress).latestRoot();
+        if (latestRoot == _lastPropagatedRoot) revert RootAlreadyPropagated();
+        _lastPropagatedRoot = latestRoot;
 
         // The `encodeCall` function is strongly typed, so this checks that we are passing the
         // correct data to the optimism bridge.

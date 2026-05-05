@@ -21,6 +21,9 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice WorldID Identity Manager contract
     IWorldIDIdentityManager public immutable worldID;
 
+    /// @notice The last root propagated to Polygon, used to prevent duplicate messages
+    uint256 private _lastPropagatedRoot;
+
     ///////////////////////////////////////////////////////////////////
     ///                            EVENTS                           ///
     ///////////////////////////////////////////////////////////////////
@@ -50,6 +53,9 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// @notice Emitted when an attempt is made to set the FxBaseRootTunnel's
     /// fxChildTunnel when it has already been set.
     error FxBaseRootChildTunnelAlreadySet();
+
+    /// @notice Thrown when propagateRoot is called but the root has not changed since last propagation
+    error RootAlreadyPropagated();
 
     ///////////////////////////////////////////////////////////////////
     ///                         CONSTRUCTOR                         ///
@@ -81,6 +87,8 @@ contract PolygonStateBridge is FxBaseRootTunnel, Ownable2Step {
     /// to Polygon's StateChild contract (PolygonWorldID)
     function propagateRoot() external {
         uint256 latestRoot = worldID.latestRoot();
+        if (latestRoot == _lastPropagatedRoot) revert RootAlreadyPropagated();
+        _lastPropagatedRoot = latestRoot;
 
         bytes memory message = abi.encodeCall(IPolygonWorldID.receiveRoot, (latestRoot));
 
