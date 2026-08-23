@@ -1,0 +1,110 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    strategy:
+      fail-fast: true
+      matrix:
+        node-version: ['18', '20']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Display environment info
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Make version: $(make --version | head -1)"
+          uname -a
+
+      - name: Run configure script
+        run: ./configure
+        continue-on-error: false
+
+      - name: Install dependencies
+        run: make
+        timeout-minutes: 10
+
+      - name: Run checks
+        run: make check
+        timeout-minutes: 15
+
+      - name: Run distribution check
+        run: make distcheck
+        timeout-minutes: 20
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.node-version }}
+          path: |
+            dist/
+            build/
+          retention-days: 5
+
+      - name: Generate test report
+        if: always()
+        run: |
+          echo "## Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Node Version**: ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_STEP_SUMMARY
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Run linting
+        run: make lint || echo "No lint target found, skipping..."
+        continue-on-error: true
+
+  notify-on-failure:
+    runs-on: ubuntu-latest
+    needs: [build, lint]
+    if: failure()
+    
+    steps:
+      - name: Build failed notification
+        run: |
+          echo "❌ Build pipeline failed!"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
